@@ -46,19 +46,19 @@
   };
 </script>
 
-  <meta name="description" content="KafkaApache Kafka 是一款开源的消息引擎系统，其主要功能是提供一套完备的消息发布与订阅解决方案。在 Kafka 中，发布订阅的对象是主题（Topic），我们可以为每个业务、每个应用甚至是每类数据都创建专属的主题。 消息（Record）我们已经知道，Kafka 是消息引擎，这里的消息就是指 Kafka 处理的主要对象。 主题（Topic）主题是承载消息的逻辑容器，在实际使用中多用来区">
+  <meta name="description" content="消息交付可靠性保障在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：  最多一次（at most once）：消息可能会丢失，但绝不会重复消费。 至少一次（at lease once）：消息不会丢失，但有可能被重复发送。 精确一次（exactly once）">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka核心概念">
-<meta property="og:url" content="http://yoursite.com/2020/01/20/Kafka%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:title" content="Kafka精确一次语义">
+<meta property="og:url" content="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="KafkaApache Kafka 是一款开源的消息引擎系统，其主要功能是提供一套完备的消息发布与订阅解决方案。在 Kafka 中，发布订阅的对象是主题（Topic），我们可以为每个业务、每个应用甚至是每类数据都创建专属的主题。 消息（Record）我们已经知道，Kafka 是消息引擎，这里的消息就是指 Kafka 处理的主要对象。 主题（Topic）主题是承载消息的逻辑容器，在实际使用中多用来区">
+<meta property="og:description" content="消息交付可靠性保障在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：  最多一次（at most once）：消息可能会丢失，但绝不会重复消费。 至少一次（at lease once）：消息不会丢失，但有可能被重复发送。 精确一次（exactly once）">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-01-20T11:19:00.000Z">
-<meta property="article:modified_time" content="2020-01-21T05:26:44.266Z">
+<meta property="article:published_time" content="2020-01-21T08:06:00.000Z">
+<meta property="article:modified_time" content="2020-01-21T11:15:53.467Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/20/Kafka%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">
+<link rel="canonical" href="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/">
 
 
 <script id="page-configurations">
@@ -70,7 +70,7 @@
   };
 </script>
 
-  <title>Kafka核心概念 | OnePiece</title>
+  <title>Kafka精确一次语义 | OnePiece</title>
   
 
 
@@ -174,7 +174,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/20/Kafka%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -187,7 +187,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Kafka核心概念
+          Kafka精确一次语义
         </h1>
 
         <div class="post-meta">
@@ -196,16 +196,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-01-20 19:19:00" itemprop="dateCreated datePublished" datetime="2020-01-20T19:19:00+08:00">2020-01-20</time>
+              <time title="创建时间：2020-01-21 16:06:00 / 修改时间：19:15:53" itemprop="dateCreated datePublished" datetime="2020-01-21T16:06:00+08:00">2020-01-21</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-21 13:26:44" itemprop="dateModified" datetime="2020-01-21T13:26:44+08:00">2020-01-21</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -229,25 +223,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><p>Apache Kafka 是一款开源的消息引擎系统，其主要功能是提供一套完备的消息发布与订阅解决方案。<br>在 Kafka 中，发布订阅的对象是主题（Topic），我们可以为每个业务、每个应用甚至是每类数据都创建专属的主题。</p>
-<h2 id="消息（Record）"><a href="#消息（Record）" class="headerlink" title="消息（Record）"></a>消息（Record）</h2><p>我们已经知道，Kafka 是消息引擎，这里的消息就是指 Kafka 处理的主要对象。</p>
-<h2 id="主题（Topic）"><a href="#主题（Topic）" class="headerlink" title="主题（Topic）"></a>主题（Topic）</h2><p>主题是承载消息的逻辑容器，在实际使用中多用来区分具体的业务。</p>
-<h2 id="生产者（Producer）"><a href="#生产者（Producer）" class="headerlink" title="生产者（Producer）"></a>生产者（Producer）</h2><p>向主题发布消息的客户端应用程序。</p>
-<h2 id="消费者（Consumer）"><a href="#消费者（Consumer）" class="headerlink" title="消费者（Consumer）"></a>消费者（Consumer）</h2><p>从主题订阅消息的应用程序。</p>
-<h2 id="客户端（Clients）"><a href="#客户端（Clients）" class="headerlink" title="客户端（Clients）"></a>客户端（Clients）</h2><p>我们把生产者和消费者统称为客户端。</p>
-<h2 id="服务器端（Broker）"><a href="#服务器端（Broker）" class="headerlink" title="服务器端（Broker）"></a>服务器端（Broker）</h2><p>由被称为 Broker 的服务进程构成，即一个 Kafka 集群由多个 Broker 组成，Broker 负责接收和处理客户端发来的请求，以及对消息进行持久化。</p>
-<h2 id="分区（Partition）"><a href="#分区（Partition）" class="headerlink" title="分区（Partition）"></a>分区（Partition）</h2><p>一个有序不变的消息队列。每个主题下可以有多个分区。<br>生产者生产的每条消息只会被发送到一个分区中，也就是说如果向一个双分区的主题发送一条消息，这条消息要么在分区 0 中，要么在分区 1 中。（Kafka 的分区编号从 0 开始递增）<br>分区的设计是为了解决分布式系统中的伸缩性问题：把数据分割成多份保存在不同的 Broker 上，从而避免数据太多以至于单台 Broker 都无法容纳。<br>Partition 与 MongoDB 和 Elasticsearch 中的 Sharding、HBase中的Region，其实它们都是相同的原理，只是 Partitioning 是最标准的名称。</p>
-<h2 id="副本（Replica）"><a href="#副本（Replica）" class="headerlink" title="副本（Replica）"></a>副本（Replica）</h2><p>Kafka 中同一条消息能够被拷贝到多个地方以提供数据冗余，这些地方就是所谓的副本。<br>副本是在分区层级下实现的，即每个分区可配置多个副本实现高可用。<br>副本可以分为领导者副本（Leader Replica）和追随者副本（Follower Replica）。前者对外提供服务，这里的对外指的是与客户端程序进行交互；而后者只是被动的追随前者而已，不能与外界进行交互。<br>副本的工作机制：生产者总是向领导者副本写消息；而消费者总是从领导者副本读消息。至于追随者副本，它只做一件事：向领导者副本发送请求，请求领导者把最新生产的消息发给它，这样它能保持与领导者的同步。</p>
-<p>我们知道，MySQL 的从库是可以处理读操作的，但是在 Kafka 中追随者副本不会对外提供服务。其原因有以下几点：</p>
+        <h2 id="消息交付可靠性保障"><a href="#消息交付可靠性保障" class="headerlink" title="消息交付可靠性保障"></a>消息交付可靠性保障</h2><p>在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。<br>所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：</p>
 <ul>
-<li>kafka 的分区已经能够让读写操作在多个 Broker 上，而不像 MySQL 的主从，压力都在主上；</li>
-<li>kafka 保存的数据和数据库的性质有实质的区别：Kafka 中的数据是流数据，需要记录消费位移，而数据库是实体数据不存在这个概念，如果从 Kafka 的 Follower 读，消费端 offset 控制将更复杂；</li>
-<li>对于生产者来说，kafka 可以通过配置来控制是否等待 Follower 的消息确认，如果从上面读，也需要所有的 Follower 都确认了才可以回复生产者，造成性能下降，如果 Follower 出问题了也不好处理。</li>
+<li>最多一次（at most once）：消息可能会丢失，但绝不会重复消费。</li>
+<li>至少一次（at lease once）：消息不会丢失，但有可能被重复发送。</li>
+<li>精确一次（exactly once）：消息不会丢失，也不会被重复发送。</li>
 </ul>
-<h2 id="消费者组（Consumer-Group）"><a href="#消费者组（Consumer-Group）" class="headerlink" title="消费者组（Consumer Group）"></a>消费者组（Consumer Group）</h2><p>多个消费者实例共同组成的一个组，同时消费多个分区以实现高吞吐。<br>主题中的每个分区都只会被组内的一个消费者实例消费，其它消费者实例不能消费它。一个消费者实例可以消费多个分区。分区数决定了消费者个数的上限，一般情况下消费者个数应与分区数一致，消费者个数过多会浪费系统资源，因为多出的消费者不会被分配到任何分区。</p>
-<h2 id="重平衡（Rebalance）"><a href="#重平衡（Rebalance）" class="headerlink" title="重平衡（Rebalance）"></a>重平衡（Rebalance）</h2><p>消费者组内某个实例挂掉后，其它消费者实例自动重新分配订阅主题分区的过程。Rebalance 是 Kafka 实现高可用的重要手段。</p>
-<h2 id="消息位移（Offset）"><a href="#消息位移（Offset）" class="headerlink" title="消息位移（Offset）"></a>消息位移（Offset）</h2><p>表示分区中每条消息的位置信息，是一个单调递增且不变的值。</p>
-<h2 id="消费者位移（Consumer-Offset）"><a href="#消费者位移（Consumer-Offset）" class="headerlink" title="消费者位移（Consumer Offset）"></a>消费者位移（Consumer Offset）</h2><p>表示消费者的消费进度，每个消费者都有自己的消费者位移。</p>
+<p>目前，Kafka 默认提供的交付可靠性保障是第二种，即至少一次。<br>在 Kafka 中，只有 Broker 成功“提交”消息且 Producer 接到 Broker 的应答才会认为该消息成功发送。不过倘若消息成功“提交”，但 Broker 的应答没有成功发送回 Producer 端（比如网络出现瞬时抖动），那么 Producer 就无法确定消息是否真的提交成功了。因此，它只能选择重试，也就是再次发送相同的消息。这就是 Kafka 默认提供至少一次可靠性保障的原因，不过这会导致消息重复发送。</p>
+<p>Kafka 也能提供对最多一次交付保障，只需要让 Producer 禁止重试即可。这样一来，消息要么写入成功，要么写入失败，但绝不会重新发送。我们通常不会希望出现消息丢失的情况，但在一些场景里偶发的消息丢失其实是被允许的，相反，消息重复消费是绝对要避免的。此时，使用最多一次交付保障就是最恰当的。</p>
+<p>无论至少一次还是最多一次，都不如精确一次来得有吸引力。大部分用户还是希望消息只被交付一次，这样，消息不会丢失，也不会被重复处理。或者说，即使 Producer 端重复发送了相同的消息，Broker 端也能做到自动去重。在下游 Consumer 看来，消息依然只有一条。</p>
+<p>那么问题来了，Kafka 是怎么做到精确一次的呢？简单来说，这是通过两种机制：幂等性（Idempotence）和事务（Transaction）。</p>
+<h2 id="幂等性-Producer"><a href="#幂等性-Producer" class="headerlink" title="幂等性 Producer"></a>幂等性 Producer</h2><p>在 Kafka 中，Producer 默认不是幂等性的，但我们可以创建幂等性 Producer，只需要设置属性 enable.idempotence 为 true 即可。</p>
+<p>不过，幂等性 Producer是有多用范围的。<br>首先，它只能保证单分区上的幂等性，即一个幂等性 Producer 能够保证某个主题的一个分区不出现重复消息，它无法实现多个分区的幂等性。<br>其次，它只能实现单会话上的幂等性，不能实现跨会话的幂等性。这里的会话，我们可以理解为 Producer 进程的一次运行。当我们重启了 Producer 进程之后，这种幂等性保证就丧失了。</p>
+<p>如果我们想实现对分区以及多会话上的消息无重复，则需要使用事务型 Producer。</p>
+<h2 id="事务型-Producer"><a href="#事务型-Producer" class="headerlink" title="事务型 Producer"></a>事务型 Producer</h2><p>事务型 Producer 能够保证将消息原子性地写入到多个分区中。这批消息要么全部写入成功，要么全部失败。另外，事务型 Producer 也不惧进程的重启。Producer 重启回来后，Kafka 依然保证它们发送消息的精确一次处理。</p>
+<p>设置事务型 Producer 的方法也很简单，只需配置以下两个属性：</p>
+<ul>
+<li>和幂等性 Producer 一样，开启 enable.idempotence = true。</li>
+<li>设置 Producer 端参数 transactional.id。最好为其设置一个有意义的名字。</li>
+</ul>
+<p>实际上即使消息写入失败，Kafka 也会把它们写入到底层的日志中，也就是说 Consumer 还是会看到这些消息。因此在 Consumer 端，读取事务型 Producer 发送的消息也需要做一些变更：设置 isolation.level 参数的值。目前该参数有两个取值：</p>
+<ul>
+<li>read_uncommitted<br>这是默认值，表明 Consumer 能够读取到 Kafka 写入的任何消息，不论事务型 Producer 提交事务还是终止事务，其写入的消息都可以读取。很显然，如果我们用了事务型 Producer，那么对应的 Consumer 就不要使用这个值。</li>
+<li>read_committed<br>表明 Consumer 只会读取事务型 Producer 成功提交事务写入的消息。当然，它也能看到非事务型 Producer 写入的所有消息。</li>
+</ul>
 
     </div>
 
@@ -283,13 +282,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/16/Spring%20Boot%E9%9B%86%E6%88%90Kafka/" rel="prev" title="Spring Boot集成Kafka">
-      <i class="fa fa-chevron-left"></i> Spring Boot集成Kafka
+    <a href="/2020/01/21/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B/" rel="prev" title="Kafka消息模型">
+      <i class="fa fa-chevron-left"></i> Kafka消息模型
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/21/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B/" rel="next" title="Kafka消息模型">
-      Kafka消息模型 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -350,7 +346,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka"><span class="nav-number">1.</span> <span class="nav-text">Kafka</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息（Record）"><span class="nav-number">2.</span> <span class="nav-text">消息（Record）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主题（Topic）"><span class="nav-number">3.</span> <span class="nav-text">主题（Topic）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生产者（Producer）"><span class="nav-number">4.</span> <span class="nav-text">生产者（Producer）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消费者（Consumer）"><span class="nav-number">5.</span> <span class="nav-text">消费者（Consumer）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端（Clients）"><span class="nav-number">6.</span> <span class="nav-text">客户端（Clients）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务器端（Broker）"><span class="nav-number">7.</span> <span class="nav-text">服务器端（Broker）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分区（Partition）"><span class="nav-number">8.</span> <span class="nav-text">分区（Partition）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#副本（Replica）"><span class="nav-number">9.</span> <span class="nav-text">副本（Replica）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消费者组（Consumer-Group）"><span class="nav-number">10.</span> <span class="nav-text">消费者组（Consumer Group）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重平衡（Rebalance）"><span class="nav-number">11.</span> <span class="nav-text">重平衡（Rebalance）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息位移（Offset）"><span class="nav-number">12.</span> <span class="nav-text">消息位移（Offset）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消费者位移（Consumer-Offset）"><span class="nav-number">13.</span> <span class="nav-text">消费者位移（Consumer Offset）</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息交付可靠性保障"><span class="nav-number">1.</span> <span class="nav-text">消息交付可靠性保障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#幂等性-Producer"><span class="nav-number">2.</span> <span class="nav-text">幂等性 Producer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务型-Producer"><span class="nav-number">3.</span> <span class="nav-text">事务型 Producer</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -475,7 +471,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: '049e67abc2d5d0f46a0bbe22f260deed',
+      id: '1055658b086fc5a4cac0177e8aa54492',
         language: 'zh-CN',
       distractionFreeMode: true
     });
