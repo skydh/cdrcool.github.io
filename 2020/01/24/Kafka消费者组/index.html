@@ -46,19 +46,19 @@
   };
 </script>
 
-  <meta name="description" content="消息交付可靠性保障在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：  最多一次（at most once）：消息可能会丢失，但绝不会重复消费。 至少一次（at lease once）：消息不会丢失，但有可能被重复发送。 精确一次（exactly once）">
+  <meta name="description" content="消费者组概念消费者组，即 Consumer Group，是 Kafka 提供的可扩展且具有容错性的消费者机制。要理解 Consumer Group，我们需要记住下面这三个特性：  Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。 Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka 精确一次语义">
-<meta property="og:url" content="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/index.html">
+<meta property="og:title" content="Kafka 消费者组">
+<meta property="og:url" content="http://yoursite.com/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="消息交付可靠性保障在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：  最多一次（at most once）：消息可能会丢失，但绝不会重复消费。 至少一次（at lease once）：消息不会丢失，但有可能被重复发送。 精确一次（exactly once）">
+<meta property="og:description" content="消费者组概念消费者组，即 Consumer Group，是 Kafka 提供的可扩展且具有容错性的消费者机制。要理解 Consumer Group，我们需要记住下面这三个特性：  Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。 Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-01-21T08:06:00.000Z">
-<meta property="article:modified_time" content="2020-01-24T04:40:38.205Z">
+<meta property="article:published_time" content="2020-01-24T02:43:00.000Z">
+<meta property="article:modified_time" content="2020-01-25T04:05:30.690Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/">
+<link rel="canonical" href="http://yoursite.com/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/">
 
 
 <script id="page-configurations">
@@ -70,7 +70,7 @@
   };
 </script>
 
-  <title>Kafka 精确一次语义 | OnePiece</title>
+  <title>Kafka 消费者组 | OnePiece</title>
   
 
 
@@ -174,7 +174,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -187,7 +187,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Kafka 精确一次语义
+          Kafka 消费者组
         </h1>
 
         <div class="post-meta">
@@ -197,14 +197,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-01-21 16:06:00" itemprop="dateCreated datePublished" datetime="2020-01-21T16:06:00+08:00">2020-01-21</time>
+              <time title="创建时间：2020-01-24 10:43:00" itemprop="dateCreated datePublished" datetime="2020-01-24T10:43:00+08:00">2020-01-24</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-24 12:40:38" itemprop="dateModified" datetime="2020-01-24T12:40:38+08:00">2020-01-24</time>
+                <time title="修改时间：2020-01-25 12:05:30" itemprop="dateModified" datetime="2020-01-25T12:05:30+08:00">2020-01-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -229,31 +229,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="消息交付可靠性保障"><a href="#消息交付可靠性保障" class="headerlink" title="消息交付可靠性保障"></a>消息交付可靠性保障</h2><p>在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。<br>所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：</p>
-<ul>
-<li>最多一次（at most once）：消息可能会丢失，但绝不会重复消费。</li>
-<li>至少一次（at lease once）：消息不会丢失，但有可能被重复发送。</li>
-<li>精确一次（exactly once）：消息不会丢失，也不会被重复发送。</li>
-</ul>
-<p>目前，Kafka 默认提供的交付可靠性保障是第二种，即至少一次。<br>在 Kafka 中，只有 Broker 成功“提交”消息且 Producer 接到 Broker 的应答才会认为该消息成功发送。不过倘若消息成功“提交”，但 Broker 的应答没有成功发送回 Producer 端（比如网络出现瞬时抖动），那么 Producer 就无法确定消息是否真的提交成功了。因此，它只能选择重试，也就是再次发送相同的消息。这就是 Kafka 默认提供至少一次可靠性保障的原因，不过这会导致消息重复发送。</p>
-<p>Kafka 也能提供对最多一次交付保障，只需要让 Producer 禁止重试即可。这样一来，消息要么写入成功，要么写入失败，但绝不会重新发送。我们通常不会希望出现消息丢失的情况，但在一些场景里偶发的消息丢失其实是被允许的，相反，消息重复消费是绝对要避免的。此时，使用最多一次交付保障就是最恰当的。</p>
-<p>无论至少一次还是最多一次，都不如精确一次来得有吸引力。大部分用户还是希望消息只被交付一次，这样，消息不会丢失，也不会被重复处理。或者说，即使 Producer 端重复发送了相同的消息，Broker 端也能做到自动去重。在下游 Consumer 看来，消息依然只有一条。</p>
-<p>那么问题来了，Kafka 是怎么做到精确一次的呢？简单来说，这是通过两种机制：幂等性（Idempotence）和事务（Transaction）。</p>
-<h2 id="幂等性-Producer"><a href="#幂等性-Producer" class="headerlink" title="幂等性 Producer"></a>幂等性 Producer</h2><p>在 Kafka 中，Producer 默认不是幂等性的，但我们可以创建幂等性 Producer，只需要设置属性 enable.idempotence 为 true 即可。</p>
-<p>不过，幂等性 Producer是有多用范围的。<br>首先，它只能保证单分区上的幂等性，即一个幂等性 Producer 能够保证某个主题的一个分区不出现重复消息，它无法实现多个分区的幂等性。<br>其次，它只能实现单会话上的幂等性，不能实现跨会话的幂等性。这里的会话，我们可以理解为 Producer 进程的一次运行。当我们重启了 Producer 进程之后，这种幂等性保证就丧失了。</p>
-<p>如果我们想实现对分区以及多会话上的消息无重复，则需要使用事务型 Producer。</p>
-<h2 id="事务型-Producer"><a href="#事务型-Producer" class="headerlink" title="事务型 Producer"></a>事务型 Producer</h2><p>事务型 Producer 能够保证将消息原子性地写入到多个分区中。这批消息要么全部写入成功，要么全部失败。另外，事务型 Producer 也不惧进程的重启。Producer 重启回来后，Kafka 依然保证它们发送消息的精确一次处理。<br>f’f<br>设置事务型 Producer 的方法也很简单，只需配置以下两个属性：</p>
-<ul>
-<li>和幂等性 Producer 一样，开启 enable.idempotence = true。</li>
-<li>设置 Producer 端参数 transactional.id。最好为其设置一个有意义的名字。</li>
-</ul>
-<p>实际上即使消息写入失败，Kafka 也会把它们写入到底层的日志中，也就是说 Consumer 还是会看到这些消息。因此在 Consumer 端，读取事务型 Producer 发送的消息也需要做一些变更：设置 isolation.level 参数的值。目前该参数有两个取值：</p>
-<ul>
-<li>read_uncommitted<br>这是默认值，表明 Consumer 能够读取到 Kafka 写入的任何消息，不论事务型 Producer 提交事务还是终止事务，其写入的消息都可以读取。很显然，如果我们用了事务型 Producer，那么对应的 Consumer 就不要使用这个值。</li>
-<li>read_committed<br>表明 Consumer 只会读取事务型 Producer 成功提交事务写入的消息。当然，它也能看到非事务型 Producer 写入的所有消息。</li>
-</ul>
-<p>尽管从交付语义上来看，事务型 Producer 能做的更多。但是事务型 Producer 的性能要更差，在实际使用过程中，我们需要仔细评估引入事务的开销，切不可无脑地启用事务。</p>
-<h2 id="Exactly-Once"><a href="#Exactly-Once" class="headerlink" title="Exactly Once"></a>Exactly Once</h2><p>需要强调的时，Kafka 中的 Exactly Once，和我们通常理解的消息队列的服务⽔平中的 Exactly Once 是不⼀样的。<br>我们通常理解消息队列的服务⽔平中的 Exactly Once，它指的是，消息从⽣产者发送到 Broker，然后消费者再从 Broker 拉取消息，然后进⾏消费。这个过程中，确保每⼀条消息恰好传输⼀次，不重不丢。<br>而 Kafka 中的 Exactly Once，它解决的是，在流计算中，⽤ Kafka 作为数据源，并且将计算结果保存到 Kafka 这种场景下，数据从 Kafka 的某个主题中消费，在计算集群中计算，再把计算结果保存在 Kafka 的其他主题中。这样的过程中，保证每条消息都被恰好计算⼀次，确保计算结果正确。<br>也就是说，Kafka 中的 Exactly Once 机制，是为了解决在“读数据-计算-保存结果”这样的计算过程中数据不重不丢，⽽不是我们通常理解的使⽤消息队列进⾏消息⽣产消费过程中的 Exactly Once。</p>
+        <h2 id="消费者组"><a href="#消费者组" class="headerlink" title="消费者组"></a>消费者组</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>消费者组，即 Consumer Group，是 Kafka 提供的可扩展且具有容错性的消费者机制。<br>要理解 Consumer Group，我们需要记住下面这三个特性：</p>
+<ol>
+<li>Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。</li>
+<li>Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可以是同一个进程下的线程。在实际场景中，使用进程更为常见一些。</li>
+<li>Consumer Group 下所有实例订阅的主题的单个分区，只能分配给组内的某个 Consumer 实例消费。这个分区当然也可以被其它的 Group 消费。 </li>
+</ol>
+<h3 id="对比传统消息模型"><a href="#对比传统消息模型" class="headerlink" title="对比传统消息模型"></a>对比传统消息模型</h3><p>我们知道，JMS 规范定义了两种消息模型：点对点模型（消息队列）和发布/订阅模型，它们是各有优劣的。<br>传统的消息队列模型额缺陷在于消息一旦被消费，就会从队列中被删除，而且只能被下游的一个 Consumer 消费。严格来说，这一点不算是缺陷，只能算是它的一个特性。但是显然，这种模型的伸缩性（Scalability）很差，因为下游的多个 Consumer 都要“抢”这个共享消息队列的消息。<br>发布/订阅模型的缺陷同样是伸缩性不高，因为每个订阅者都必须要订阅主题的所有分区。这种全量订阅的方式既不灵活，也会影像消息的真实投递效果。</p>
+<p>使用 Consumer Group 机制，Kafka 同时实现了传统消息引擎系统的两大模型（又避开了这两钟模型的缺陷）：如果所有实例都属于同一个 group，那么它实现的就是消息队列模型；如果所有实例分别属于不同的 Group，那么它实现的就是 发布/定于模型。</p>
+<h3 id="消费者（Consumer）实例数量"><a href="#消费者（Consumer）实例数量" class="headerlink" title="消费者（Consumer）实例数量"></a>消费者（Consumer）实例数量</h3><p>理想情况下，每个 Consumer Group 下的 Consumer 实例的数量应该等于该 Group 订阅主题的分区总数。一般不推荐设置大于总分区数的 Consumer 实例，设置多余的实例只会浪费资源，而没有任何好处。</p>
 
     </div>
 
@@ -289,12 +273,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/21/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B/" rel="prev" title="Kafka 消息模型">
-      <i class="fa fa-chevron-left"></i> Kafka 消息模型
+    <a href="/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/" rel="prev" title="Kafka 事务消息">
+      <i class="fa fa-chevron-left"></i> Kafka 事务消息
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/" rel="next" title="Kafka 事务消息">
-      Kafka 事务消息 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/01/24/Kafka%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" rel="next" title="Kafka 分区分配策略">
+      Kafka 分区分配策略 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -356,7 +340,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息交付可靠性保障"><span class="nav-number">1.</span> <span class="nav-text">消息交付可靠性保障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#幂等性-Producer"><span class="nav-number">2.</span> <span class="nav-text">幂等性 Producer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务型-Producer"><span class="nav-number">3.</span> <span class="nav-text">事务型 Producer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exactly-Once"><span class="nav-number">4.</span> <span class="nav-text">Exactly Once</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#消费者组"><span class="nav-number">1.</span> <span class="nav-text">消费者组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对比传统消息模型"><span class="nav-number">1.2.</span> <span class="nav-text">对比传统消息模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消费者（Consumer）实例数量"><span class="nav-number">1.3.</span> <span class="nav-text">消费者（Consumer）实例数量</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -481,7 +465,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: '1055658b086fc5a4cac0177e8aa54492',
+      id: '8da3ee8a05ff6ce68da69221d6739467',
         language: 'zh-CN',
       distractionFreeMode: true
     });
