@@ -170,6 +170,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/21/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">Kafka 消息模型</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-21 11:14:00" itemprop="dateCreated datePublished" datetime="2020-01-21T11:14:00+08:00">2020-01-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-24 12:40:34" itemprop="dateModified" datetime="2020-01-24T12:40:34+08:00">2020-01-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="JMS-规范"><a href="#JMS-规范" class="headerlink" title="JMS 规范"></a>JMS 规范</h2><p>JMS 规范定义了两种消息模型：点对点（point to point, queue）和发布/订阅（publish/subscribe, topic）。</p>
+<h3 id="点对点（point-to-point-queue）"><a href="#点对点（point-to-point-queue）" class="headerlink" title="点对点（point to point, queue）"></a>点对点（point to point, queue）</h3><p>生产者生产消息发送到 queue 中，然后消费者从 queue 中取出并且消费消息。 这里要注意：消息被消费以后，queue 中不再有存储， 所以消费者不可能消费已经被消费的消息。queue 支持存在多个消费者，但是对一个消息而言，只会有一个消费者可以消费。</p>
+<p>点对点模型示意图如下：<br><img src="/images/kafka/%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B-%E7%82%B9%E5%AF%B9%E7%82%B9.png" alt="消息模型-点对点"></p>
+<h3 id="发布-订阅（publish-subscribe-topic）"><a href="#发布-订阅（publish-subscribe-topic）" class="headerlink" title="发布/订阅（publish/subscribe, topic）"></a>发布/订阅（publish/subscribe, topic）</h3><p>在发布-订阅消息系统中，消息被持久化到一个 topic 中。与点对点消息系统不同的是，消费者可以订阅一个或多个 topic，消费者可以消费该 topic 中所有的数据，同一条数据可以被多个消费者消费，数据被消费后不会立马删除。在发布-订阅消息系统中，消息的生产者称为发布者，消费者称为订阅者。</p>
+<p>发布/订阅模型示意图如下：<br><img src="/images/kafka/%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85.png" alt="消息模型-发布订阅"></p>
+<h2 id="Kafka-消息模型"><a href="#Kafka-消息模型" class="headerlink" title="Kafka 消息模型"></a>Kafka 消息模型</h2><p>从 JMS规范上来说，Kafka 没有实现点对点模型，只实现了发布/订阅模型。不过在这种发布/订阅模型中，如果只有一个订阅者，那它和点对点模型就基本是一样的了。也就是说，发布/订阅模型在功能层面上是可以兼容点对点模型的。</p>
+<p>在 Kafka 消息模型中，每个主题包含多个分区，通过多个分区来实现多实例并行生产和消费。需要注意的是，<strong>Kafka 只在分区上保证消息的有序性，主题层面是无法保证消息的严格顺序的</strong>。</p>
+<p>在 Kafka 中，订阅者的概念是通过消费组（Consumer Group）来体现的。每个消费组都消费主题中一份完整的消息，不同消费组之间消费进度彼此不受影响，也就是说，一条消息被 Consumer Group1 消费过，也会再给Consumer Group2消费。<br>消费组中包含多个消费者，同一个组内的消费者是竞争消费的关系，每个消费者负责消费组内的一部分消息。如果一条消息被消费者 Consumer1 消费了，那同组的其他消费者就不会再收到这条消息。</p>
+<p>在 Topic 的消费过程中，由于消息需要被不同的组进行多次消费，所以消费完的消息并不会立即被删除，这就需要 Kafka 为每个消费组在每个分区上维护一个消费位置（Consumer Offset），这个位置之前的消息都被消费过，之后的消息都没有被消费过，每成功消费一条消息，消费位置就加一。</p>
+<p>Kafka 消息模型示意图如下：<br><img src="/images/kafka/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B.png" alt="Kafka消息模型"></p>
+<p>在本文最后，需要再说明下为何 Kafka 会引入分区这个概念：<br>在生产端，生产者先将消息发送给服务端，也就是Broker，服务端在收到消息并将消息写入主题或者队列中后，会给生产者发送确认的响应。如果生产者没有收到服务端的确认或者收到失败的响应，则会重新发送消息；在消费端，消费者在收到消息并完成自己的消费业务逻辑（比如，将数据保存到数据库中）后，也会给服务端发送消费成功的确认，服务端只有收到消费确认后，才认为一条消息被成功消费，否则它会给消费者重新发送这条消息，直到收到对应的消费成功确认。这个确认机制很好地保证了消息传递过程中的可靠性，但是，引入这个机制在消费端带来了一个不小的问题。什么问题呢？<br>为了确保消息的有序性，在某一条消息被成功消费之前，下一条消息是不能被消费的，否则就会出现消息空洞，违背了有序性这个原则。也就是说，每个主题在任意时刻，至多只能有一个消费者实例在进行消费，那就没法通过水平扩展消费者的数量来提升消费端总体的消费性能。为了解决这个问题，Kafka 在主题下面增加了队列的概念。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/20/Kafka%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -819,14 +905,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
