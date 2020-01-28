@@ -170,6 +170,106 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/" class="post-title-link" itemprop="url">Kafka 精确一次语义</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-21 16:06:00" itemprop="dateCreated datePublished" datetime="2020-01-21T16:06:00+08:00">2020-01-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-24 12:40:38" itemprop="dateModified" datetime="2020-01-24T12:40:38+08:00">2020-01-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="消息交付可靠性保障"><a href="#消息交付可靠性保障" class="headerlink" title="消息交付可靠性保障"></a>消息交付可靠性保障</h2><p>在介绍精确一次语义之前，我们先了解下什么是消息交付可靠性保障。<br>所谓消息交付可靠性保障，是消息引擎对 Producer 和 Consumer 要处理的消息提供什么样的承诺。常见的承诺有以下三种：</p>
+<ul>
+<li>最多一次（at most once）：消息可能会丢失，但绝不会重复消费。</li>
+<li>至少一次（at lease once）：消息不会丢失，但有可能被重复发送。</li>
+<li>精确一次（exactly once）：消息不会丢失，也不会被重复发送。</li>
+</ul>
+<p>目前，Kafka 默认提供的交付可靠性保障是第二种，即至少一次。<br>在 Kafka 中，只有 Broker 成功“提交”消息且 Producer 接到 Broker 的应答才会认为该消息成功发送。不过倘若消息成功“提交”，但 Broker 的应答没有成功发送回 Producer 端（比如网络出现瞬时抖动），那么 Producer 就无法确定消息是否真的提交成功了。因此，它只能选择重试，也就是再次发送相同的消息。这就是 Kafka 默认提供至少一次可靠性保障的原因，不过这会导致消息重复发送。</p>
+<p>Kafka 也能提供对最多一次交付保障，只需要让 Producer 禁止重试即可。这样一来，消息要么写入成功，要么写入失败，但绝不会重新发送。我们通常不会希望出现消息丢失的情况，但在一些场景里偶发的消息丢失其实是被允许的，相反，消息重复消费是绝对要避免的。此时，使用最多一次交付保障就是最恰当的。</p>
+<p>无论至少一次还是最多一次，都不如精确一次来得有吸引力。大部分用户还是希望消息只被交付一次，这样，消息不会丢失，也不会被重复处理。或者说，即使 Producer 端重复发送了相同的消息，Broker 端也能做到自动去重。在下游 Consumer 看来，消息依然只有一条。</p>
+<p>那么问题来了，Kafka 是怎么做到精确一次的呢？简单来说，这是通过两种机制：幂等性（Idempotence）和事务（Transaction）。</p>
+<h2 id="幂等性-Producer"><a href="#幂等性-Producer" class="headerlink" title="幂等性 Producer"></a>幂等性 Producer</h2><p>在 Kafka 中，Producer 默认不是幂等性的，但我们可以创建幂等性 Producer，只需要设置属性 enable.idempotence 为 true 即可。</p>
+<p>不过，幂等性 Producer是有多用范围的。<br>首先，它只能保证单分区上的幂等性，即一个幂等性 Producer 能够保证某个主题的一个分区不出现重复消息，它无法实现多个分区的幂等性。<br>其次，它只能实现单会话上的幂等性，不能实现跨会话的幂等性。这里的会话，我们可以理解为 Producer 进程的一次运行。当我们重启了 Producer 进程之后，这种幂等性保证就丧失了。</p>
+<p>如果我们想实现对分区以及多会话上的消息无重复，则需要使用事务型 Producer。</p>
+<h2 id="事务型-Producer"><a href="#事务型-Producer" class="headerlink" title="事务型 Producer"></a>事务型 Producer</h2><p>事务型 Producer 能够保证将消息原子性地写入到多个分区中。这批消息要么全部写入成功，要么全部失败。另外，事务型 Producer 也不惧进程的重启。Producer 重启回来后，Kafka 依然保证它们发送消息的精确一次处理。<br>f’f<br>设置事务型 Producer 的方法也很简单，只需配置以下两个属性：</p>
+<ul>
+<li>和幂等性 Producer 一样，开启 enable.idempotence = true。</li>
+<li>设置 Producer 端参数 transactional.id。最好为其设置一个有意义的名字。</li>
+</ul>
+<p>实际上即使消息写入失败，Kafka 也会把它们写入到底层的日志中，也就是说 Consumer 还是会看到这些消息。因此在 Consumer 端，读取事务型 Producer 发送的消息也需要做一些变更：设置 isolation.level 参数的值。目前该参数有两个取值：</p>
+<ul>
+<li>read_uncommitted<br>这是默认值，表明 Consumer 能够读取到 Kafka 写入的任何消息，不论事务型 Producer 提交事务还是终止事务，其写入的消息都可以读取。很显然，如果我们用了事务型 Producer，那么对应的 Consumer 就不要使用这个值。</li>
+<li>read_committed<br>表明 Consumer 只会读取事务型 Producer 成功提交事务写入的消息。当然，它也能看到非事务型 Producer 写入的所有消息。</li>
+</ul>
+<p>尽管从交付语义上来看，事务型 Producer 能做的更多。但是事务型 Producer 的性能要更差，在实际使用过程中，我们需要仔细评估引入事务的开销，切不可无脑地启用事务。</p>
+<h2 id="Exactly-Once"><a href="#Exactly-Once" class="headerlink" title="Exactly Once"></a>Exactly Once</h2><p>需要强调的时，Kafka 中的 Exactly Once，和我们通常理解的消息队列的服务⽔平中的 Exactly Once 是不⼀样的。<br>我们通常理解消息队列的服务⽔平中的 Exactly Once，它指的是，消息从⽣产者发送到 Broker，然后消费者再从 Broker 拉取消息，然后进⾏消费。这个过程中，确保每⼀条消息恰好传输⼀次，不重不丢。<br>而 Kafka 中的 Exactly Once，它解决的是，在流计算中，⽤ Kafka 作为数据源，并且将计算结果保存到 Kafka 这种场景下，数据从 Kafka 的某个主题中消费，在计算集群中计算，再把计算结果保存在 Kafka 的其他主题中。这样的过程中，保证每条消息都被恰好计算⼀次，确保计算结果正确。<br>也就是说，Kafka 中的 Exactly Once 机制，是为了解决在“读数据-计算-保存结果”这样的计算过程中数据不重不丢，⽽不是我们通常理解的使⽤消息队列进⾏消息⽣产消费过程中的 Exactly Once。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -381,7 +481,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-24 12:40:46" itemprop="dateModified" datetime="2020-01-24T12:40:46+08:00">2020-01-24</time>
+                <time title="修改时间：2020-01-27 20:03:13" itemprop="dateModified" datetime="2020-01-27T20:03:13+08:00">2020-01-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -406,7 +506,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+          <h2 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="配置属性"><a href="#配置属性" class="headerlink" title="配置属性"></a>配置属性</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="comment"># kafka 集群地址</span></span><br><span class="line">    <span class="attr">bootstrap-servers:</span> <span class="string">localhost:9092,localhost:9093,localhost:9094</span></span><br><span class="line">    <span class="comment"># 生产者</span></span><br><span class="line">    <span class="attr">producer:</span></span><br><span class="line">      <span class="comment"># 生产者每次批量发送数据的大小，默认值 16K</span></span><br><span class="line">      <span class="attr">batch-size:</span> <span class="number">16384</span></span><br><span class="line">      <span class="comment"># 生产者能够使用的缓存的大小，默认值 32M</span></span><br><span class="line">      <span class="attr">buffer-memory:</span> <span class="number">33554432</span></span><br><span class="line">      <span class="comment"># 生产者发送数据失败时重试的次数，默认值 0</span></span><br><span class="line">      <span class="attr">retries:</span> <span class="number">0</span></span><br><span class="line">      <span class="comment"># 指定了必须要有多少个分区副本收到消息，生产者才会认为写入消息是成功的，这个参数对消息丢失的可能性有重大影响。默认值 1</span></span><br><span class="line">      <span class="comment"># 0：生产者往集群发送数据不需要等到集群的返回，不确保消息发送成功。安全性最低但是效率最高。</span></span><br><span class="line">      <span class="comment"># 1：生产者往集群发送数据只要 Leader 应答就可以发送下一条，只确保 Leader 接收成功。</span></span><br><span class="line">      <span class="comment"># all或-1：往集群发送数据需要所有的 ISR Follower 都完成从 Leader 的同步才会发送下一条，确保 Leader 发送成功和所有的副本都成功接收。安全性最高，但是效率最低。</span></span><br><span class="line">      <span class="attr">acks:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">key-serializer:</span> <span class="string">org.apache.kafka.common.serialization.StringSerializer</span></span><br><span class="line">      <span class="attr">value-serializer:</span> <span class="string">org.apache.kafka.common.serialization.StringSerializer</span></span><br><span class="line">      <span class="attr">properties:</span></span><br><span class="line">        <span class="comment"># 一个 batch 被创建之后，最多等待多久被发送出去，默认值 0</span></span><br><span class="line">        <span class="comment"># 配合 batch-size 一起使用：满足 batch.size 和 ling.ms 之一，生产者便开始发送 batch</span></span><br><span class="line">        <span class="attr">linger.ms:</span> <span class="number">0</span></span><br><span class="line">    <span class="comment"># 消费者</span></span><br><span class="line">    <span class="attr">consumer:</span></span><br><span class="line">      <span class="comment"># 用来唯一标识 consumer 进程所在组的字符串，如果设置同样的 group id，表示这些 processes 都是属于同一个 consumer group</span></span><br><span class="line">      <span class="attr">group-id:</span> <span class="string">group-x</span></span><br><span class="line">      <span class="comment"># 如果为真，消费者所 fetch 的消息的 offset 将会自动的同步到 zookeeper</span></span><br><span class="line">      <span class="attr">enable-auto-commit:</span> <span class="literal">true</span></span><br><span class="line">      <span class="comment"># 消费者向 zookeeper 提交 offset 的频率，当 enable-auto-commit 为 true 时生效，默认值 5s</span></span><br><span class="line">      <span class="attr">auto-commit-interval:</span> <span class="number">5000</span></span><br><span class="line">      <span class="comment"># earliest：当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，从头开始消费</span></span><br><span class="line">      <span class="comment"># latest：当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，消费新产生的该分区下的数据</span></span><br><span class="line">      <span class="comment"># none: 当各分区都存在已提交的offset时，从offset后开始消费；只要有一个分区不存在已提交的offset，则抛出异常</span></span><br><span class="line">      <span class="attr">auto-offset-reset:</span> <span class="string">earliest</span></span><br><span class="line">      <span class="attr">key-deserializer:</span> <span class="string">org.apache.kafka.common.serialization.StringDeserializer</span></span><br><span class="line">      <span class="attr">value-deserializer:</span> <span class="string">org.apache.kafka.common.serialization.StringDeserializer</span></span><br></pre></td></tr></table></figure>
 
@@ -905,7 +1005,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
