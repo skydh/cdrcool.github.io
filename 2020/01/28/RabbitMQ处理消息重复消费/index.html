@@ -46,19 +46,19 @@
   };
 </script>
 
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="业务逻辑处理一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。 那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。 下面是几种常用的设计幂等操作的方法：  利用数据库的唯一约束实现幂等以转账为例：将账户 X 的余额加 100 元。在这个例子中，我们可以">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://yoursite.com/2020/01/15/hello-world/index.html">
+<meta property="og:title" content="RabbitMQ 处理消息重复消费">
+<meta property="og:url" content="http://yoursite.com/2020/01/28/RabbitMQ%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="业务逻辑处理一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。 那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。 下面是几种常用的设计幂等操作的方法：  利用数据库的唯一约束实现幂等以转账为例：将账户 X 的余额加 100 元。在这个例子中，我们可以">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-01-15T02:50:00.000Z">
-<meta property="article:modified_time" content="2020-01-15T06:08:04.805Z">
+<meta property="article:published_time" content="2020-01-28T10:52:00.000Z">
+<meta property="article:modified_time" content="2020-01-28T10:57:21.285Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/15/hello-world/">
+<link rel="canonical" href="http://yoursite.com/2020/01/28/RabbitMQ%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/">
 
 
 <script id="page-configurations">
@@ -70,7 +70,7 @@
   };
 </script>
 
-  <title>Hello World | OnePiece</title>
+  <title>RabbitMQ 处理消息重复消费 | OnePiece</title>
   
 
 
@@ -174,7 +174,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/15/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/28/RabbitMQ%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -187,7 +187,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          RabbitMQ 处理消息重复消费
         </h1>
 
         <div class="post-meta">
@@ -198,7 +198,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-01-15 10:50:00 / 修改时间：14:08:04" itemprop="dateCreated datePublished" datetime="2020-01-15T10:50:00+08:00">2020-01-15</time>
+              <time title="创建时间：2020-01-28 18:52:00 / 修改时间：18:57:21" itemprop="dateCreated datePublished" datetime="2020-01-28T18:52:00+08:00">2020-01-28</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -206,8 +206,8 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/RabbitMQ/" itemprop="url" rel="index">
+                    <span itemprop="name">RabbitMQ</span>
                   </a>
                 </span>
             </span>
@@ -223,20 +223,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<h3 id="Quick-Start-1"><a href="#Quick-Start-1" class="headerlink" title="Quick Start"></a>Quick Start</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+        <h2 id="业务逻辑处理"><a href="#业务逻辑处理" class="headerlink" title="业务逻辑处理"></a>业务逻辑处理</h2><p>一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。</p>
+<p>那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。</p>
+<p>下面是几种常用的设计幂等操作的方法：</p>
+<ol>
+<li><p>利用数据库的唯一约束实现幂等<br>以转账为例：将账户 X 的余额加 100 元。<br>在这个例子中，我们可以通过改造业务逻辑，让它具备幂等性。<br>首先，我们可以限定，对于每个转账单每个账户只可以执行一次变更操作，在分布式系统中，这个限制实现的方法非常多，最简单的是我们在数据库中建一张转账流水表，这个表有三个字段：转账单 ID、账户 ID 和变更金额，然后给转账单 ID 和账户 ID 这两个字段联合起来创建一个唯一约束，这样对于相同的转账单 ID 和账户 ID，表里至多只能存在一条记录。<br>这样，我们消费消息的逻辑可以变为：“在转账流水表中增加一条转账记录，然后再根据转账记录，异步操作更新用户余额即可。”在转账流水表增加一条转账记录这个操作中，由于我们在这个表中预先定义了“账户 ID 转账单 ID”的唯一约束，对于同一个转账单同一个账户只能插入一条记录，后续重复的插入操作都会失败，这样就实现了一个幂等的操作。我们只要写一个 SQL，正确地实现它就可以了。<br>基于这个思路，不光是可以使用关系型数据库，只要是支持类似“INSERT IF NOT EXIST”语义的存储类系统都可以用于实现幂等，比如，我们可以用 Redis 的 SETNX 命令来替代数据库中的唯一约束，来实现幂等消费。</p>
+</li>
+<li><p>为更新的数据设置前置条件<br>另外一种实现幂等的思路是，给数据变更设置一个前置条件，如果满足条件就更新数据，否则拒绝更新数据，在更新数据的时候，同时变更前置条件中需要判断的数据。<br>这样，重复执行这个操作时，由于第一次更新数据的时候已经变更了前置条件中需要判断的数据，不满足前置条件，则不会重复执行更新数据操作。<br>比如，刚刚我们说过，“将账户 X 的余额增加 100元”这个操作并不满足幂等性，我们可以把这个操作加上一个前置条件，变为：“如果账户 X 当前的余额为 500元，将余额加 100元”，这个操作就具备了幂等性。<br>对应到消息队列中的使用时，可以在发消息时在消息体中带上当前的余额，在消费的时候进行判断数据库中，当前余额是否与消息中的余额相等，只有相等才执行变更操作。<br>但是，如果我们要更新的数据不是数值，或者我们要做一个比较复杂的更新操作怎么办？用什么作为前置判断条件呢？<br>更加通用的方法是，给我们的数据增加一个版本号属性，每次更数据前，比较当前数据的版本号是否和消息中的版本号一致，如果不一致就拒绝更新数据，更新数据的同时将版本号 +1，一样可以实现幂等更新。</p>
+</li>
+<li><p>记录并检查操作<br>如果上面提到的两种实现幂等方法都不能适用于我们的场景，我们还有一种通用性最强，适用范围最广的实现幂等性方法：记录并检查操作，也称为“Token 机制或者 GUID（全局唯一ID）机制”，实现的思路特别简单：在执行数据更新操作之前，先检查一下是否执行过这个更新操作。<br>具体的实现方法是，在发送消息时，给每条消息指定一个全局唯一的 ID，消费时，先根据这个 ID 检查这条消息是否有被消费过，如果没有消费过，才更新数据，然后将消费状态置为已消费。<br>原理和实现是不是很简单？其实一点儿都不简单，在分布式系统中，这个方法其实是非常难实现的。<br>首先，给每个消息指定一个全局唯一的 ID 就是一件不那么简单的事儿，方法有很多，但都不太好同时满足简单、高可用和高性能，或多或少都要有些牺牲。更加麻烦的是，在“检查消费状态，然后更新数据并且设置消费状态”中，三个操作必须作为一组操作保证原子性，才能真正实现幂等，否则就会出现 Bug。</p>
+</li>
+</ol>
 
     </div>
 
@@ -271,11 +268,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2020/01/15/Hexo%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" rel="next" title="Hexo 配置指南">
-      Hexo 配置指南 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/01/28/RabbitMQ%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7/" rel="prev" title="RabbitMQ 保证消息的顺序性">
+      <i class="fa fa-chevron-left"></i> RabbitMQ 保证消息的顺序性
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -336,7 +333,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Quick-Start-1"><span class="nav-number">1.5.</span> <span class="nav-text">Quick Start</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#业务逻辑处理"><span class="nav-number">1.</span> <span class="nav-text">业务逻辑处理</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -461,7 +458,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: 'f0aa02626d81c22c8a3298a553932156',
+      id: 'd9c267207602993c8532a6c69171399b',
         language: 'zh-CN',
       distractionFreeMode: true
     });
