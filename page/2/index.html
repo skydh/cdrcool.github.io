@@ -170,6 +170,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/25/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84%E9%87%8D%E5%B9%B3%E8%A1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/25/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84%E9%87%8D%E5%B9%B3%E8%A1%A1/" class="post-title-link" itemprop="url">Kafka 消费者组重平衡（Rebalance）</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-01-25 11:22:00 / 修改时间：14:01:25" itemprop="dateCreated datePublished" datetime="2020-01-25T11:22:00+08:00">2020-01-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>Rebalance 本质上是一种协议，规定了一个 Consumer Group 下的所有 Consumer 如何达成一致，来分配订阅 Topic 的每个分区。在 Rebalance 过程中，所有 Consumer 实例共同参与，在协调者（Coordinator）组件的帮助下，完成订阅主题分区的分配。</p>
+<h2 id="触发条件"><a href="#触发条件" class="headerlink" title="触发条件"></a>触发条件</h2><p>Rebalance 的触发条件有以下3个：</p>
+<ul>
+<li>组成员数发生变更<br>比如有新的 Consumer 实例加入组或者离开组，抑或是有 Consumer 实例崩溃被“踢出”组。</li>
+<li>订阅主题数发生变更<br>Consumer Group 可以是用正则表达式的方式订阅主题，比如 consumer.subscribe(Pattern.compile(“t.*c”)) 就表明该 Group 订阅所有以字母t开头、字母 c 结尾的主题。在 Consumer Group 的运行过程中，一旦我们新创建了一个满足这样条件的主题，那么该 Group 就会发生 Rebalance。</li>
+<li>订阅主题的分区数发生变更<br>Kafka 当前只允许增加一个主题的分区数。当分区数增加时，就会触发订阅该主题的所有 Group 开启 Rebalance。</li>
+</ul>
+<h2 id="分区分配策略"><a href="#分区分配策略" class="headerlink" title="分区分配策略"></a>分区分配策略</h2><p>Rebalance 发生时，Group 下所有的 Consumer 实例都会协调在一起共同参与。那每个 Consumer 实例怎么知道应该消费订阅主题的哪些分区呢？这就需要<a href="https://cdrcool.github.io/2020/01/24/Kafka分区分配策略/" target="_blank" rel="noopener">Kafka 分区分配策略</a>的协助了。</p>
+<h2 id="弊端"><a href="#弊端" class="headerlink" title="弊端"></a>弊端</h2><ul>
+<li>Rebalance 影响 Consumer 端 TPS<br>这是因为在 Rebalance 过程中，所有 Consumer 实例都会停止消费，直到 Rebalance 完成。</li>
+<li>Rebalance 很慢<br>尤其是当我们的 Group 下成员很多的时候。</li>
+<li>Rebalance 效率不高<br>当前 Kafka 的设计机制决定了每次 Rebalance 时，Group 下的所有成员都要参与进来，而且通常不会考虑局部性原理，但局部性原理对提升系统性能是特别重要的。</li>
+</ul>
+<h2 id="避免-Rebalance"><a href="#避免-Rebalance" class="headerlink" title="避免 Rebalance"></a>避免 Rebalance</h2><p>在真实的业务场景中，很多 Rebalance 都是计划外的或者说是不必要的。</p>
+<p>要避免 Rebalance，还是要从 Rebalance 发生的时机入手。我们在前面说过，Rebalance 发生的时机有 3 个：</p>
+<ul>
+<li>组成员数量发生变化</li>
+<li>订阅主题数量发生变化</li>
+<li>订阅主题的分区数发生变化<br>后面两个通常都是运维的主动操作，所以它们引发的 Rebalance 大都是不可避免的。</li>
+</ul>
+<p>至于组成员数量发生变化，如果也是我们的主动操作，那么它也不属于我们要规避的那类“不必要 Rebalance”。</p>
+<p>我们需要重点关注以下两类导致 Rebalance 的场景：</p>
+<ul>
+<li>Consumer 未能及时发送心跳<br>当 Consumer Group 完成 Rebalance 之后，每个 Consumer 实例都会定期地向 Coordinator 发送心跳请求，表明它还存活着。如果某个 Consumer 实例不能及时地发送这些心跳请求，Coordinator 就会认为该 Consumer已经“死”了，从而将其从 Group 中移除，然后开启新一轮 Rebalance。<br>Consumer 端有个参数，叫 <strong>session.timeout.ms</strong>，就是被用来表征此事的。该参数的默认值是10秒，即如果 Coordinator 在10秒之内没有收到 Group 下某 Consumer 实例的心跳，它就会认为这个 Consumer 实例已经挂了。可以这么说，session.timout.ms 决定了 Consumer 存活性的时间间隔。<br>除了这个参数，Consumer 还提供了一个允许我们控制发送心跳请求频率的参数，就是 <strong>heartbeat.interval.ms</strong>。这个值设置得越小，Consumer 实例发送心跳请求的频率就越高。频繁地发送心跳请求会额外消耗带宽资源，但好处是能够更加快速地知晓当前是否开启 Rebalance。</li>
+</ul>
+<p>对于上面两个参数，在这里给出一些推荐数值，我们可以“无脑”地应用在你的生产环境中。</p>
+<ul>
+<li><p>设置 session.timeout.ms = 6s。</p>
+</li>
+<li><p>设置 heartbeat.interval.ms = 2s。</p>
+</li>
+<li><p>要保证Consumer实例在被判定为“dead”之前，能够发送至少3轮的心跳请求，即 session.timeout.ms &gt;= 3 * heartbeat.interval.ms。</p>
+</li>
+<li><p>Consumer 消费时间过长<br>Consumer 端还有一个参数，用于控制 Consumer 实际消费能力对 Rebalance 的影响，即 <strong>max.poll.interval.ms</strong> 参数。它限定了 Consumer 端应用程序两次调用 poll 方法的最大时间间隔。它的默认值是 5 分钟，表示 Consumer 程序如果在 5 分钟之内无法消费完 poll 方法返回的消息，那么 Consumer 会主动发起“离开组”的请求，Coordinator 也会开启新一轮 Rebalance。<br>如果消费逻辑很重，此时，max.poll.interval.ms 参数值的设置显得尤为关键。如果要避免非预期的 Rebalance，我们最好将该参数值设置得大一点，比我们的下游最大处理时间稍长一点。这样，Consumer 就不会因为处理这些消息的时间太长而引发 Rebalance。</p>
+</li>
+</ul>
+<p>如果上面提到的 3 个参数，我们已经设置了合理的数值，却发现还是出现了 Rebalance，那么需要关注一下 Consumer 端的 <strong>GC</strong> 表现，比如是否出现了频繁的 Full GC 导致的长时间停顿，实际应用中经常出现因为GC设置不合理导致程序频发 Full GC 而引发的非预期 Rebalance。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/24/Kafka%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1153,94 +1259,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/15/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/15/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-01-15 10:50:00 / 修改时间：14:08:04" itemprop="dateCreated datePublished" datetime="2020-01-15T10:50:00+08:00">2020-01-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<h3 id="Quick-Start-1"><a href="#Quick-Start-1" class="headerlink" title="Quick Start"></a>Quick Start</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1306,7 +1329,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
