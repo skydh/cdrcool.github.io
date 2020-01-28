@@ -347,7 +347,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-01-28 16:55:00 / 修改时间：17:25:28" itemprop="dateCreated datePublished" datetime="2020-01-28T16:55:00+08:00">2020-01-28</time>
+              <time title="创建时间：2020-01-28 16:55:00 / 修改时间：21:23:36" itemprop="dateCreated datePublished" datetime="2020-01-28T16:55:00+08:00">2020-01-28</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -372,12 +372,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><ul>
-<li>一个 Queue 对应一个 Consumer</li>
-<li>关闭 auto ack, 设置为 manual ack</li>
-<li>设置 prefetchCount = 1，即 channel.basicQos(1)，默认即为 1</li>
-</ul>
-<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>消息实体中增加：版本号 &amp; 状态机 &amp; msgid &amp; parent_msgid，通过 parent_msgid 判断消息的顺序（需要全局存储，记录消息的执行状态）。</p>
+          <p>同一个 Queue，如果有多个 Consumer，那么是做不到消息的有序性的。</p>
+<p>因此，我们可以基于同一规则（对唯一标识进行 hash），将单个 Queue 拆分成多个 Queue，再将拆分后的 Queue 与 Consumer 一一对应。</p>
+<p>同时，我们应该关闭 auto ack，改为 manual ack，并设置 prefetchCount = 1（默认），即 channel.basicQos(1)。</p>
 
       
     </div>
@@ -806,10 +803,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-01-26 16:19:00 / 修改时间：16:42:29" itemprop="dateCreated datePublished" datetime="2020-01-26T16:19:00+08:00">2020-01-26</time>
+              <time title="创建时间：2020-01-26 16:19:00" itemprop="dateCreated datePublished" datetime="2020-01-26T16:19:00+08:00">2020-01-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-28 21:23:36" itemprop="dateModified" datetime="2020-01-28T21:23:36+08:00">2020-01-28</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -833,7 +836,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Kafka 只能保证分区级别的消息顺序性。<br>要实现全局性的消息顺序性，我们或者只定义一个分区，或者通过指定消息的 key，从而将 key 值相同的消息都路由到同一个分区。</p>
+          <p>Kafka 只能保证分区级别的消息顺序性。</p>
+<p>要实现全局性的消息顺序性，我们或者只定义一个分区，或者通过指定消息的 key，从而将 key 值相同的消息都路由到同一个分区。</p>
+<p>同时，我们应该关闭位移自动提交，改为位移手动提交，即设置 enable.auto.commit = false。</p>
 
       
     </div>
