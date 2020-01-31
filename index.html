@@ -388,7 +388,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-01-31 10:52:00 / 修改时间：17:42:52" itemprop="dateCreated datePublished" datetime="2020-01-31T10:52:00+08:00">2020-01-31</time>
+              <time title="创建时间：2020-01-31 10:52:00 / 修改时间：17:44:47" itemprop="dateCreated datePublished" datetime="2020-01-31T10:52:00+08:00">2020-01-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -420,7 +420,13 @@
 </ol>
 <p><img src="/images/zookeeper/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png" alt="ZooKeeper数据模型"></p>
 <p>ZooKeeper 的层次模型称作 Data tree。Data tree 的每个节点叫做 znode。不同于文件系统，每个节点都可以保存数据。每个节点都有一个版本（version）。版本从 0 开始计数。</p>
-<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>一个 znode 可以是持久性的，也可以是临时性的；可以是顺序性的，也可以是非顺序性的。<br>1.PERSISTENT<br>持久性的 znode，在创建之后即使发生 ZooKeeper 集群宕机或者 client 宕机也不会丢失。<br>2.EPHEMERAL<br>临时性的 znode，client 宕机或者 client 在指定的 timeout 时间内没有给 ZooKeeper 集群发消息，这样的节点就会消失。<br>3.PERSISTENT_SEQUENTIAL<br>持久顺序性的 znode，除了具备持久性 znode 的特点之外，znode 的名字具备顺序性。<br>4.EPHEMERAL_SEQUENTIAL<br>临时顺序性的 znode，除了具备临时性 znode 的特点之外，znode 的名字具备顺序性。</p>
+<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>一个 znode 可以是持久性的，也可以是临时性的；可以是顺序性的，也可以是非顺序性的。</p>
+<ol>
+<li>PERSISTENT<br>持久性的 znode，在创建之后即使发生 ZooKeeper 集群宕机或者 client 宕机也不会丢失。</li>
+<li>EPHEMERAL<br>临时性的 znode，client 宕机或者 client 在指定的 timeout 时间内没有给 ZooKeeper 集群发消息，这样的节点就会消失。</li>
+<li>PERSISTENT_SEQUENTIAL<br>持久顺序性的 znode，除了具备持久性 znode 的特点之外，znode 的名字具备顺序性。</li>
+<li>EPHEMERAL_SEQUENTIAL<br>临时顺序性的 znode，除了具备临时性 znode 的特点之外，znode 的名字具备顺序性。</li>
+</ol>
 <p>每一个顺序性的 znode 关联一个唯一的单调递增整数。这个单调递增整数是 znode 名字的后缀。</p>
 <p>其实除了以上 4 中节点类型，还有另外一类节点：container 节点。<br>container 节点是一种新引入的 znode，目的在于下挂子节点。当一个 container 节点的所有子节点被删除之后，ZooKeeper 会删除掉这个 container 节点。服务发现的 base path 节点和服务节点就是 container 节点。</p>
 <h2 id="Data-tree接口"><a href="#Data-tree接口" class="headerlink" title="Data tree接口"></a>Data tree接口</h2><p>ZooKeeper 对外提供一个用来访问 Data tree 的简化文件系统 API：</p>
