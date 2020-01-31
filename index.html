@@ -171,92 +171,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/31/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">ZooKeeper 数据模型</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-01-31 10:52:00 / 修改时间：16:46:35" itemprop="dateCreated datePublished" datetime="2020-01-31T10:52:00+08:00">2020-01-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
-                    <span itemprop="name">ZooKeeper</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>ZooKeeper 的数据模型是<strong>层次模型</strong>。层次模型常见于文件系统。层次模型和 key-value 模型是两种主流的数据模型。ZooKeeper 使用文件系统模型主要基于以下两点考虑：</p>
-<ol>
-<li>文件系统的树形结构便于表达数据之间的层次关系</li>
-<li>文件系统的属性结构便于为不同的应用分配独立的命名空间（namespace）</li>
-</ol>
-<p><img src="/images/zookeeper/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%9B%BE.png" alt="ZooKeeper数据模型图"></p>
-<p>ZooKeeper 的层次模型称作 Data tree。Data tree 的每个节点叫做 znode。不同于文件系统，每个节点都可以保存数据。每个节点都有一个版本（version）。版本从 0 开始计数。</p>
-<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>一个 znode 可以是持久性的，也可以是临时性的；可以是顺序性的，也可以是非顺序性的。<br>1.PERSISTENT<br>持久性的 znode，在创建之后即使发生 ZooKeeper 集群宕机或者 client 宕机也不会丢失。<br>2.EPHEMERAL<br>临时性的 znode，client 宕机或者 client 在指定的 timeout 时间内没有给 ZooKeeper 集群发消息，这样的节点就会消失。<br>3.PERSISTENT_SEQUENTIAL<br>持久顺序性的 znode，除了具备持久性 znode 的特点之外，znode 的名字具备顺序性。<br>4.EPHEMERAL_SEQUENTIAL<br>临时顺序性的 znode，除了具备临时性 znode 的特点之外，znode 的名字具备顺序性。</p>
-<p>每一个顺序性的 znode 关联一个唯一的单调递增整数。这个单调递增整数是 znode 名字的后缀。</p>
-<p>其实除了以上 4 中节点类型，还有另外一类节点：container 节点。<br>container 节点是一种新引入的 znode，目的在于下挂子节点。当一个 container 节点的所有子节点被删除之后，ZooKeeper 会删除掉这个 container 节点。服务发现的 base path 节点和服务节点就是 container 节点。</p>
-<h2 id="Data-tree接口"><a href="#Data-tree接口" class="headerlink" title="Data tree接口"></a>Data tree接口</h2><p>ZooKeeper 对外提供一个用来访问 Data tree 的简化文件系统 API：</p>
-<ul>
-<li>使用 UNIX 风格的路径名来定位 znode，例如 /A/X 表示 znode A 的子节点 X。</li>
-<li>znode 的数据只支持全量写入和读取，没有像通用文件系统那样支持部分写入和读取。</li>
-<li>Data tree 的所有 API 都是 wait-free 的。正在执行中的 API 调用不会影响其他 API 的完成。</li>
-<li>Data tree 的 API 都是对文件系统的 wait-free 操作，不直接提供锁这样的分布式协同机制。但是 Data tree 的 API 非常强大，可以用来实现多种分布式协同机制。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -282,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-01-31 10:52:00 / 修改时间：16:43:25" itemprop="dateCreated datePublished" datetime="2020-01-31T10:52:00+08:00">2020-01-31</time>
+              <time title="创建时间：2020-01-31 10:54:00 / 修改时间：17:41:01" itemprop="dateCreated datePublished" datetime="2020-01-31T10:54:00+08:00">2020-01-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -386,7 +300,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-01-31 10:52:00 / 修改时间：16:30:18" itemprop="dateCreated datePublished" datetime="2020-01-31T10:52:00+08:00">2020-01-31</time>
+              <time title="创建时间：2020-01-31 10:53:00 / 修改时间：17:41:01" itemprop="dateCreated datePublished" datetime="2020-01-31T10:53:00+08:00">2020-01-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -430,6 +344,92 @@
 </ul>
 <h3 id="请求流程"><a href="#请求流程" class="headerlink" title="请求流程"></a>请求流程</h3><p>Follower-Leader请求流程：<br><img src="/images/zookeeper/Follower-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Follower-Leader请求流程"></p>
 <p>Obeserver-Leader请求流程：<br><img src="/images/zookeeper/Obeserver-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Obeserver-请求流程"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/31/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">ZooKeeper 数据模型</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-01-31 10:52:00 / 修改时间：16:46:35" itemprop="dateCreated datePublished" datetime="2020-01-31T10:52:00+08:00">2020-01-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">ZooKeeper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>ZooKeeper 的数据模型是<strong>层次模型</strong>。层次模型常见于文件系统。层次模型和 key-value 模型是两种主流的数据模型。ZooKeeper 使用文件系统模型主要基于以下两点考虑：</p>
+<ol>
+<li>文件系统的树形结构便于表达数据之间的层次关系</li>
+<li>文件系统的属性结构便于为不同的应用分配独立的命名空间（namespace）</li>
+</ol>
+<p><img src="/images/zookeeper/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%9B%BE.png" alt="ZooKeeper数据模型图"></p>
+<p>ZooKeeper 的层次模型称作 Data tree。Data tree 的每个节点叫做 znode。不同于文件系统，每个节点都可以保存数据。每个节点都有一个版本（version）。版本从 0 开始计数。</p>
+<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><p>一个 znode 可以是持久性的，也可以是临时性的；可以是顺序性的，也可以是非顺序性的。<br>1.PERSISTENT<br>持久性的 znode，在创建之后即使发生 ZooKeeper 集群宕机或者 client 宕机也不会丢失。<br>2.EPHEMERAL<br>临时性的 znode，client 宕机或者 client 在指定的 timeout 时间内没有给 ZooKeeper 集群发消息，这样的节点就会消失。<br>3.PERSISTENT_SEQUENTIAL<br>持久顺序性的 znode，除了具备持久性 znode 的特点之外，znode 的名字具备顺序性。<br>4.EPHEMERAL_SEQUENTIAL<br>临时顺序性的 znode，除了具备临时性 znode 的特点之外，znode 的名字具备顺序性。</p>
+<p>每一个顺序性的 znode 关联一个唯一的单调递增整数。这个单调递增整数是 znode 名字的后缀。</p>
+<p>其实除了以上 4 中节点类型，还有另外一类节点：container 节点。<br>container 节点是一种新引入的 znode，目的在于下挂子节点。当一个 container 节点的所有子节点被删除之后，ZooKeeper 会删除掉这个 container 节点。服务发现的 base path 节点和服务节点就是 container 节点。</p>
+<h2 id="Data-tree接口"><a href="#Data-tree接口" class="headerlink" title="Data tree接口"></a>Data tree接口</h2><p>ZooKeeper 对外提供一个用来访问 Data tree 的简化文件系统 API：</p>
+<ul>
+<li>使用 UNIX 风格的路径名来定位 znode，例如 /A/X 表示 znode A 的子节点 X。</li>
+<li>znode 的数据只支持全量写入和读取，没有像通用文件系统那样支持部分写入和读取。</li>
+<li>Data tree 的所有 API 都是 wait-free 的。正在执行中的 API 调用不会影响其他 API 的完成。</li>
+<li>Data tree 的 API 都是对文件系统的 wait-free 操作，不直接提供锁这样的分布式协同机制。但是 Data tree 的 API 非常强大，可以用来实现多种分布式协同机制。</li>
+</ul>
 
       
     </div>
