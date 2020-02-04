@@ -171,6 +171,277 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/31/ZooKeeper%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="post-title-link" itemprop="url">ZooKeeper 应用场景</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-31 10:54:00" itemprop="dateCreated datePublished" datetime="2020-01-31T10:54:00+08:00">2020-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-02 22:51:44" itemprop="dateModified" datetime="2020-02-02T22:51:44+08:00">2020-02-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">ZooKeeper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>利用 ZooKeeper 可以非常方便构建一系列分布式应用中都会涉及到的核心功能。</p>
+<h3 id="命名服务"><a href="#命名服务" class="headerlink" title="命名服务"></a>命名服务</h3><p>命名服务是指通过指定的名字来获取资源或者服务的地址，利用 ZooKeeper 创建一个全局的路径，即是唯一的路径，这个路径就可以作为一个名字，指向集群中的机器，提供的服务的地址，或者一个远程的对象等等。<br>ZooKeeper 的命名服务有以下两个应用方面：</p>
+<ul>
+<li>提供类 JNDI 功能，可以把系统中各种服务的名称、地址以及目录信息存放在 ZooKeeper，需要的时候去 ZooKeeper 中读取。</li>
+<li>制作分布式的序列号生成器。</li>
+</ul>
+<h2 id="数据发布-订阅"><a href="#数据发布-订阅" class="headerlink" title="数据发布/订阅"></a>数据发布/订阅</h2><p>数据发布/订阅的一个常见的场景是配置中心：发布者把数据发布到 ZooKeeper 的一个或一系列的节点上，供订阅者进行数据订阅，达到动态获取数据的目的。</p>
+<p>配置信息一般有几个特点:</p>
+<ul>
+<li>数据量小的KV</li>
+<li>数据内容在运行时会发生动态变化</li>
+<li>集群机器共享，配置一致</li>
+</ul>
+<p>思路：<br>ZooKeeper 采用的是推拉结合的方式：</p>
+<ul>
+<li>推: 服务端会推给注册了监控节点的客户端 Watcher 事件通知</li>
+<li>拉: 客户端获得通知后，然后主动到服务端拉取最新的数据</li>
+</ul>
+<p>数据发布/订阅的另一个常见的场景是服务注册中心，不过由于 ZooKeeper 是基于 CP 原则构建的，因此不适合做服务注册与发现。</p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><p>分布式锁是控制分布式系统间同步访问共享资源的一种方式。如果不同的系统或同一个系统的不同主机之间共享了同一个资源，那么访问这些资源的时候，需要使用互斥的手段来防止彼此之间的干扰，以保证一致性，这种情况就需要使用分布式锁。</p>
+<p>思路：<br>使用临时顺序 znode 来表示获取锁的请求，创建最小后缀数字 znode 的用户成功拿到锁。</p>
+<h2 id="Master-选举"><a href="#Master-选举" class="headerlink" title="Master 选举"></a>Master 选举</h2><p>Master 选举，就是在众多机器或服务中，选举出一个最终“决定权”的领导者，来独立完成一项任务。比如有一项服务是需要对外提供服务，但是要保证高可用，我们就机会进行服务的多项部署，也就是做了一些备份，提高系统的可用性。一旦我们的主服务挂了，我们可以让其它的备份服务进行重新选举，这样我们就能使整个系统不会因服务的挂掉而造成服务不可用。</p>
+<p>思路：<br>在 ZooKeeper中，有两种方式可以实现 Master 选举：</p>
+<ol>
+<li>谁先创建 master 临时节点，谁就是 master，当一个 master 挂掉了，master 节点就消失了，别的节点就会监听到，就会继续去创建 master 临时节点，以此类推，利用 Zookeeper 的两个特点（一个节点只能成功创建一次、利用监听的机制）</li>
+<li>在 master 下面创建临时有序节点，那个节点最小，那个就是 master，节点挂掉，下面那个临时节点就会监听到上面的临时节点挂掉了，从而取代成为 master，以此类推，（利用 Zookeeper 创建节点临时有序的特性）</li>
+</ol>
+<h2 id="分布式协调-通知"><a href="#分布式协调-通知" class="headerlink" title="分布式协调/通知"></a>分布式协调/通知</h2><p>分布式协调/通知是将不同的分布式组件有机结合起来的关键所在。对于一个在多台机器上部署运行的应用而言，通常需要一个协调者(Coordinator)来控制整个系统的运行流程，例如分布式事务的处理、机器间的相互协调等。同时，引入这样一个协调者，便于将分布式协调的职责从应用中分离出来，从而大大减少系统之间的耦合性，而且能够显著提高系统的可扩展性。</p>
+<p>协调/通知机制通常有两种方式：<br>系统调度模式：操作人员发送通知实际是通过控制台改变某个节点的状态，然后 Zookeeper 将这些变化发送给注册了这个节点的 Watcher 的所有客户端。<br>工作汇报模式：这个情况是每个工作进程都在某个目录下创建一个临时节点，并携带工作的进度数据。这样汇总的进程可以监控目录子节点的变化获得工作进度的实时的全局情况。</p>
+<p>思路：<br>用 Zookeeper 的 watcher 注册和异步通知功能，通知的发送者创建一个节点，并将通知的数据写入的该节点；通知的接受者则对该节点注册 watch，当节点变化时，就算作通知的到来。</p>
+<h2 id="集群管理"><a href="#集群管理" class="headerlink" title="集群管理"></a>集群管理</h2><p>所谓集群管理，包括集群监控与集群控制两大块，前者侧重对集群运行时状态的收集，后者则是对集群进行操作与控制。在日常开发和运维过程中，我们经常会有类似于如下的需求：</p>
+<ul>
+<li>希望知道当前集群中究竟有多少机器在工作</li>
+<li>对集群中每台机器的运行时状态进行数据收集</li>
+<li>对集群中机器进行上下线操作</li>
+</ul>
+<p>思路：<br>ZooKeeper 具有以下两大特性：</p>
+<ul>
+<li>客户端如果对 ZooKeeper 的一个数据节点注册 Watcher 监听，那么当该数据节点的内容或是其子节点列表发生变更时，ZooKeeper 服务器就会向订阅的客户端发送变更通知。</li>
+<li>对在 ZooKeeper 上创建的临时节点，一旦客户端与服务器之间的会话失效，那么该临时节点也就被自动清除。<br>利用 ZooKeeper 的这两大特性，我们可以很方便地实现集群机器存活性监控的系统。</li>
+</ul>
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><p>负载均衡是一种手段，用来把对某种资源的访问分摊给不同的设备，从而减轻单点的压力。<br>我们可以自定义一个负载均衡算法，在每个请求过来时从 ZooKeeper 服务器中获取当前集群服务器列表，根据算法选出其中一个服务器来处理请求。</p>
+<h2 id="分布式队列"><a href="#分布式队列" class="headerlink" title="分布式队列"></a>分布式队列</h2><p>使用 ZooKeeper 来实现分布式队列，分为两大类：</p>
+<ul>
+<li><p>FIFO 先进先出队列<br>队列按照 FIFO 方式进行入队和出队操作，例如实现生产者和消费者模型。</p>
+</li>
+<li><p>Barrier 分布式屏障<br>当一个队列的成员都聚齐时，这个队列才可用，否则一直等待所有成员到达，这种是同步队列。</p>
+</li>
+</ul>
+<p>思路：</p>
+<ol>
+<li>首先利用 Zookeeper 中临时顺序节点的特点</li>
+<li>当生产者创建节点生产时，需要判断父节点下临时顺序子节点的个数，如果达到了上限，则阻塞等待；如果没有达到，就创建节点。</li>
+<li>当消费者获取节点时，如果父节点中不存在临时顺序子节点，则阻塞等待；如果有子节点，则获取执行自己的业务，执行完毕后删除该节点即可。</li>
+<li>获取时获取最小值，保证 FIFO 特性。</li>
+</ol>
+<p>虽然 ZooKeeper 可以用来实现分布式队列，但是并不建议使用，原因有如下几点：</p>
+<ol>
+<li>ZooKeeper 对于传输数据有一个 1MB 的大小限制，这就意味着实际中 ZooKeeper 节点 ZNodes 必须设计的很小，但实际中队列通常都存放着数以千计的消息。</li>
+<li>如果有很多大的 ZNodes 会严重拖慢的zk启动过程，包括 ZooKeeper 节点之间的同步过程，如果真要用 ZooKeeper 当队列，最好去调整 initLimit 与 syncLimit 参数。</li>
+<li>如果一个 ZNode 过大，也会导致清理变得困难，也会导致 getChildren() 方法失败，Netflix 不得不设计一个特殊的机制来处理这个大体积的 ZNode。</li>
+<li>如果 ZooKeeper 中某个 node 下有数千子节点，也会严重拖累 ZooKeeper 性能。</li>
+<li>ZooKeeper 中的数据都会放置在内存中。</li>
+</ol>
+<p>参考资料：<br><a href="https://zhuanlan.zhihu.com/p/59669985" target="_blank" rel="noopener">ZooKeeper 的应用场景</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/31/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">ZooKeeper 集群架构</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-31 10:53:00" itemprop="dateCreated datePublished" datetime="2020-01-31T10:53:00+08:00">2020-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-03 22:39:30" itemprop="dateModified" datetime="2020-02-03T22:39:30+08:00">2020-02-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">ZooKeeper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/zookeeper/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84.png" alt="ZooKeeper集群架构"></p>
+<ul>
+<li>每个 Server 在内存中存储了一份数据</li>
+<li>ZooKeeper 启动时，将从实例中选举一个 leader（Paxos 协议）</li>
+<li>Leader 负责处理数据更新等操作（Zab 协议）</li>
+<li>一个更新操作成功，当且仅当大多数 Server 在内存中成功修改数据</li>
+</ul>
+<p>ZooKeeper 本身可以是单机模式，也可以是集群模式，为了 ZooKeeper 本身不出现单点故障，通常情况使用集群模式（Server 数目一般为奇数），而且是 master/slave 模式的集群。</p>
+<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><p><img src="/images/zookeeper/ZooKeeper%E8%A7%92%E8%89%B2%E8%AF%B4%E6%98%8E.png" alt="ZooKeeper角色说明"></p>
+<h3 id="Leader"><a href="#Leader" class="headerlink" title="Leader"></a>Leader</h3><p>Leader 不直接接受 Client 的请求，但接受由其他 Follower 和 Observer 转发过来的 Client 请求，此外，Leader 还负责投票的发起和决议，即时更新状态和数据。</p>
+<h3 id="Follower"><a href="#Follower" class="headerlink" title="Follower"></a>Follower</h3><p>Follower 角色接受客户端请求并返回结果，参与 Leader 发起的投票和选举，但不具有写操作的权限。</p>
+<h3 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h3><p>Observer 角色接受客户端连接，将写操作转给 Leader，但 Observer 不参与投票（即不参加一致性协议的达成），只同步 Leader 节点的状态，Observer 角色是为集群系统扩展而生的。</p>
+<p>应用场景：</p>
+<ul>
+<li>提高集群的读性能（未参与事务的提交过程）</li>
+<li>跨数据中心部署</li>
+</ul>
+<h3 id="Follower-vs-Observer-请求流程"><a href="#Follower-vs-Observer-请求流程" class="headerlink" title="Follower vs Observer 请求流程"></a>Follower vs Observer 请求流程</h3><p>Follower-Leader 写请求流程：<br><img src="/images/zookeeper/Follower-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Follower-Leader请求流程"></p>
+<ol>
+<li>节点 1（Follower） 收到写请求，转发到节点 2（Leader）</li>
+<li>节点 2 发送 Propose 给集群中所有 Follower 节点</li>
+<li>Follower 节点收到 Propose 后，返回 Accept 给 Leader</li>
+<li>Leader 收到大多数节点的 Accept 后，向所有节点发送 Commit</li>
+<li>节点 1 收到 Commit 后，返回客户端，告诉客户端写成功</li>
+</ol>
+<p>Observer-Leader 写请求流程：<br><img src="/images/zookeeper/Obeserver-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Obeserver-请求流程"></p>
+<ol>
+<li>节点 1（Observer） 收到写请求，转发到节点 2（Leader）</li>
+<li>节点 2 发送 Propose 给集群中所有 Follower 节点</li>
+<li>Follower 节点收到 Propose 后，返回 Accept 给 Leader</li>
+<li>Leader 收到大多数节点的 Accept 后，向所有节点发送 Commit</li>
+<li>节点 1 不参与事务的提交过程，而是一直等待，等到收到 Leader 的 INFORM 后，返回客户端，告诉客户端写成功</li>
+</ol>
+<h2 id="节点数"><a href="#节点数" class="headerlink" title="节点数"></a>节点数</h2><p>ZooKeeper 要求集群节点数大于 1，且为单数，原因有以下两点。</p>
+<ol>
+<li>容错<br>由于在增删改操作中需要半数以上服务器通过，来分析以下情况：</li>
+</ol>
+<ul>
+<li>2 台服务器，至少 2 台正常运行才行（2 的半数为 1，半数以上最少为 2），正常运行 1 台服务器都不允许挂掉</li>
+<li>3 台服务器，至少 2 台正常运行才行（3 的半数为 1.5，半数以上最少为 2），正常运行可以允许 1 台服务器挂掉</li>
+<li>4 台服务器，至少 3 台正常运行才行（4 的半数为 2，半数以上最少为 3），正常运行可以允许 1 台服务器挂掉</li>
+<li>5 台服务器，至少 3 台正常运行才行（5 的半数为 2.5，半数以上最少为 3），正常运行可以允许 2 台服务器挂掉</li>
+<li>6 台服务器，至少 3 台正常运行才行（6 的半数为 3，半数以上最少为 4），正常运行可以允许 2 台服务器挂掉</li>
+</ul>
+<p>通过以上可以发现，3 台服务器和 4 台服务器都最多允许 1 台服务器挂掉，5 台服务器和 6 台服务器都最多允许 2 台服务器挂掉，但是明显 4 台服务器成本高于 3 台服务器成本，6 台服务器成本高于 5 服务器成本。这是由于半数以上投票通过决定的。</p>
+<ol start="2">
+<li>防脑裂<br>一个 ZooKeeper 集群中，可以有多个 follower、observer 服务器，但是必需只能有一个 leader 服务器。如果 leader 服务器挂掉了，剩下的服务器集群会通过半数以上投票选出一个新的 leader 服务器。</li>
+</ol>
+<p>集群互不通讯情况：</p>
+<ul>
+<li>一个集群 3 台服务器，全部运行正常，但是其中 1 台裂开了，和另外 2 台无法通讯。3 台机器里面 2 台正常运行过半票可以选出一个 leader。</li>
+<li>一个集群 4 台服务器，全部运行正常，但是其中 2 台裂开了，和另外 2 台无法通讯。4 台机器里面 2 台正常工作没有过半票以上达到3，无法选出 leader 正常运行。</li>
+<li>一个集群 5 台服务器，全部运行正常，但是其中 2 台裂开了，和另外 3 台无法通讯。5 台机器里面 3 台正常运行过半票可以选出一个 leader。</li>
+<li>一个集群 6 台服务器，全部运行正常，但是其中 3 台裂开了，和另外 3 台无法通讯。6 台机器里面 3 台正常工作没有过半票以上达到 4，无法选出 leader 正常运行。</li>
+</ul>
+<p>通可以上分析可以看出，为什么 ZooKeeper 集群数量总是单出现，主要原因还是在于第 2 点，防脑裂，对于第 1 点，无非是正常控制，但是不影响集群正常运行。但是出现第 2 种裂的情况，ZooKeeper 集群就无法正常运行了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -947,167 +1218,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/26/Kafka%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/26/Kafka%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/" class="post-title-link" itemprop="url">Kafka 处理消息重复消费</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-26 16:43:00" itemprop="dateCreated datePublished" datetime="2020-01-26T16:43:00+08:00">2020-01-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-28 20:31:39" itemprop="dateModified" datetime="2020-01-28T20:31:39+08:00">2020-01-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index">
-                    <span itemprop="name">Kafka</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Kafka-设置"><a href="#Kafka-设置" class="headerlink" title="Kafka 设置"></a>Kafka 设置</h2><h3 id="设置-enable-auto-commit"><a href="#设置-enable-auto-commit" class="headerlink" title="设置 enable-auto-commit"></a>设置 enable-auto-commit</h3><p>Kafka 默认会自动提交消费者位移，但是这样容易出现重复消费：<br>在默认情况下，Consumer 每 5 秒自动提交一次位移。<br>现在，我们假设提交位移之后的 3 秒发生了 Rebalance 操作。在 Rebalance 之后，所有 Consumer 从上一次提交的位移处继续消费，但该位移已经是 3 秒前的位移数据了，故在 Rebalance 发生前 3 秒消费的所有数据都要重新再消费一次。<br>虽然我们能够通过减少 auto.commit.interval.ms 的值来提高提交频率，但这么做只能缩小重复消费的时间窗口，不可能完全消除它。这是自动提交机制的一个缺陷。<br>因此要设置 enable-auto-commit = false 来关闭位移自动提交。</p>
-<h3 id="合理设置-max-poll-interval-ms-与-max-poll-records"><a href="#合理设置-max-poll-interval-ms-与-max-poll-records" class="headerlink" title="合理设置 max.poll.interval.ms 与 max.poll.records"></a>合理设置 max.poll.interval.ms 与 max.poll.records</h3><p>如果消费者两次 poll 的时间间隔超出设置值，Kafka 服务端会进行 Rebalance 操作，导致客户端连接失效，无法提交 offset 信息，从而引发重复消费。</p>
-<h2 id="业务逻辑处理"><a href="#业务逻辑处理" class="headerlink" title="业务逻辑处理"></a>业务逻辑处理</h2><p>一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。</p>
-<p>那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。</p>
-<h3 id="利用数据库的唯一约束实现幂等"><a href="#利用数据库的唯一约束实现幂等" class="headerlink" title="利用数据库的唯一约束实现幂等"></a>利用数据库的唯一约束实现幂等</h3><p>以转账为例：将账户 X 的余额加 100 元。<br>在这个例子中，我们可以通过改造业务逻辑，让它具备幂等性。<br>首先，我们可以限定，对于每个转账单每个账户只可以执行一次变更操作，在分布式系统中，这个限制实现的方法非常多，最简单的是我们在数据库中建一张转账流水表，这个表有三个字段：转账单 ID、账户 ID 和变更金额，然后给转账单 ID 和账户 ID 这两个字段联合起来创建一个唯一约束，这样对于相同的转账单 ID 和账户 ID，表里至多只能存在一条记录。<br>这样，我们消费消息的逻辑可以变为：“在转账流水表中增加一条转账记录，然后再根据转账记录，异步操作更新用户余额即可。”在转账流水表增加一条转账记录这个操作中，由于我们在这个表中预先定义了“账户 ID 转账单 ID”的唯一约束，对于同一个转账单同一个账户只能插入一条记录，后续重复的插入操作都会失败，这样就实现了一个幂等的操作。我们只要写一个 SQL，正确地实现它就可以了。<br>基于这个思路，不光是可以使用关系型数据库，只要是支持类似“INSERT IF NOT EXIST”语义的存储类系统都可以用于实现幂等，比如，我们可以用 Redis 的 SETNX 命令来替代数据库中的唯一约束，来实现幂等消费。</p>
-<h3 id="为更新的数据设置前置条件"><a href="#为更新的数据设置前置条件" class="headerlink" title="为更新的数据设置前置条件"></a>为更新的数据设置前置条件</h3><p>另外一种实现幂等的思路是，给数据变更设置一个前置条件，如果满足条件就更新数据，否则拒绝更新数据，在更新数据的时候，同时变更前置条件中需要判断的数据。<br>这样，重复执行这个操作时，由于第一次更新数据的时候已经变更了前置条件中需要判断的数据，不满足前置条件，则不会重复执行更新数据操作。<br>比如，刚刚我们说过，“将账户 X 的余额增加 100元”这个操作并不满足幂等性，我们可以把这个操作加上一个前置条件，变为：“如果账户 X 当前的余额为 500元，将余额加 100元”，这个操作就具备了幂等性。<br>对应到消息队列中的使用时，可以在发消息时在消息体中带上当前的余额，在消费的时候进行判断数据库中，当前余额是否与消息中的余额相等，只有相等才执行变更操作。<br>但是，如果我们要更新的数据不是数值，或者我们要做一个比较复杂的更新操作怎么办？用什么作为前置判断条件呢？<br>更加通用的方法是，给我们的数据增加一个版本号属性，每次更数据前，比较当前数据的版本号是否和消息中的版本号一致，如果不一致就拒绝更新数据，更新数据的同时将版本号 +1，一样可以实现幂等更新。</p>
-<h3 id="记录并检查操作"><a href="#记录并检查操作" class="headerlink" title="记录并检查操作"></a>记录并检查操作</h3><p>如果上面提到的两种实现幂等方法都不能适用于我们的场景，我们还有一种通用性最强，适用范围最广的实现幂等性方法：记录并检查操作，也称为“Token 机制或者 GUID（全局唯一ID）机制”，实现的思路特别简单：在执行数据更新操作之前，先检查一下是否执行过这个更新操作。<br>具体的实现方法是，在发送消息时，给每条消息指定一个全局唯一的 ID，消费时，先根据这个 ID 检查这条消息是否有被消费过，如果没有消费过，才更新数据，然后将消费状态置为已消费。<br>原理和实现是不是很简单？其实一点儿都不简单，在分布式系统中，这个方法其实是非常难实现的。<br>首先，给每个消息指定一个全局唯一的 ID 就是一件不那么简单的事儿，方法有很多，但都不太好同时满足简单、高可用和高性能，或多或少都要有些牺牲。更加麻烦的是，在“检查消费状态，然后更新数据并且设置消费状态”中，三个操作必须作为一组操作保证原子性，才能真正实现幂等，否则就会出现 Bug。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/26/Kafka%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/26/Kafka%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7/" class="post-title-link" itemprop="url">Kafka 保证消息的顺序性</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-26 16:19:00" itemprop="dateCreated datePublished" datetime="2020-01-26T16:19:00+08:00">2020-01-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-28 21:42:14" itemprop="dateModified" datetime="2020-01-28T21:42:14+08:00">2020-01-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index">
-                    <span itemprop="name">Kafka</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Kafka 只能保证分区级别的消息顺序性。</p>
-<p>要实现全局性的消息顺序性，我们或者只定义一个分区，或者通过指定消息的 key，从而将 key 值相同的消息都路由到同一个分区。并且每个分区对应的消费者组里应该只有一个消费者。</p>
-<p>同时，我们应该关闭位移自动提交，改为位移手动提交，即设置 enable.auto.commit = false。</p>
-<p>不过这样做的话，吞吐量又可能过低，我们可以在消费端内部用内存队列做排队，然后分发给底层不同的 worker 来处理。这样又可能会存在消息丢失。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1178,14 +1288,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">

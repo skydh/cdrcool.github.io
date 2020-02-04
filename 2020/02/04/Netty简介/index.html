@@ -46,23 +46,19 @@
   };
 </script>
 
-  <meta name="description" content="Kafka 中的事务，它解决的问题是，确保在⼀个事务中发送的多条消息，要么都成功，要么都失败。注意，这⾥⾯的多条消息不⼀定要在同⼀个主题和分区中，可以是发往多个主题和分区的消息。Kafka 的这种事务机制，单独来使⽤的场景不多。更多的情况下被⽤来配合 Kafka 的幂等机制来实现 Kafka 的 Exactly Once 语义。当然，我们可以在 Kafka 的事务执⾏过程中，加⼊本地事务，来实现分">
+  <meta name="description" content="Netty 是一个广受欢迎的异步的、事件驱动的、基于NIO实现的 Java 开源网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端。 JDK 原生 NIO 程序的问题JDK 原生也有一套网络应用程序 API，但是存在一系列问题，主要如下： 1) NIO 的类库和 API 繁杂，使用麻烦：你需要熟练掌握 Selector、ServerSocketChannel、SocketChannel">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka 事务消息">
-<meta property="og:url" content="http://yoursite.com/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/index.html">
+<meta property="og:title" content="Netty 简介">
+<meta property="og:url" content="http://yoursite.com/2020/02/04/Netty%E7%AE%80%E4%BB%8B/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="Kafka 中的事务，它解决的问题是，确保在⼀个事务中发送的多条消息，要么都成功，要么都失败。注意，这⾥⾯的多条消息不⼀定要在同⼀个主题和分区中，可以是发往多个主题和分区的消息。Kafka 的这种事务机制，单独来使⽤的场景不多。更多的情况下被⽤来配合 Kafka 的幂等机制来实现 Kafka 的 Exactly Once 语义。当然，我们可以在 Kafka 的事务执⾏过程中，加⼊本地事务，来实现分">
+<meta property="og:description" content="Netty 是一个广受欢迎的异步的、事件驱动的、基于NIO实现的 Java 开源网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端。 JDK 原生 NIO 程序的问题JDK 原生也有一套网络应用程序 API，但是存在一系列问题，主要如下： 1) NIO 的类库和 API 繁杂，使用麻烦：你需要熟练掌握 Selector、ServerSocketChannel、SocketChannel">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B.png">
-<meta property="og:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B.png">
-<meta property="og:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
-<meta property="article:published_time" content="2020-01-21T14:02:00.000Z">
-<meta property="article:modified_time" content="2020-01-24T04:40:23.607Z">
+<meta property="article:published_time" content="2020-02-04T12:07:00.000Z">
+<meta property="article:modified_time" content="2020-02-04T14:36:33.237Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B.png">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/">
+<link rel="canonical" href="http://yoursite.com/2020/02/04/Netty%E7%AE%80%E4%BB%8B/">
 
 
 <script id="page-configurations">
@@ -74,7 +70,7 @@
   };
 </script>
 
-  <title>Kafka 事务消息 | OnePiece</title>
+  <title>Netty 简介 | OnePiece</title>
   
 
 
@@ -179,7 +175,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -192,7 +188,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Kafka 事务消息
+          Netty 简介
         </h1>
 
         <div class="post-meta">
@@ -201,24 +197,18 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-01-21 22:02:00" itemprop="dateCreated datePublished" datetime="2020-01-21T22:02:00+08:00">2020-01-21</time>
+              <time title="创建时间：2020-02-04 20:07:00 / 修改时间：22:36:33" itemprop="dateCreated datePublished" datetime="2020-02-04T20:07:00+08:00">2020-02-04</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-24 12:40:23" itemprop="dateModified" datetime="2020-01-24T12:40:23+08:00">2020-01-24</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index">
-                    <span itemprop="name">Kafka</span>
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
                   </a>
                 </span>
             </span>
@@ -234,21 +224,45 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Kafka 中的事务，它解决的问题是，确保在⼀个事务中发送的多条消息，要么都成功，要么都失败。注意，这⾥⾯的多条消息不⼀定要在同⼀个主题和分区中，可以是发往多个主题和分区的消息。<br>Kafka 的这种事务机制，单独来使⽤的场景不多。更多的情况下被⽤来配合 Kafka 的幂等机制来实现 Kafka 的 Exactly Once 语义。<br>当然，我们可以在 Kafka 的事务执⾏过程中，加⼊本地事务，来实现分布式事务。（但是不同于 RocketMQ，Kafka 是没有事务反查机制的）</p>
-<h2 id="实现分布式事务"><a href="#实现分布式事务" class="headerlink" title="实现分布式事务"></a>实现分布式事务</h2><p>我们以订单和购物车这个例子来介绍 Kafka 是如何用消息队列来实现分布式事务。</p>
-<p><img src="/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B.png" alt="Kafka事务应用示例"></p>
-<p>如上图所示：<br>首先，订单系统在消息队列上开启一个事务。<br>然后订单系统给消息服务器发送一个“半消息”，这个半消息不是说消息内容不完整，它包含的内容就是完整的消息内容，半消息和普通消息的唯一区别是，在事务提交之前，对于消费者来说，这个消息是不可见的。<br>半消息发送成功之后，订单系统就可以执行本地事务了，在订单库中创建一条订单记录，并提交订单库的数据库事务。然后根据本地事务的执行结果决定提交或者回滚事务消息。<br>如果订单创建成功，那就提交事务消息，购物车系统就可以消费到这条消息继续后续的流程。如果订单创建失败，那就回滚事务消息，购物车系统就不会收到这条消息，这样就基本实现了“要么都成功，要么都失败”的一致性要求。</p>
-<p>在上面的实现过程中，有一个问题其实是没有解决的：如果在第四步提交事务消息时失败了怎么办？Kafka 的解决方案比较简单粗暴，直接抛出异常，让用户自行处理。我们可以在业务代码中反复重试提交，知道提交成功，或者删除之前创建的订单进行补偿。</p>
-<h2 id="事务消息实现机制"><a href="#事务消息实现机制" class="headerlink" title="事务消息实现机制"></a>事务消息实现机制</h2><p>Kafka 是基于两阶段提交来实现事务的。</p>
-<p>在 Kafka 事务中，有两个重要角色：事务协调者和事务日志主题。</p>
-<ul>
-<li>事务协调者<br>负责在服务端协调整个事务。事务协调者并不是一个独立的进程，而是 Broker 进程的一部分，协调者和分区一样通过选举来保证自身的可用性。</li>
-<li>事务日志主题<br>在 Kafka 集群中有一个特殊的用于记录事务日志的主题，这个事务日志主题的实例和普通的主题是一样的，里面记录的数据就是类似于“开启事务”、“提交事务”这样的事务日志。日志主题同样也包含了很多的分区。在 Kafka 集群中，可以存在多个协调者，每个协调者负责管理和使用事务日志中的几个分区。</li>
+        <p>Netty 是一个广受欢迎的<strong>异步的、事件驱动的、基于NIO实现的</strong> Java 开源网络应用程序框架，用于快速开发<strong>可维护的高性能协议服务器和客户端</strong>。</p>
+<h2 id="JDK-原生-NIO-程序的问题"><a href="#JDK-原生-NIO-程序的问题" class="headerlink" title="JDK 原生 NIO 程序的问题"></a>JDK 原生 NIO 程序的问题</h2><p>JDK 原生也有一套网络应用程序 API，但是存在一系列问题，主要如下：</p>
+<p>1) NIO 的类库和 API 繁杂，使用麻烦：你需要熟练掌握 Selector、ServerSocketChannel、SocketChannel、ByteBuffer 等。</p>
+<p>2) 需要具备其他的额外技能做铺垫：例如熟悉 Java 多线程编程，因为 NIO 编程涉及到 Reactor 模式，你必须对多线程和网路编程非常熟悉，才能编写出高质量的 NIO 程序。</p>
+<p>3) 可靠性能力补齐，开发工作量和难度都非常大：例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常码流的处理等等。NIO 编程的特点是功能开发相对容易，但是可靠性能力补齐工作量和难度都非常大。</p>
+<p>4) JDK NIO 的 Bug：例如臭名昭著的 Epoll Bug，它会导致 Selector 空轮询，最终导致 CPU 100%。官方声称在 JDK 1.6 版本的 update 18 修复了该问题，但是直到 JDK 1.7 版本该问题仍旧存在，只不过该 Bug 发生概率降低了一些而已，它并没有被根本解决。</p>
+<h2 id="Netty-框架的优势"><a href="#Netty-框架的优势" class="headerlink" title="Netty 框架的优势"></a>Netty 框架的优势</h2><ul>
+<li>API使用简单，开发门槛低；</li>
+<li>功能强大，预置了多种编解码功能，支持多种主流协议；</li>
+<li>定制能力强，可以通过 ChannelHandler 对通信框架进行灵活地扩展；</li>
+<li>性能高，通过与其他业界主流的 NIO 框架对比，Netty 的综合性能最优；</li>
+<li>成熟、稳定，Netty 修复了已经发现的所有 JDK NIO BUG，业务开发人员不需要再为 NIO 的 BUG 而烦恼；</li>
+<li>社区活跃，版本迭代周期短，发现的BUG可以被及时修复，同时，更多的新功能会加入；</li>
+<li>经历了大规模的商业应用考验，质量得到验证。在互联网、大数据、网络游戏、企业应用、电信软件等众多行业得到成功商用，证明了它已经完全能够满足不同行业的商业应用。</li>
 </ul>
-<p>Kafka 事务的实现流程：<br><img src="/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B.png" alt="Kafka事务实现流程"></p>
-<p>如上图所示，首先，当我们开启事务的时候，生产者会给协调者发一个请求开启事务，协调者在事务日志中记录下事务ID。<br>然后，生产者在发送消息之前，还要给协调者发送请求，告知发送的消息属于哪个主题和分区，这个信息也会被协调者记录在事务日志中。接下来，生产者就可以像发送普通消息一样来发送事务消息。需要注意的是，Kafka 在处理未提交的事务消息时，和普通消息是一样的，直接发给 Broker，保存在这些消息对应的分区中，Kafka 会在客户端的消费者中，暂时过滤未提交的事务消息。<br>消息发送完成之后，生产者给协调者发送提交或回滚事务的请求，由协调者来开始两阶段提交，完成事务。第一阶段，协调者把事务的状态设置为“预提交”，并写入事务日志。到这里，实际上事务已经成功了，无论接下来发生什么情况，事务最终都会被提交。之后便开始第二阶段，协调者在事务相关的素有分区中，都会写一条“事务结束”的特殊消息，当 Kafka 的消费者，也就是客户端，督导这个事务结束的特殊消息之后，它就可以把之前暂时过滤的那些未提交的事务消息，放行给业务代码进行消费了。<br>最后，协调者记录最后一条事务日志，标识这个事务已经结束了。</p>
-<p>整个事务的实现流程时序图如下：<br><img src="/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="Kafka事务实现流程时序图"></p>
-<p>总结⼀下 Kafka 这个两阶段的流程：<br>准备阶段，⽣产者发消息给协调者开启事务，然后消息发送到每个分区上。<br>提交阶段，⽣产者发消息给协调者提交事务，协调者给每个分区发⼀条“事务结束”的消息，完成分布式事务提交。</p>
+<h2 id="Netty-的应用场景"><a href="#Netty-的应用场景" class="headerlink" title="Netty 的应用场景"></a>Netty 的应用场景</h2><p>1) 互联网行业：在分布式系统中，各个节点之间需要远程服务调用，高性能的 RPC 框架必不可少，Netty 作为异步高性能的通信框架，往往作为基础通信组件被这些 RPC 框架使用。典型的应用有：阿里分布式服务框架 Dubbo 的 RPC 框架使用 Dubbo 协议进行节点间通信，Dubbo 协议默认使用 Netty 作为基础通信组件，用于实现各进程节点之间的内部通信。</p>
+<p>2) 游戏行业：无论是手游服务端还是大型的网络游戏，Java 语言得到了越来越广泛的应用。Netty 作为高性能的基础通信组件，它本身提供了 TCP/UDP 和 HTTP 协议栈。非常方便定制和开发私有协议栈，账号登录服务器，地图服务器之间可以方便的通过 Netty 进行高性能的通信。</p>
+<p>3) 大数据领域：经典的 Hadoop 的高性能通信和序列化组件 Avro 的 RPC 框架，默认采用 Netty 进行跨界点通信，它的 Netty Service 基于 Netty 框架二次封装实现。</p>
+<p>4) 企业软件：企业和 IT 集成需要 ESB，Netty 对多协议支持、私有协议定制的简洁性和高性能是 ESB RPC 框架的首选通信组件。事实上，很多企业总线厂商会选择 Netty 作为基础通信组件，用于企业的 IT 集成。</p>
+<p>5）通信行业：Netty 的异步高性能、高可靠性和高成熟度的优点，使它在通信行业得到了大量的应用。</p>
+<h2 id="Netty-在开源框架中的应用"><a href="#Netty-在开源框架中的应用" class="headerlink" title="Netty 在开源框架中的应用"></a>Netty 在开源框架中的应用</h2><ul>
+<li><p>数据库：Cassandra</p>
+</li>
+<li><p>大数据处理：Spark、Hadoop</p>
+</li>
+<li><p>消息队列：RocketMQ</p>
+</li>
+<li><p>搜索引擎：Elasticsearch</p>
+</li>
+<li><p>框架：gRPC、Apache Dubbo、Spring5(WebFlux)</p>
+</li>
+<li><p>分布式协调器：ZooKeeper</p>
+</li>
+<li><p>工具类：async-http-client</p>
+</li>
+<li><p>其它参考：<a href="https://netty.io/wiki/adopters.html" target="_blank" rel="noopener">https://netty.io/wiki/adopters.html</a></p>
+</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>1)  (高并发架构系列：Netty的实现原理、特点与优势、以及适用场景)[<a href="https://youzhixueyuan.com/netty-implementation-principle.html]" target="_blank" rel="noopener">https://youzhixueyuan.com/netty-implementation-principle.html]</a></p>
 
     </div>
 
@@ -284,12 +298,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/" rel="prev" title="Kafka 精确一次语义">
-      <i class="fa fa-chevron-left"></i> Kafka 精确一次语义
+    <a href="/2020/02/04/ZooKeeper%202PC%E4%BA%8B%E5%8A%A1%E6%8F%90%E4%BA%A4/" rel="prev" title="ZooKeeper 2PC事务提交">
+      <i class="fa fa-chevron-left"></i> ZooKeeper 2PC事务提交
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/" rel="next" title="Kafka 消费者组">
-      Kafka 消费者组 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="next" title="Netty 架构设计">
+      Netty 架构设计 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -351,7 +365,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实现分布式事务"><span class="nav-number">1.</span> <span class="nav-text">实现分布式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务消息实现机制"><span class="nav-number">2.</span> <span class="nav-text">事务消息实现机制</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JDK-原生-NIO-程序的问题"><span class="nav-number">1.</span> <span class="nav-text">JDK 原生 NIO 程序的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty-框架的优势"><span class="nav-number">2.</span> <span class="nav-text">Netty 框架的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty-的应用场景"><span class="nav-number">3.</span> <span class="nav-text">Netty 的应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty-在开源框架中的应用"><span class="nav-number">4.</span> <span class="nav-text">Netty 在开源框架中的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -476,7 +490,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: '7cacdc4683ed13220a755efd99b57f58',
+      id: 'd5187a56559aa13f7ee0e0b4de8fe53e',
         language: 'zh-CN',
       distractionFreeMode: true
     });

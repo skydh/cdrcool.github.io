@@ -46,23 +46,23 @@
   };
 </script>
 
-  <meta name="description" content="Kafka 中的事务，它解决的问题是，确保在⼀个事务中发送的多条消息，要么都成功，要么都失败。注意，这⾥⾯的多条消息不⼀定要在同⼀个主题和分区中，可以是发往多个主题和分区的消息。Kafka 的这种事务机制，单独来使⽤的场景不多。更多的情况下被⽤来配合 Kafka 的幂等机制来实现 Kafka 的 Exactly Once 语义。当然，我们可以在 Kafka 的事务执⾏过程中，加⼊本地事务，来实现分">
+  <meta name="description" content="总体架构Netty 采用了比较典型的三层网络架构进行设计，逻辑架构图如下所示：   1) Core 核心：可扩展事件模型、通用通信 API、支持零拷贝的 ByteBuf 缓冲对象。 2) 传输服务：支持 BIO 和 NIO。 3) 协议支持：HTTP、Protobuf、二进制、文本、WebSocket 等一系列常见协议都支持。还支持通过实行编码解码逻辑来实现自定义协议。 4) 容器集成：支持 OS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka 事务消息">
-<meta property="og:url" content="http://yoursite.com/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/index.html">
+<meta property="og:title" content="Netty 架构设计">
+<meta property="og:url" content="http://yoursite.com/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="Kafka 中的事务，它解决的问题是，确保在⼀个事务中发送的多条消息，要么都成功，要么都失败。注意，这⾥⾯的多条消息不⼀定要在同⼀个主题和分区中，可以是发往多个主题和分区的消息。Kafka 的这种事务机制，单独来使⽤的场景不多。更多的情况下被⽤来配合 Kafka 的幂等机制来实现 Kafka 的 Exactly Once 语义。当然，我们可以在 Kafka 的事务执⾏过程中，加⼊本地事务，来实现分">
+<meta property="og:description" content="总体架构Netty 采用了比较典型的三层网络架构进行设计，逻辑架构图如下所示：   1) Core 核心：可扩展事件模型、通用通信 API、支持零拷贝的 ByteBuf 缓冲对象。 2) 传输服务：支持 BIO 和 NIO。 3) 协议支持：HTTP、Protobuf、二进制、文本、WebSocket 等一系列常见协议都支持。还支持通过实行编码解码逻辑来实现自定义协议。 4) 容器集成：支持 OS">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B.png">
-<meta property="og:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B.png">
-<meta property="og:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
-<meta property="article:published_time" content="2020-01-21T14:02:00.000Z">
-<meta property="article:modified_time" content="2020-01-24T04:40:23.607Z">
+<meta property="og:image" content="http://yoursite.com/2020/02/04/images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/02/04/images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1-%E4%B8%AD%E6%96%87.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/02/04/images/netty/%E9%AB%98%E6%80%A7%E8%83%BD%E6%A0%B8%E5%BF%83%E4%B8%89%E8%A6%81%E7%B4%A0.jpg">
+<meta property="article:published_time" content="2020-02-04T13:46:00.000Z">
+<meta property="article:modified_time" content="2020-02-04T14:38:42.780Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B.png">
+<meta name="twitter:image" content="http://yoursite.com/2020/02/04/images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1.jpg">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/">
+<link rel="canonical" href="http://yoursite.com/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">
 
 
 <script id="page-configurations">
@@ -74,7 +74,7 @@
   };
 </script>
 
-  <title>Kafka 事务消息 | OnePiece</title>
+  <title>Netty 架构设计 | OnePiece</title>
   
 
 
@@ -179,7 +179,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -192,7 +192,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Kafka 事务消息
+          Netty 架构设计
         </h1>
 
         <div class="post-meta">
@@ -201,24 +201,18 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-01-21 22:02:00" itemprop="dateCreated datePublished" datetime="2020-01-21T22:02:00+08:00">2020-01-21</time>
+              <time title="创建时间：2020-02-04 21:46:00 / 修改时间：22:38:42" itemprop="dateCreated datePublished" datetime="2020-02-04T21:46:00+08:00">2020-02-04</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-24 12:40:23" itemprop="dateModified" datetime="2020-01-24T12:40:23+08:00">2020-01-24</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index">
-                    <span itemprop="name">Kafka</span>
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
                   </a>
                 </span>
             </span>
@@ -234,21 +228,24 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Kafka 中的事务，它解决的问题是，确保在⼀个事务中发送的多条消息，要么都成功，要么都失败。注意，这⾥⾯的多条消息不⼀定要在同⼀个主题和分区中，可以是发往多个主题和分区的消息。<br>Kafka 的这种事务机制，单独来使⽤的场景不多。更多的情况下被⽤来配合 Kafka 的幂等机制来实现 Kafka 的 Exactly Once 语义。<br>当然，我们可以在 Kafka 的事务执⾏过程中，加⼊本地事务，来实现分布式事务。（但是不同于 RocketMQ，Kafka 是没有事务反查机制的）</p>
-<h2 id="实现分布式事务"><a href="#实现分布式事务" class="headerlink" title="实现分布式事务"></a>实现分布式事务</h2><p>我们以订单和购物车这个例子来介绍 Kafka 是如何用消息队列来实现分布式事务。</p>
-<p><img src="/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B.png" alt="Kafka事务应用示例"></p>
-<p>如上图所示：<br>首先，订单系统在消息队列上开启一个事务。<br>然后订单系统给消息服务器发送一个“半消息”，这个半消息不是说消息内容不完整，它包含的内容就是完整的消息内容，半消息和普通消息的唯一区别是，在事务提交之前，对于消费者来说，这个消息是不可见的。<br>半消息发送成功之后，订单系统就可以执行本地事务了，在订单库中创建一条订单记录，并提交订单库的数据库事务。然后根据本地事务的执行结果决定提交或者回滚事务消息。<br>如果订单创建成功，那就提交事务消息，购物车系统就可以消费到这条消息继续后续的流程。如果订单创建失败，那就回滚事务消息，购物车系统就不会收到这条消息，这样就基本实现了“要么都成功，要么都失败”的一致性要求。</p>
-<p>在上面的实现过程中，有一个问题其实是没有解决的：如果在第四步提交事务消息时失败了怎么办？Kafka 的解决方案比较简单粗暴，直接抛出异常，让用户自行处理。我们可以在业务代码中反复重试提交，知道提交成功，或者删除之前创建的订单进行补偿。</p>
-<h2 id="事务消息实现机制"><a href="#事务消息实现机制" class="headerlink" title="事务消息实现机制"></a>事务消息实现机制</h2><p>Kafka 是基于两阶段提交来实现事务的。</p>
-<p>在 Kafka 事务中，有两个重要角色：事务协调者和事务日志主题。</p>
+        <h2 id="总体架构"><a href="#总体架构" class="headerlink" title="总体架构"></a>总体架构</h2><p>Netty 采用了比较典型的三层网络架构进行设计，逻辑架构图如下所示：</p>
+<p><img src="../images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1.jpg" alt="Netty架构设计"></p>
+<p><img src="../images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1-%E4%B8%AD%E6%96%87.jpg" alt="Netty架构设计-中文"></p>
+<p>1) Core 核心：可扩展事件模型、通用通信 API、支持零拷贝的 ByteBuf 缓冲对象。</p>
+<p>2) 传输服务：支持 BIO 和 NIO。</p>
+<p>3) 协议支持：HTTP、Protobuf、二进制、文本、WebSocket 等一系列常见协议都支持。还支持通过实行编码解码逻辑来实现自定义协议。</p>
+<p>4) 容器集成：支持 OSGI、JBossMC、Spring、Guice 容器。</p>
+<h2 id="高性能设计"><a href="#高性能设计" class="headerlink" title="高性能设计"></a>高性能设计</h2><p>高性能核心三要素：</p>
+<p><img src="../images/netty/%E9%AB%98%E6%80%A7%E8%83%BD%E6%A0%B8%E5%BF%83%E4%B8%89%E8%A6%81%E7%B4%A0.jpg" alt="高性能核心三要素"></p>
 <ul>
-<li>事务协调者<br>负责在服务端协调整个事务。事务协调者并不是一个独立的进程，而是 Broker 进程的一部分，协调者和分区一样通过选举来保证自身的可用性。</li>
-<li>事务日志主题<br>在 Kafka 集群中有一个特殊的用于记录事务日志的主题，这个事务日志主题的实例和普通的主题是一样的，里面记录的数据就是类似于“开启事务”、“提交事务”这样的事务日志。日志主题同样也包含了很多的分区。在 Kafka 集群中，可以存在多个协调者，每个协调者负责管理和使用事务日志中的几个分区。</li>
+<li><p>传输<br>用什么样的通道将数据发送给对方，BIO、NIO 或者 AIO，<strong>IO 模型在很大程度上决定了框架的性能</strong>。<br>Netty 的 I/O 模型基于非阻塞 I/O 实现，底层依赖的是 JDK NIO 框架的 Selector。</p>
+</li>
+<li><p>协议<br>采用什么样的通信协议，HTTP或者内部私有协议。协议的选择不同，性能模型也不同。相比于公有协议，内部私有协议的性能通常可以被设计的更优。</p>
+</li>
+<li><p>线程<br>数据报如何读取？读取之后的编解码在哪个线程进行，编解码后的消息如何派发，Reactor 线程模型的不同，对性能的影响也非常大。<br>Reactor 线程模型有三种：Reactor 单线程模型、Reactor 多线程模型、主从 Reactor 多线程模型。Netty 的线程模型是<strong>主从 Reactor 多线程模型</strong>去掉线程池后的变种，这也是Netty NIO的默认模式。</p>
+</li>
 </ul>
-<p>Kafka 事务的实现流程：<br><img src="/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B.png" alt="Kafka事务实现流程"></p>
-<p>如上图所示，首先，当我们开启事务的时候，生产者会给协调者发一个请求开启事务，协调者在事务日志中记录下事务ID。<br>然后，生产者在发送消息之前，还要给协调者发送请求，告知发送的消息属于哪个主题和分区，这个信息也会被协调者记录在事务日志中。接下来，生产者就可以像发送普通消息一样来发送事务消息。需要注意的是，Kafka 在处理未提交的事务消息时，和普通消息是一样的，直接发给 Broker，保存在这些消息对应的分区中，Kafka 会在客户端的消费者中，暂时过滤未提交的事务消息。<br>消息发送完成之后，生产者给协调者发送提交或回滚事务的请求，由协调者来开始两阶段提交，完成事务。第一阶段，协调者把事务的状态设置为“预提交”，并写入事务日志。到这里，实际上事务已经成功了，无论接下来发生什么情况，事务最终都会被提交。之后便开始第二阶段，协调者在事务相关的素有分区中，都会写一条“事务结束”的特殊消息，当 Kafka 的消费者，也就是客户端，督导这个事务结束的特殊消息之后，它就可以把之前暂时过滤的那些未提交的事务消息，放行给业务代码进行消费了。<br>最后，协调者记录最后一条事务日志，标识这个事务已经结束了。</p>
-<p>整个事务的实现流程时序图如下：<br><img src="/images/kafka/Kafka%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="Kafka事务实现流程时序图"></p>
-<p>总结⼀下 Kafka 这个两阶段的流程：<br>准备阶段，⽣产者发消息给协调者开启事务，然后消息发送到每个分区上。<br>提交阶段，⽣产者发消息给协调者提交事务，协调者给每个分区发⼀条“事务结束”的消息，完成分布式事务提交。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>1)  (高并发架构系列：Netty的实现原理、特点与优势、以及适用场景)[<a href="https://youzhixueyuan.com/netty-implementation-principle.html]" target="_blank" rel="noopener">https://youzhixueyuan.com/netty-implementation-principle.html]</a></p>
 
     </div>
 
@@ -284,13 +281,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/21/Kafka%E7%B2%BE%E7%A1%AE%E4%B8%80%E6%AC%A1%E8%AF%AD%E4%B9%89/" rel="prev" title="Kafka 精确一次语义">
-      <i class="fa fa-chevron-left"></i> Kafka 精确一次语义
+    <a href="/2020/02/04/Netty%E7%AE%80%E4%BB%8B/" rel="prev" title="Netty 简介">
+      <i class="fa fa-chevron-left"></i> Netty 简介
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/" rel="next" title="Kafka 消费者组">
-      Kafka 消费者组 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -351,7 +345,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实现分布式事务"><span class="nav-number">1.</span> <span class="nav-text">实现分布式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务消息实现机制"><span class="nav-number">2.</span> <span class="nav-text">事务消息实现机制</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#总体架构"><span class="nav-number">1.</span> <span class="nav-text">总体架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高性能设计"><span class="nav-number">2.</span> <span class="nav-text">高性能设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -476,7 +470,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: '7cacdc4683ed13220a755efd99b57f58',
+      id: 'b80916268e11a9973c85ceb92412893e',
         language: 'zh-CN',
       distractionFreeMode: true
     });
