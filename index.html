@@ -171,6 +171,357 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/Elasticsearch%E5%88%86%E8%AF%8D%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/11/Elasticsearch%E5%88%86%E8%AF%8D%E4%B8%8E%E5%88%86%E8%AF%8D%E5%99%A8/" class="post-title-link" itemprop="url">Elasticsearch分词与分词器</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-11 17:08:00 / 修改时间：20:51:26" itemprop="dateCreated datePublished" datetime="2020-02-11T17:08:00+08:00">2020-02-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Elasticsearch/" itemprop="url" rel="index">
+                    <span itemprop="name">Elasticsearch</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>分词（Analysis）是把全文本转换成一系列单词（term/token）的过程。<br>分词是通过分词器（Analyzer）来实现的。我们可以使用 ELasticsearch 内置的分词器，也可以按需定制化分词器。<br><strong>除了在数据写入时转换词条，匹配 Query 语句时也需要用相同的分词器对查询语句进行分析。</strong></p>
+<h2 id="分词器组成"><a href="#分词器组成" class="headerlink" title="分词器组成"></a>分词器组成</h2><p>分词器由三部分组成：</p>
+<ul>
+<li>Character Filters：针对原始文本处理，例如去除 html</li>
+<li>Tokenizer：按照规则切分为单词</li>
+<li>Token Filter：将切分的单词进行加工：小写、删除 stopwords、增加同义词..</li>
+</ul>
+<p><img src="images/elasticsearch/%E5%88%86%E8%AF%8D%E5%99%A8%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B.png" alt="分词器处理流程示例"></p>
+<h2 id="Elasticsearch-内置分词器"><a href="#Elasticsearch-内置分词器" class="headerlink" title="Elasticsearch 内置分词器"></a>Elasticsearch 内置分词器</h2><ul>
+<li>Standard Analyzer：默认分词器，按词切分，小写处理</li>
+<li>Simple Analyzer：按照非字母切分（符号被过滤），小写处理</li>
+<li>Stop Analyzer：停用词过滤（the, a, is），小写处理</li>
+<li>Whitespace Analyzer：按照空格切分，不转小写</li>
+<li>Keyword Analyzer：正则表达式，默认 \W+（非字符分割）</li>
+<li>Language：提供了30多种常见语言的分词器</li>
+<li>Customer Analyzer：自定义分词器</li>
+</ul>
+<h2 id="中文分词"><a href="#中文分词" class="headerlink" title="中文分词"></a>中文分词</h2><p>中文分词有它特定的一些难点：</p>
+<ul>
+<li>中文句子，切分成一个一个词，而不是一个个字。（英文中，单词有自然的空格作为分割）</li>
+<li>一句中文，在不同的上下文中，有不同的理解。（eg: 这个苹果，不大好吃/这个苹果，不大，好吃）</li>
+</ul>
+<p>中文分词器：</p>
+<ul>
+<li>IK</li>
+<li>THULAC</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/Elasticsearch%E5%B8%B8%E7%94%A8API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/11/Elasticsearch%E5%B8%B8%E7%94%A8API/" class="post-title-link" itemprop="url">Elasticsearch 文档基本操作</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-11 17:08:00 / 修改时间：22:16:25" itemprop="dateCreated datePublished" datetime="2020-02-11T17:08:00+08:00">2020-02-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Elasticsearch/" itemprop="url" rel="index">
+                    <span itemprop="name">Elasticsearch</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Document"><a href="#Document" class="headerlink" title="Document"></a>Document</h2><h3 id="index"><a href="#index" class="headerlink" title="index"></a>index</h3><p>如果 id 不存在，创建新的文档。否则，先删除现有的文档，再创建新的文档，版本号加 1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT my_index&#x2F;_doc&#x2F;1</span><br><span class="line">&#123;</span><br><span class="line">    &quot;user&quot;: &quot;mike&quot;,</span><br><span class="line">    &quot;comment&quot;: &quot;You konw, for search&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="create"><a href="#create" class="headerlink" title="create"></a>create</h3><ul>
+<li>自动创建 id</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST my_index&#x2F;_doc</span><br><span class="line">&#123;</span><br><span class="line">    &quot;user&quot;: &quot;mike&quot;,</span><br><span class="line">    &quot;comment&quot;: &quot;You konw, for search&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>指定 id（如果 id 已经存在，会失败）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT my_index&#x2F;_create&#x2F;1</span><br><span class="line">&#123;</span><br><span class="line">    &quot;user&quot;: &quot;mike&quot;,</span><br><span class="line">    &quot;comment&quot;: &quot;You konw, for search&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="update"><a href="#update" class="headerlink" title="update"></a>update</h3><p>文档必须已经存在，更新只会对相应字段做增量修改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST my_index&#x2F;_update&#x2F;1</span><br><span class="line">&#123;</span><br><span class="line">    &quot;doc&quot; : &#123;</span><br><span class="line">        &quot;user&quot;: &quot;mike&quot;,</span><br><span class="line">        &quot;comment&quot;: &quot;You konw, for search&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="get"><a href="#get" class="headerlink" title="get"></a>get</h3><p>找到文档，返回 HTTP 200，否则返回 HTTP 404</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET my_index&#x2F;_doc&#x2F;1</span><br></pre></td></tr></table></figure>
+
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h3><p>删除文档。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE my_index&#x2F;_doc&#x2F;1</span><br></pre></td></tr></table></figure>
+
+<h3 id="bulk"><a href="#bulk" class="headerlink" title="bulk"></a>bulk</h3><ul>
+<li>支持在一次 API 调用中，对不同的索引进行操作</li>
+<li>支持 index、create、update、delete 四种操作类型</li>
+<li>可以在 URI 中指定 index，也可以在请求的 payload 中进行</li>
+<li>操作中单条操作失败，并不会影响其它操作</li>
+<li>返回结果中包括了每一条操作执行的结果</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST _bulk</span><br><span class="line">&#123;&quot;index&quot;: &#123;&quot;_index&quot;: &quot;test&quot;, &quot;_id&quot;: &quot;1&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;field1&quot;: &quot;value1&quot;&#125;</span><br><span class="line">&#123;&quot;delete&quot;: &#123;&quot;_index&quot;: &quot;test&quot;, &quot;_id&quot;: &quot;2&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;create&quot;: &#123;&quot;_index&quot;: &quot;test2&quot;, &quot;_id&quot;: &quot;3&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;field1&quot;: &quot;value3&quot;&#125;</span><br><span class="line">&#123;&quot;update&quot;: &#123;&quot;_index&quot;: &quot;test&quot;, &quot;_id&quot;: &quot;1&quot;&#125;&#125;</span><br><span class="line">&#123;&quot;doc&quot;: &#123;&quot;field2&quot;: &quot;value2&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="mget"><a href="#mget" class="headerlink" title="mget"></a>mget</h3><p>批量操作，可以减少网路连接所产生的开销，提高性能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET _mget</span><br><span class="line">&#123;</span><br><span class="line">    &quot;docs&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;_index&quot;: &quot;user,</span><br><span class="line">            &quot;_id&quot;: 1</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;_index&quot;: &quot;comment,</span><br><span class="line">            &quot;_id&quot;: 1</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="msearch"><a href="#msearch" class="headerlink" title="msearch"></a>msearch</h3><p>批量查询。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST users&#x2F;_msearch</span><br><span class="line">&#123;&#125;</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot; : &#123;&#125;&#125;, &quot;from&quot;: 0, size&quot;: 10&#125;</span><br><span class="line">&#123;&#125;</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot; : &#123;&#125;&#125;&#125;</span><br><span class="line">&#123;&quot;index&quot;: &quot;twitter2&quot;&#125;</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot; : &#123;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h2><table>
+<thead>
+<tr>
+<th align="center">语法</th>
+<th align="center">范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">/_search</td>
+<td align="center">集群上所有的索引</td>
+</tr>
+<tr>
+<td align="center">/index1/_search</td>
+<td align="center">index1</td>
+</tr>
+<tr>
+<td align="center">/index1,index2/_search</td>
+<td align="center">index1 和 index2</td>
+</tr>
+<tr>
+<td align="center">/index*/_search</td>
+<td align="center">以 index 开头的索引</td>
+</tr>
+</tbody></table>
+<h3 id="URI-Search"><a href="#URI-Search" class="headerlink" title="URI Search"></a>URI Search</h3><p>在 URL 中使用查询参数。</p>
+<ul>
+<li>q：指定查询语句，使用 Query String Syntax，KV 键值对</li>
+<li>df：默认字段，不指定时，会对所有字段进行查询</li>
+<li>sort：排序</li>
+<li>from/size：用于分页</li>
+<li>profile：查看查询是如何被执行的</li>
+</ul>
+<p>eg:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;movies&#x2F;_search?q&#x3D;2012&amp;df&#x3D;title&amp;sort&#x3D;tear:desc&amp;from&#x3D;0&amp;size&#x3D;10&amp;timeout&#x3D;1s</span><br><span class="line">&#123;</span><br><span class="line">    &quot;profile&quot;: true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>指定字段 vs 范查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q&#x3D;title:2012 &#x2F; q&#x3D;2012</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Term vs Phrase</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Beautiful Mind &#x3D;&gt; Beautiful OR Mind</span><br><span class="line">&quot;Beautiful Mind&quot; &#x3D;&gt; Beautiful AND Mind (Phrase Query)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分组与引号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">title: (Beautiful Mind) (Term Query)</span><br><span class="line"></span><br><span class="line">title: &quot;Beautiful Mind&quot; (Phrase Query)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>布尔操作<br>AND / OR /NOT （必须大写）或者 &amp;&amp; / || / !</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">title:(matrix NOT reloaded)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>分组</li>
+</ul>
+<ul>
+<li>=&gt; must</li>
+</ul>
+<ul>
+<li>=&gt; must_not</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">title:(+matrix -reloaded)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>范围查询<br>[] =&gt; 闭区间<br>{} =&gt; 开区间</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">year:&#123;2019 TO 2018]</span><br><span class="line">year:[* TO 2018]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>算数符号</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">year:&gt;2010</span><br><span class="line">year:(&gt;2010 &amp;&amp; &lt;&#x3D; 2018)</span><br><span class="line">year:(+&gt;2010 +&lt;&#x3D; 2018)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通配符查询<br>? =&gt; 1 个字符</li>
+<li>0 或多个字符</li>
+</ul>
+<p>通配符查询效率低，占用内存大，不建议使用。特别是放在最前面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">title:mi?d</span><br><span class="line">title:be*</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>正则表达</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">title:[bt]oy</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>模糊匹配与近似查询</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">title:befutifl~1</span><br><span class="line">title:&quot;lord rings&quot;~2</span><br></pre></td></tr></table></figure>
+
+<h3 id="Request-Body-Search"><a href="#Request-Body-Search" class="headerlink" title="Request Body Search"></a>Request Body Search</h3><p>使用 Elasticsearch 提供的，基于 JSON 格式的更加完备的 DSL。</p>
+<p>eg:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET kibana_sample_data_ecommerce&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>分页<br>from 从 0 开始，默认返回 10 个结果。获取靠后的翻页成本较高。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET kibana_sample_data_ecommerce&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;from&quot;: 10,</span><br><span class="line">    ”size&quot;: 5,</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>排序<br>最好在“数字型”与“日期型”字段上排序，因为对于多值类型或分析过的字段排序，系统会选一个值，无法得知该值。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET kibana_sample_data_ecommerce&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;sort&quot;: [&#123;&quot;order_date&quot;: &quot;desc&#125;],</span><br><span class="line">    &quot;from&quot;: 10,</span><br><span class="line">    ”size&quot;: 5,</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>_source filtering<br>如果 _source 没有存储，那就只返回匹配的文档的元数据。_source 支持使用通配符，如 _source[“name*”,”desc*”]。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET kibana_sample_data_ecommerce&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;_source&quot;: [&quot;order_date&quot;, &quot;category.keyword&quot;],</span><br><span class="line">    &quot;from&quot;: 10,</span><br><span class="line">    ”size&quot;: 5,</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>match</li>
+</ul>
+<p>默认 OR 查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;comments&#x2F;_doc&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match&quot;: &#123;</span><br><span class="line">            &quot;comment&quot;: &quot;Last Christmas&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AND 查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;comments&#x2F;_doc&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match&quot;: &#123;</span><br><span class="line">            &quot;comment&quot;: &quot;Last Christmas&quot;,</span><br><span class="line">            &quot;operator&quot;: &quot;AND&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>match_phrase</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;comments&#x2F;_doc&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match_phrase&quot;: &#123;</span><br><span class="line">            &quot;comment&quot;: &quot;Song Last Chrismas&quot;,</span><br><span class="line">            &quot;slop&quot;: 1</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>query_string</li>
+</ul>
+<p>单字段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;users&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;query_string&quot;: &#123;</span><br><span class="line">            &quot;default_field&quot;: &quot;name&quot;,</span><br><span class="line">            &quot;query&quot;: &quot;Ruan AND Yiming&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多字段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;users&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;query_string&quot;: &#123;</span><br><span class="line">            &quot;fields&quot;: [&quot;name&quot;, &quot;about&quot;],</span><br><span class="line">            &quot;query&quot;: &quot;(Ruan AND Yiming) OR (Java AND Elasticsearch)&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>simple_query_string<br>类似 query_string，但是会忽略错误的语法，同时只支持部分查询语法；不支持 AND OR NOT，会当作字符串处理；Term 之间默认的关系是 OR，可以指定 Operator；支持部分逻辑：+ 替代 AND，| 替代 OR，- 替代 NOT。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;users&#x2F;_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;simple_query_string&quot;: &#123;</span><br><span class="line">            &quot;fields&quot;: [&quot;name&quot;],</span><br><span class="line">            &quot;query&quot;: &quot;Ruan -Yiming&quot;,</span><br><span class="line">            &quot;default_operator&quot;: &quot;AND&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Analyzer"><a href="#Analyzer" class="headerlink" title="Analyzer"></a>Analyzer</h2><h3 id="analyze"><a href="#analyze" class="headerlink" title="analyze"></a>analyze</h3><ul>
+<li>指定 Analyzer 进行测试</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET _analyze</span><br><span class="line">&#123;</span><br><span class="line">    &quot;analyzer&quot;: &quot;standard&quot;,</span><br><span class="line">    &quot;text&quot;: &quot;2 running Quik brown-foxes leap over lazy dogs in the summer evening.&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>指定索引的字段进行测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST books&#x2F;_analyze</span><br><span class="line">&#123;</span><br><span class="line">    &quot;field&quot;: &quot;title&quot;,</span><br><span class="line">    &quot;text&quot;: &quot;Mastering Elasticsearch&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>自定义分词器进行测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST _analyze</span><br><span class="line">&#123;</span><br><span class="line">    &quot;tokenizer&quot;: &quot;standard&quot;,</span><br><span class="line">    &quot;filter&quot;: [&quot;lowercase&quot;],</span><br><span class="line">    &quot;text&quot;: &quot;Mastering Elasticsearch&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/Elasticsearch%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1142,327 +1493,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%20IO%E6%A8%A1%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/04/Netty%20IO%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">Netty IO模型</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-04 22:59:00" itemprop="dateCreated datePublished" datetime="2020-02-04T22:59:00+08:00">2020-02-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-08 21:14:19" itemprop="dateModified" datetime="2020-02-08T21:14:19+08:00">2020-02-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Netty/" itemprop="url" rel="index">
-                    <span itemprop="name">Netty</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="IO-模型"><a href="#IO-模型" class="headerlink" title="IO 模型"></a>IO 模型</h2><p>IO 模型主要分类：</p>
-<ul>
-<li><p>同步（synchronous）IO 和异步（asynchronous）IO</p>
-</li>
-<li><p>阻塞（blocking）IO 和非阻塞（non-blocking）IO</p>
-</li>
-<li><p>同步阻塞（blocking-IO）简称 BIO</p>
-</li>
-<li><p>同步非阻塞（non-blocking-IO）简称 NIO</p>
-</li>
-<li><p>异步非阻塞（synchronous-non-blocking-IO）简称 AIO</p>
-</li>
-</ul>
-<h3 id="同步-VS-异步"><a href="#同步-VS-异步" class="headerlink" title="同步 VS 异步"></a>同步 VS 异步</h3><p>同步：发送一个请求，等待返回，再发送下一个请求，同步可以避免出现死锁，脏读的发生。</p>
-<p>异步：发送一个请求，不等待返回，随时可以再发送下一个请求，可以提高效率，保证并发。</p>
-<p>简述：数据就绪后需要自己去读是同步，数据就绪直接读好再回调给程序是异步。</p>
-<h3 id="阻塞-VS-非阻塞"><a href="#阻塞-VS-非阻塞" class="headerlink" title="阻塞 VS 非阻塞"></a>阻塞 VS 非阻塞</h3><p>阻塞：传统的 IO 流都是阻塞式的。也就是说，当一个线程调用 read（）或者 write（）方法时，该线程将被阻塞，直到有一些数据读读取或者被写入，在此期间，该线程不能执行其他任何任务。在完成网络通信进行 IO 操作时，由于线程会阻塞，所以服务器端必须为每个客户端都提供一个独立的线程进行处理，当服务器端需要处理大量的客户端时，性能急剧下降。</p>
-<p>非阻塞：Java NIO 是非阻塞式的。当线程从某通道进行读写数据时，若没有数据可用时，该线程会去执行其他任务。线程通常将非阻塞 IO 的空闲时间用于在其他通道上执行 IO 操作，所以单独的线程可以管理多个输入和输出通道。因此 NIO 可以让服务器端使用一个或有限几个线程来同时处理连接到服务器端的所有客户端。</p>
-<p>简述：没有数据传过来时，读会阻塞直到有数据；缓冲区满时，写操作也会阻塞，这就是阻塞。非粗赛遇到这些情况，都是直接返回。</p>
-<h3 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h3><p>以我们去饭店吃饭为例：</p>
-<ul>
-<li>BIO：食堂排队打饭模式，排队在窗口，打好才走；</li>
-<li>NIO：等待被叫模式，等待被叫，好了自己去端；</li>
-<li>AIO：包厢模式，点单后菜直接被端上桌。</li>
-</ul>
-<h3 id="IO-VS-NIO"><a href="#IO-VS-NIO" class="headerlink" title="IO VS NIO"></a>IO VS NIO</h3><table>
-<thead>
-<tr>
-<th align="center">IO</th>
-<th align="center">NIO</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">面向流（Stream Oriented）</td>
-<td align="center">面向缓冲区（Buffer Oriented）</td>
-</tr>
-<tr>
-<td align="center">阻塞 IO（Blocking IO）</td>
-<td align="center">非阻塞 IO（Non Blocking IO）</td>
-</tr>
-<tr>
-<td align="center">无</td>
-<td align="center">选择器（Selectors）</td>
-</tr>
-</tbody></table>
-<h3 id="BIO-VS-NIO-VS-AIO"><a href="#BIO-VS-NIO-VS-AIO" class="headerlink" title="BIO VS NIO VS AIO"></a>BIO VS NIO VS AIO</h3><table>
-<thead>
-<tr>
-<th align="center">BIO</th>
-<th align="center">NIO</th>
-<th align="center">AIO</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Thread-Per-Connection</td>
-<td align="center">Reactor</td>
-<td align="center">Proactor</td>
-</tr>
-</tbody></table>
-<h3 id="BIO、NIO、AIO-适用场景"><a href="#BIO、NIO、AIO-适用场景" class="headerlink" title="BIO、NIO、AIO 适用场景"></a>BIO、NIO、AIO 适用场景</h3><ul>
-<li>BIO 方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4 以前的唯一选择。</li>
-<li>NIO 方式适用于连接数目多且连接比较短（轻操作）的架构，比如聊天服务器，并发局限于应用中，编程比较复杂。</li>
-<li>AIO方式使用于连接数目多且连接比较长（重操作）的架构，比如相册服务器，充分调用 OS 参与并发操作，编程比较复杂，JDK7 开始支持。</li>
-</ul>
-<h3 id="多路复用-IO（IO-Multiplexing）"><a href="#多路复用-IO（IO-Multiplexing）" class="headerlink" title="多路复用 IO（IO Multiplexing）"></a>多路复用 IO（IO Multiplexing）</h3><p>即经典的 <strong>Reactor 设计模式</strong>，有时也称为<strong>异步阻塞 IO</strong>，Java 中的 Selector 和 Linux 中的 epoll 都是这种模型。</p>
-<h4 id="Reactor-模式"><a href="#Reactor-模式" class="headerlink" title="Reactor 模式"></a>Reactor 模式</h4><p>Reactor 模式的核心流程：注册感兴趣的事件 -&gt; 扫描是否有感兴趣的事件发生 -&gt; 事件发生后做出响应的处理。</p>
-<table>
-<thead>
-<tr>
-<th align="center">Client/Server</th>
-<th align="center">SocketChannel/ServerSocketChannel</th>
-<th align="center">OP_ACCEPT</th>
-<th align="center">OP_CONNECT</th>
-<th align="center">OP_WRITE</th>
-<th align="center">OP_READ</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">client</td>
-<td align="center">SocketChannel</td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-</tr>
-<tr>
-<td align="center">server</td>
-<td align="center">ServerSocketChannel</td>
-<td align="center">Y</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">server</td>
-<td align="center">SocketChannel</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-</tr>
-</tbody></table>
-<p>Reactor 模式有三种实现方式：Reactor 单线程、Reactor 多线程模式、Reactor 主从模式。</p>
-<ol>
-<li>Reactor 单线程模式</li>
-</ol>
-<p><img src="/images/netty/Reactor%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%BC%8F.png" alt="Reactor 单线程模式"></p>
-<p>每个客户端发起连接请求都会交给 acceptor，acceptor 根据事件类型交给线程 handler 处理，注意 acceptor 处理和 handler 处理都在一个线程中处理，所以其中某个 handler 阻塞时，会导致其他所有的 client 的 handler 都得不到执行，并且更严重的是，handler 的阻塞也会导致整个服务不能接收新的 client 请求(因为 acceptor 也被阻塞了). 因为有这么多的缺陷，因此单线程 Reactor 模型用的比较少.</p>
-<ol start="2">
-<li>Reactor 多线程模式</li>
-</ol>
-<p><img src="/images/netty/Reactor%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%BC%8F.png" alt="Reactor 多线程模式"></p>
-<p>有专门一个线程，即 Acceptor 线程用于监听客户端的TCP连接请求。</p>
-<p>客户端连接的 IO 操作都是由一个特定的 NIO 线程池负责。每个客户端连接都与一个特定的 NIO 线程绑定，因此在这个客户端连接中的所有 IO 操作都是在同一个线程中完成的。</p>
-<p>客户端连接有很多，但是 NIO 线程数是比较少的，因此一个 NIO 线程可以同时绑定到多个客户端连接中。</p>
-<p>缺点：如果我们的服务器需要同时处理大量的客户端连接请求或我们需要在客户端连接时，进行一些权限的检查，那么单线程的 Acceptor 很有可能就处理不过来，造成了大量的客户端不能连接到服务器。</p>
-<ol start="3">
-<li>Reactor 主从模式</li>
-</ol>
-<p><img src="/images/netty/Reactor%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F.png" alt="Reactor 主从模式"></p>
-<p><strong>举例说明：</strong><br>以饭店规模变化为例：</p>
-<ul>
-<li>Reactor 单线程模式：一个人包揽所有，迎宾、点菜、做饭、上菜、送客等；</li>
-<li>Reactor 多线程模式：多招几个伙计，大家一起做上面的事情；</li>
-<li>Reactor 主从模式：进一步分工，搞一个或多个人专门做迎宾。</li>
-</ul>
-<h4 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h4><ol>
-<li>缓冲区 Buffer<br>Buffer 是一个对象。它包含一些要写入或者读出的数据。<br>在面向流的 I/O 中，可以将数据写入或者将数据直接读到 Stream 对象中。在 NIO 中，所有的数据都是用缓冲区处理。这也就是很多博客说，IO 是面向流的，NIO 是面向缓冲区的。<br>缓冲区实质是一个数组，通常它是一个字节数组（ByteBuffer），也可以使用其他类的数组。但是一个缓冲区不仅仅是一个数组，缓冲区提供了对数据的结构化访问以及维护读写位置（limit）等信息。<br>最常用的缓冲区是 ByteBuffer，一个 ByteBuffer 提供了一组功能于操作 byte 数组。除了 ByteBuffer，还有其他的一些缓冲区，事实上，每一种Java基本类型（除了Boolean）都对应一种缓冲区，具体如下：</li>
-</ol>
-<ul>
-<li>ByteBuffer：字节缓冲区</li>
-<li>CharBuffer：字符缓冲区</li>
-<li>ShortBuffer：短整型缓冲区</li>
-<li>IntBuffer：整型缓冲区</li>
-<li>LongBuffer：长整型缓冲区</li>
-<li>FloatBuffer：浮点型缓冲区</li>
-<li>DoubleBuffer：双精度浮点型缓冲区</li>
-</ul>
-<ol start="2">
-<li>通道 Channel<br>Channel 是一个通道，可以通过它读取和写入数据，它就像自来水管一样，网络数据通过 Channel 读取和写入。<br>通道和流不同之处在于通道是双向的，流只是在一个方向移动，而且通道可以用于读，写或者同时用于读写。因为 Channel 是全双工的，所以它比流更好地映射底层操作系统的 API，特别是在 UNIX 网络编程中，底层操作系统的通道都是全双工的，同时支持读和写。<br>Channel 有四种实现：</li>
-</ol>
-<ul>
-<li>FileChannel：文件中读取数据。</li>
-<li>DatagramChannel：从 UDP 网络中读取或者写入数据。</li>
-<li>SocketChannel：从 TCP 网络中读取或者写入数据。</li>
-<li>ServerSocketChannel：允许你监听来自 TCP 的连接，就像服务器一样。每一个连接都会有一个 SocketChannel 产生。这句话的意思就是，ServerSocketChannel 用于服务端，SocketChannel 用于客户端。</li>
-</ul>
-<ol start="3">
-<li>多路复用器 Selector<br>Selector 会不断轮询注册在上面的 Channel，如果某个 Channel 上面有新的 TCP 连接接入、读或写事件，这个channel就处于就绪状态，会被 Selector 轮询出来，然后通过 SelectionKey 可以获取 Channel 的集合，进行后续的 I/O 操作。一个多路复用器 Selector 可以同时轮询多个 Channel，由于 JDK 使用了 epoll() 代替传统的 select 实现，所以它没有最大连接句柄 1024/2048 的限制。这就意味着只需一个线程负责 Selector 的轮询，就可以接入成千上万的客户端。</li>
-</ol>
-<h2 id="Netty-IO-模型"><a href="#Netty-IO-模型" class="headerlink" title="Netty IO 模型"></a>Netty IO 模型</h2><p>目前 Netty 只支持 NIO 模型。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://youzhixueyuan.com/java-nio-introduce.html" target="_blank" rel="noopener">高并发编程系列：NIO、BIO、AIO的区别，及NIO的应用和框架选型</a></li>
-<li><a href="https://blog.csdn.net/u011521382/article/details/81069457" target="_blank" rel="noopener">NIO相关概念介绍：缓冲区Buffer,通道Channel,多路复用器Selector</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">Netty 架构设计</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-04 21:46:00" itemprop="dateCreated datePublished" datetime="2020-02-04T21:46:00+08:00">2020-02-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-08 21:14:19" itemprop="dateModified" datetime="2020-02-08T21:14:19+08:00">2020-02-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Netty/" itemprop="url" rel="index">
-                    <span itemprop="name">Netty</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Netty 采用了比较典型的三层网络架构进行设计，逻辑架构图如下所示：</p>
-<p><img src="/images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1.jpg" alt="Netty架构设计"></p>
-<p><img src="/images/netty/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1-%E4%B8%AD%E6%96%87.jpg" alt="Netty架构设计-中文"></p>
-<ol>
-<li><p>Core 核心：可扩展事件模型、通用通信 API、支持零拷贝的 ByteBuf 缓冲对象。</p>
-</li>
-<li><p>传输服务：支持 BIO 和 NIO。</p>
-</li>
-<li><p>协议支持：HTTP、Protobuf、二进制、文本、WebSocket 等一系列常见协议都支持。还支持通过实行编码解码逻辑来实现自定义协议。</p>
-</li>
-<li><p>容器集成：支持 OSGI、JBossMC、Spring、Guice 容器。</p>
-</li>
-</ol>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://youzhixueyuan.com/netty-implementation-principle.html" target="_blank" rel="noopener">高并发架构系列：Netty的实现原理、特点与优势、以及适用场景</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1533,7 +1563,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
