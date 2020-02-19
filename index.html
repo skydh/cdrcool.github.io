@@ -196,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-02-19 12:30:00 / 修改时间：14:23:29" itemprop="dateCreated datePublished" datetime="2020-02-19T12:30:00+08:00">2020-02-19</time>
+              <time title="创建时间：2020-02-19 12:30:00 / 修改时间：14:27:15" itemprop="dateCreated datePublished" datetime="2020-02-19T12:30:00+08:00">2020-02-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -229,7 +229,7 @@
 <p>于是我们在拿到锁之后，再给锁加上一个过期时间，比如 5s，这样及时中间出现异常也可以保证 5s 之后锁会自动释放。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setnx lock:codehole <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">expire lock:codehole 5</span><br><span class="line"></span><br><span class="line">... <span class="keyword">do</span> something critical ...</span><br><span class="line"></span><br><span class="line">del lock:codehole</span><br></pre></td></tr></table></figure>
 
-<p>但是以上逻辑还有问题。如果再 setnx 和 expire 之间服务进程突然挂掉了，可能是因为机器掉电或者被认为杀掉的，就会导致 expire 得不到执行，也会造成死锁。</p>
+<p>但是以上逻辑还有问题。如果再 setnx 和 expire 之间服务进程突然挂掉了，可能是因为机器掉电或者被人为杀掉的，就会导致 expire 得不到执行，也会造成死锁。</p>
 <p>这种问题的根源就在于 setnx 和 expire 是两条指令而不是原子指令，所以我们应该使用这两个指定的原子指令。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> lock:codehole <span class="literal">true</span> ex 5 nx</span><br><span class="line"></span><br><span class="line">... <span class="keyword">do</span> something critical ...</span><br><span class="line"></span><br><span class="line">del lock:codehole</span><br></pre></td></tr></table></figure>
 
