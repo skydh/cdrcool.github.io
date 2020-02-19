@@ -171,6 +171,137 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/31/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">ZooKeeper 集群架构</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-31 10:53:00" itemprop="dateCreated datePublished" datetime="2020-01-31T10:53:00+08:00">2020-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-03 22:39:30" itemprop="dateModified" datetime="2020-02-03T22:39:30+08:00">2020-02-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">ZooKeeper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/images/zookeeper/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84.png" alt="ZooKeeper集群架构"></p>
+<ul>
+<li>每个 Server 在内存中存储了一份数据</li>
+<li>ZooKeeper 启动时，将从实例中选举一个 leader（Paxos 协议）</li>
+<li>Leader 负责处理数据更新等操作（Zab 协议）</li>
+<li>一个更新操作成功，当且仅当大多数 Server 在内存中成功修改数据</li>
+</ul>
+<p>ZooKeeper 本身可以是单机模式，也可以是集群模式，为了 ZooKeeper 本身不出现单点故障，通常情况使用集群模式（Server 数目一般为奇数），而且是 master/slave 模式的集群。</p>
+<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><p><img src="/images/zookeeper/ZooKeeper%E8%A7%92%E8%89%B2%E8%AF%B4%E6%98%8E.png" alt="ZooKeeper角色说明"></p>
+<h3 id="Leader"><a href="#Leader" class="headerlink" title="Leader"></a>Leader</h3><p>Leader 不直接接受 Client 的请求，但接受由其他 Follower 和 Observer 转发过来的 Client 请求，此外，Leader 还负责投票的发起和决议，即时更新状态和数据。</p>
+<h3 id="Follower"><a href="#Follower" class="headerlink" title="Follower"></a>Follower</h3><p>Follower 角色接受客户端请求并返回结果，参与 Leader 发起的投票和选举，但不具有写操作的权限。</p>
+<h3 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h3><p>Observer 角色接受客户端连接，将写操作转给 Leader，但 Observer 不参与投票（即不参加一致性协议的达成），只同步 Leader 节点的状态，Observer 角色是为集群系统扩展而生的。</p>
+<p>应用场景：</p>
+<ul>
+<li>提高集群的读性能（未参与事务的提交过程）</li>
+<li>跨数据中心部署</li>
+</ul>
+<h3 id="Follower-vs-Observer-请求流程"><a href="#Follower-vs-Observer-请求流程" class="headerlink" title="Follower vs Observer 请求流程"></a>Follower vs Observer 请求流程</h3><p>Follower-Leader 写请求流程：<br><img src="/images/zookeeper/Follower-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Follower-Leader请求流程"></p>
+<ol>
+<li>节点 1（Follower） 收到写请求，转发到节点 2（Leader）</li>
+<li>节点 2 发送 Propose 给集群中所有 Follower 节点</li>
+<li>Follower 节点收到 Propose 后，返回 Accept 给 Leader</li>
+<li>Leader 收到大多数节点的 Accept 后，向所有节点发送 Commit</li>
+<li>节点 1 收到 Commit 后，返回客户端，告诉客户端写成功</li>
+</ol>
+<p>Observer-Leader 写请求流程：<br><img src="/images/zookeeper/Obeserver-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Obeserver-请求流程"></p>
+<ol>
+<li>节点 1（Observer） 收到写请求，转发到节点 2（Leader）</li>
+<li>节点 2 发送 Propose 给集群中所有 Follower 节点</li>
+<li>Follower 节点收到 Propose 后，返回 Accept 给 Leader</li>
+<li>Leader 收到大多数节点的 Accept 后，向所有节点发送 Commit</li>
+<li>节点 1 不参与事务的提交过程，而是一直等待，等到收到 Leader 的 INFORM 后，返回客户端，告诉客户端写成功</li>
+</ol>
+<h2 id="节点数"><a href="#节点数" class="headerlink" title="节点数"></a>节点数</h2><p>ZooKeeper 要求集群节点数大于 1，且为单数，原因有以下两点。</p>
+<ol>
+<li>容错<br>由于在增删改操作中需要半数以上服务器通过，来分析以下情况：</li>
+</ol>
+<ul>
+<li>2 台服务器，至少 2 台正常运行才行（2 的半数为 1，半数以上最少为 2），正常运行 1 台服务器都不允许挂掉</li>
+<li>3 台服务器，至少 2 台正常运行才行（3 的半数为 1.5，半数以上最少为 2），正常运行可以允许 1 台服务器挂掉</li>
+<li>4 台服务器，至少 3 台正常运行才行（4 的半数为 2，半数以上最少为 3），正常运行可以允许 1 台服务器挂掉</li>
+<li>5 台服务器，至少 3 台正常运行才行（5 的半数为 2.5，半数以上最少为 3），正常运行可以允许 2 台服务器挂掉</li>
+<li>6 台服务器，至少 3 台正常运行才行（6 的半数为 3，半数以上最少为 4），正常运行可以允许 2 台服务器挂掉</li>
+</ul>
+<p>通过以上可以发现，3 台服务器和 4 台服务器都最多允许 1 台服务器挂掉，5 台服务器和 6 台服务器都最多允许 2 台服务器挂掉，但是明显 4 台服务器成本高于 3 台服务器成本，6 台服务器成本高于 5 服务器成本。这是由于半数以上投票通过决定的。</p>
+<ol start="2">
+<li>防脑裂<br>一个 ZooKeeper 集群中，可以有多个 follower、observer 服务器，但是必需只能有一个 leader 服务器。如果 leader 服务器挂掉了，剩下的服务器集群会通过半数以上投票选出一个新的 leader 服务器。</li>
+</ol>
+<p>集群互不通讯情况：</p>
+<ul>
+<li>一个集群 3 台服务器，全部运行正常，但是其中 1 台裂开了，和另外 2 台无法通讯。3 台机器里面 2 台正常运行过半票可以选出一个 leader。</li>
+<li>一个集群 4 台服务器，全部运行正常，但是其中 2 台裂开了，和另外 2 台无法通讯。4 台机器里面 2 台正常工作没有过半票以上达到3，无法选出 leader 正常运行。</li>
+<li>一个集群 5 台服务器，全部运行正常，但是其中 2 台裂开了，和另外 3 台无法通讯。5 台机器里面 3 台正常运行过半票可以选出一个 leader。</li>
+<li>一个集群 6 台服务器，全部运行正常，但是其中 3 台裂开了，和另外 3 台无法通讯。6 台机器里面 3 台正常工作没有过半票以上达到 4，无法选出 leader 正常运行。</li>
+</ul>
+<p>通可以上分析可以看出，为什么 ZooKeeper 集群数量总是单出现，主要原因还是在于第 2 点，防脑裂，对于第 1 点，无非是正常控制，但是不影响集群正常运行。但是出现第 2 种裂的情况，ZooKeeper 集群就无法正常运行了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1029,85 +1160,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/26/Kafka%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/26/Kafka%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7/" class="post-title-link" itemprop="url">Kafka 保证消息的顺序性</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-26 16:19:00" itemprop="dateCreated datePublished" datetime="2020-01-26T16:19:00+08:00">2020-01-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-28 21:42:14" itemprop="dateModified" datetime="2020-01-28T21:42:14+08:00">2020-01-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index">
-                    <span itemprop="name">Kafka</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Kafka 只能保证分区级别的消息顺序性。</p>
-<p>要实现全局性的消息顺序性，我们或者只定义一个分区，或者通过指定消息的 key，从而将 key 值相同的消息都路由到同一个分区。并且每个分区对应的消费者组里应该只有一个消费者。</p>
-<p>同时，我们应该关闭位移自动提交，改为位移手动提交，即设置 enable.auto.commit = false。</p>
-<p>不过这样做的话，吞吐量又可能过低，我们可以在消费端内部用内存队列做排队，然后分发给底层不同的 worker 来处理。这样又可能会存在消息丢失。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1178,7 +1230,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

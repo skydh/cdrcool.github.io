@@ -171,6 +171,82 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/Elasticsearch%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/11/Elasticsearch%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">Elasticsearch集群架构</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-11 16:20:17 / 修改时间：16:51:23" itemprop="dateCreated datePublished" datetime="2020-02-11T16:20:17+08:00">2020-02-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<p>title:Elasticsearch 集群架构<br>date:2020-02-1116:20:00<br>categories:Elasticsearch</p>
+<hr>
+<h2 id="主要特征"><a href="#主要特征" class="headerlink" title="主要特征"></a>主要特征</h2><p>从架构的角度出发，ElasticSearch 具有下面这些主要特征：</p>
+<ul>
+<li><p>合理的默认配置，使得用户在简单安装以后能直接使用 ElasticSearch 而不需要任何额外的调试，这包括内置的发现（如字段类型检测）和自动配置功能。</p>
+</li>
+<li><p>默认的分布式工作模式，每个节点总是假定自己是某个集群的一部分或将是某个集群的一部分，一旦工作启动节点便会加入某个集群。</p>
+</li>
+<li><p>对等架构（P2P）可以避免单点故障（SPOF），节点会自动连接到集群中的其他节点，进行相互的数据交换和监控操作。这其中就包括索引分片的自动复制。</p>
+</li>
+<li><p>易于向集群扩充新节点，不论是从数据容量的角度还是数量角度。</p>
+</li>
+<li><p>ElasticSearch 没有对索引中的数据结构强加任何限制，从而允许用户调整现有的数据模型。正如之前描述的那样，ElasticSearch 支持在一个索引中存在多种数据类型，并允许用户调整业务模型，包括处理文档之间的关联（尽管这种功能非常有限）。</p>
+</li>
+<li><p>准实时（NearRealTime，NRT）搜索和版本同步（versioning）。考虑到 ElasticSearch 的分布式特性，查询延迟和节点之间临时的数据不同步是难以避免的。ElasticSearch 尝试消除这些问题并且提供额外的机制用于版本同步。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/Elasticsearch%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1387,135 +1463,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/04/Netty%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Netty 简介</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-04 20:07:00" itemprop="dateCreated datePublished" datetime="2020-02-04T20:07:00+08:00">2020-02-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-06 16:16:59" itemprop="dateModified" datetime="2020-02-06T16:16:59+08:00">2020-02-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Netty/" itemprop="url" rel="index">
-                    <span itemprop="name">Netty</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Netty 是一个广受欢迎的<strong>异步的、事件驱动的、基于NIO实现的</strong> Java 开源网络应用程序框架，用于快速开发<strong>可维护的高性能协议服务器和客户端</strong>。</p>
-<h2 id="JDK-原生-NIO-程序的问题"><a href="#JDK-原生-NIO-程序的问题" class="headerlink" title="JDK 原生 NIO 程序的问题"></a>JDK 原生 NIO 程序的问题</h2><p>JDK 原生也有一套网络应用程序 API，但是存在一系列问题，主要如下：</p>
-<ol>
-<li><p>NIO 的类库和 API 繁杂，使用麻烦：你需要熟练掌握 Selector、ServerSocketChannel、SocketChannel、ByteBuffer 等。</p>
-</li>
-<li><p>需要具备其他的额外技能做铺垫：例如熟悉 Java 多线程编程，因为 NIO 编程涉及到 Reactor 模式，你必须对多线程和网路编程非常熟悉，才能编写出高质量的 NIO 程序。</p>
-</li>
-<li><p>可靠性能力补齐，开发工作量和难度都非常大：例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常码流的处理等等。NIO 编程的特点是功能开发相对容易，但是可靠性能力补齐工作量和难度都非常大。</p>
-</li>
-<li><p>JDK NIO 的 Bug：例如臭名昭著的 Epoll Bug，它会导致 Selector 空轮询，最终导致 CPU 100%。官方声称在 JDK 1.6 版本的 update 18 修复了该问题，但是直到 JDK 1.7 版本该问题仍旧存在，只不过该 Bug 发生概率降低了一些而已，它并没有被根本解决。</p>
-</li>
-</ol>
-<h2 id="Netty-框架的优势"><a href="#Netty-框架的优势" class="headerlink" title="Netty 框架的优势"></a>Netty 框架的优势</h2><ul>
-<li>API使用简单，开发门槛低；</li>
-<li>功能强大，预置了多种编解码功能，支持多种主流协议；</li>
-<li>定制能力强，可以通过 ChannelHandler 对通信框架进行灵活地扩展；</li>
-<li>性能高，通过与其他业界主流的 NIO 框架对比，Netty 的综合性能最优；</li>
-<li>成熟、稳定，Netty 修复了已经发现的所有 JDK NIO BUG，业务开发人员不需要再为 NIO 的 BUG 而烦恼；</li>
-<li>社区活跃，版本迭代周期短，发现的BUG可以被及时修复，同时，更多的新功能会加入；</li>
-<li>经历了大规模的商业应用考验，质量得到验证。在互联网、大数据、网络游戏、企业应用、电信软件等众多行业得到成功商用，证明了它已经完全能够满足不同行业的商业应用。</li>
-</ul>
-<h2 id="Netty-的应用场景"><a href="#Netty-的应用场景" class="headerlink" title="Netty 的应用场景"></a>Netty 的应用场景</h2><ol>
-<li><p>互联网行业：在分布式系统中，各个节点之间需要远程服务调用，高性能的 RPC 框架必不可少，Netty 作为异步高性能的通信框架，往往作为基础通信组件被这些 RPC 框架使用。典型的应用有：阿里分布式服务框架 Dubbo 的 RPC 框架使用 Dubbo 协议进行节点间通信，Dubbo 协议默认使用 Netty 作为基础通信组件，用于实现各进程节点之间的内部通信。</p>
-</li>
-<li><p>游戏行业：无论是手游服务端还是大型的网络游戏，Java 语言得到了越来越广泛的应用。Netty 作为高性能的基础通信组件，它本身提供了 TCP/UDP 和 HTTP 协议栈。非常方便定制和开发私有协议栈，账号登录服务器，地图服务器之间可以方便的通过 Netty 进行高性能的通信。</p>
-</li>
-<li><p>大数据领域：经典的 Hadoop 的高性能通信和序列化组件 Avro 的 RPC 框架，默认采用 Netty 进行跨界点通信，它的 Netty Service 基于 Netty 框架二次封装实现。</p>
-</li>
-<li><p>企业软件：企业和 IT 集成需要 ESB，Netty 对多协议支持、私有协议定制的简洁性和高性能是 ESB RPC 框架的首选通信组件。事实上，很多企业总线厂商会选择 Netty 作为基础通信组件，用于企业的 IT 集成。</p>
-</li>
-<li><p>通信行业：Netty 的异步高性能、高可靠性和高成熟度的优点，使它在通信行业得到了大量的应用。</p>
-</li>
-</ol>
-<h2 id="Netty-在开源框架中的应用"><a href="#Netty-在开源框架中的应用" class="headerlink" title="Netty 在开源框架中的应用"></a>Netty 在开源框架中的应用</h2><ul>
-<li><p>数据库：Cassandra</p>
-</li>
-<li><p>大数据处理：Spark、Hadoop</p>
-</li>
-<li><p>消息队列：RocketMQ</p>
-</li>
-<li><p>搜索引擎：Elasticsearch</p>
-</li>
-<li><p>框架：gRPC、Apache Dubbo、Spring5(WebFlux)</p>
-</li>
-<li><p>分布式协调器：ZooKeeper</p>
-</li>
-<li><p>工具类：async-http-client</p>
-</li>
-<li><p>其它参考：<a href="https://netty.io/wiki/adopters.html" target="_blank" rel="noopener">https://netty.io/wiki/adopters.html</a></p>
-</li>
-</ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://youzhixueyuan.com/netty-implementation-principle.html" target="_blank" rel="noopener">高并发架构系列：Netty的实现原理、特点与优势、以及适用场景</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1586,7 +1533,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -171,6 +171,135 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/04/Netty%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Netty 简介</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-04 20:07:00" itemprop="dateCreated datePublished" datetime="2020-02-04T20:07:00+08:00">2020-02-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-06 16:16:59" itemprop="dateModified" datetime="2020-02-06T16:16:59+08:00">2020-02-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Netty 是一个广受欢迎的<strong>异步的、事件驱动的、基于NIO实现的</strong> Java 开源网络应用程序框架，用于快速开发<strong>可维护的高性能协议服务器和客户端</strong>。</p>
+<h2 id="JDK-原生-NIO-程序的问题"><a href="#JDK-原生-NIO-程序的问题" class="headerlink" title="JDK 原生 NIO 程序的问题"></a>JDK 原生 NIO 程序的问题</h2><p>JDK 原生也有一套网络应用程序 API，但是存在一系列问题，主要如下：</p>
+<ol>
+<li><p>NIO 的类库和 API 繁杂，使用麻烦：你需要熟练掌握 Selector、ServerSocketChannel、SocketChannel、ByteBuffer 等。</p>
+</li>
+<li><p>需要具备其他的额外技能做铺垫：例如熟悉 Java 多线程编程，因为 NIO 编程涉及到 Reactor 模式，你必须对多线程和网路编程非常熟悉，才能编写出高质量的 NIO 程序。</p>
+</li>
+<li><p>可靠性能力补齐，开发工作量和难度都非常大：例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常码流的处理等等。NIO 编程的特点是功能开发相对容易，但是可靠性能力补齐工作量和难度都非常大。</p>
+</li>
+<li><p>JDK NIO 的 Bug：例如臭名昭著的 Epoll Bug，它会导致 Selector 空轮询，最终导致 CPU 100%。官方声称在 JDK 1.6 版本的 update 18 修复了该问题，但是直到 JDK 1.7 版本该问题仍旧存在，只不过该 Bug 发生概率降低了一些而已，它并没有被根本解决。</p>
+</li>
+</ol>
+<h2 id="Netty-框架的优势"><a href="#Netty-框架的优势" class="headerlink" title="Netty 框架的优势"></a>Netty 框架的优势</h2><ul>
+<li>API使用简单，开发门槛低；</li>
+<li>功能强大，预置了多种编解码功能，支持多种主流协议；</li>
+<li>定制能力强，可以通过 ChannelHandler 对通信框架进行灵活地扩展；</li>
+<li>性能高，通过与其他业界主流的 NIO 框架对比，Netty 的综合性能最优；</li>
+<li>成熟、稳定，Netty 修复了已经发现的所有 JDK NIO BUG，业务开发人员不需要再为 NIO 的 BUG 而烦恼；</li>
+<li>社区活跃，版本迭代周期短，发现的BUG可以被及时修复，同时，更多的新功能会加入；</li>
+<li>经历了大规模的商业应用考验，质量得到验证。在互联网、大数据、网络游戏、企业应用、电信软件等众多行业得到成功商用，证明了它已经完全能够满足不同行业的商业应用。</li>
+</ul>
+<h2 id="Netty-的应用场景"><a href="#Netty-的应用场景" class="headerlink" title="Netty 的应用场景"></a>Netty 的应用场景</h2><ol>
+<li><p>互联网行业：在分布式系统中，各个节点之间需要远程服务调用，高性能的 RPC 框架必不可少，Netty 作为异步高性能的通信框架，往往作为基础通信组件被这些 RPC 框架使用。典型的应用有：阿里分布式服务框架 Dubbo 的 RPC 框架使用 Dubbo 协议进行节点间通信，Dubbo 协议默认使用 Netty 作为基础通信组件，用于实现各进程节点之间的内部通信。</p>
+</li>
+<li><p>游戏行业：无论是手游服务端还是大型的网络游戏，Java 语言得到了越来越广泛的应用。Netty 作为高性能的基础通信组件，它本身提供了 TCP/UDP 和 HTTP 协议栈。非常方便定制和开发私有协议栈，账号登录服务器，地图服务器之间可以方便的通过 Netty 进行高性能的通信。</p>
+</li>
+<li><p>大数据领域：经典的 Hadoop 的高性能通信和序列化组件 Avro 的 RPC 框架，默认采用 Netty 进行跨界点通信，它的 Netty Service 基于 Netty 框架二次封装实现。</p>
+</li>
+<li><p>企业软件：企业和 IT 集成需要 ESB，Netty 对多协议支持、私有协议定制的简洁性和高性能是 ESB RPC 框架的首选通信组件。事实上，很多企业总线厂商会选择 Netty 作为基础通信组件，用于企业的 IT 集成。</p>
+</li>
+<li><p>通信行业：Netty 的异步高性能、高可靠性和高成熟度的优点，使它在通信行业得到了大量的应用。</p>
+</li>
+</ol>
+<h2 id="Netty-在开源框架中的应用"><a href="#Netty-在开源框架中的应用" class="headerlink" title="Netty 在开源框架中的应用"></a>Netty 在开源框架中的应用</h2><ul>
+<li><p>数据库：Cassandra</p>
+</li>
+<li><p>大数据处理：Spark、Hadoop</p>
+</li>
+<li><p>消息队列：RocketMQ</p>
+</li>
+<li><p>搜索引擎：Elasticsearch</p>
+</li>
+<li><p>框架：gRPC、Apache Dubbo、Spring5(WebFlux)</p>
+</li>
+<li><p>分布式协调器：ZooKeeper</p>
+</li>
+<li><p>工具类：async-http-client</p>
+</li>
+<li><p>其它参考：<a href="https://netty.io/wiki/adopters.html" target="_blank" rel="noopener">https://netty.io/wiki/adopters.html</a></p>
+</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://youzhixueyuan.com/netty-implementation-principle.html" target="_blank" rel="noopener">高并发架构系列：Netty的实现原理、特点与优势、以及适用场景</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/ZooKeeper%202PC%E4%BA%8B%E5%8A%A1%E6%8F%90%E4%BA%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1193,137 +1322,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/31/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">ZooKeeper 集群架构</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-31 10:53:00" itemprop="dateCreated datePublished" datetime="2020-01-31T10:53:00+08:00">2020-01-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-03 22:39:30" itemprop="dateModified" datetime="2020-02-03T22:39:30+08:00">2020-02-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
-                    <span itemprop="name">ZooKeeper</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/zookeeper/ZooKeeper%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84.png" alt="ZooKeeper集群架构"></p>
-<ul>
-<li>每个 Server 在内存中存储了一份数据</li>
-<li>ZooKeeper 启动时，将从实例中选举一个 leader（Paxos 协议）</li>
-<li>Leader 负责处理数据更新等操作（Zab 协议）</li>
-<li>一个更新操作成功，当且仅当大多数 Server 在内存中成功修改数据</li>
-</ul>
-<p>ZooKeeper 本身可以是单机模式，也可以是集群模式，为了 ZooKeeper 本身不出现单点故障，通常情况使用集群模式（Server 数目一般为奇数），而且是 master/slave 模式的集群。</p>
-<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><p><img src="/images/zookeeper/ZooKeeper%E8%A7%92%E8%89%B2%E8%AF%B4%E6%98%8E.png" alt="ZooKeeper角色说明"></p>
-<h3 id="Leader"><a href="#Leader" class="headerlink" title="Leader"></a>Leader</h3><p>Leader 不直接接受 Client 的请求，但接受由其他 Follower 和 Observer 转发过来的 Client 请求，此外，Leader 还负责投票的发起和决议，即时更新状态和数据。</p>
-<h3 id="Follower"><a href="#Follower" class="headerlink" title="Follower"></a>Follower</h3><p>Follower 角色接受客户端请求并返回结果，参与 Leader 发起的投票和选举，但不具有写操作的权限。</p>
-<h3 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h3><p>Observer 角色接受客户端连接，将写操作转给 Leader，但 Observer 不参与投票（即不参加一致性协议的达成），只同步 Leader 节点的状态，Observer 角色是为集群系统扩展而生的。</p>
-<p>应用场景：</p>
-<ul>
-<li>提高集群的读性能（未参与事务的提交过程）</li>
-<li>跨数据中心部署</li>
-</ul>
-<h3 id="Follower-vs-Observer-请求流程"><a href="#Follower-vs-Observer-请求流程" class="headerlink" title="Follower vs Observer 请求流程"></a>Follower vs Observer 请求流程</h3><p>Follower-Leader 写请求流程：<br><img src="/images/zookeeper/Follower-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Follower-Leader请求流程"></p>
-<ol>
-<li>节点 1（Follower） 收到写请求，转发到节点 2（Leader）</li>
-<li>节点 2 发送 Propose 给集群中所有 Follower 节点</li>
-<li>Follower 节点收到 Propose 后，返回 Accept 给 Leader</li>
-<li>Leader 收到大多数节点的 Accept 后，向所有节点发送 Commit</li>
-<li>节点 1 收到 Commit 后，返回客户端，告诉客户端写成功</li>
-</ol>
-<p>Observer-Leader 写请求流程：<br><img src="/images/zookeeper/Obeserver-Leader%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png" alt="Obeserver-请求流程"></p>
-<ol>
-<li>节点 1（Observer） 收到写请求，转发到节点 2（Leader）</li>
-<li>节点 2 发送 Propose 给集群中所有 Follower 节点</li>
-<li>Follower 节点收到 Propose 后，返回 Accept 给 Leader</li>
-<li>Leader 收到大多数节点的 Accept 后，向所有节点发送 Commit</li>
-<li>节点 1 不参与事务的提交过程，而是一直等待，等到收到 Leader 的 INFORM 后，返回客户端，告诉客户端写成功</li>
-</ol>
-<h2 id="节点数"><a href="#节点数" class="headerlink" title="节点数"></a>节点数</h2><p>ZooKeeper 要求集群节点数大于 1，且为单数，原因有以下两点。</p>
-<ol>
-<li>容错<br>由于在增删改操作中需要半数以上服务器通过，来分析以下情况：</li>
-</ol>
-<ul>
-<li>2 台服务器，至少 2 台正常运行才行（2 的半数为 1，半数以上最少为 2），正常运行 1 台服务器都不允许挂掉</li>
-<li>3 台服务器，至少 2 台正常运行才行（3 的半数为 1.5，半数以上最少为 2），正常运行可以允许 1 台服务器挂掉</li>
-<li>4 台服务器，至少 3 台正常运行才行（4 的半数为 2，半数以上最少为 3），正常运行可以允许 1 台服务器挂掉</li>
-<li>5 台服务器，至少 3 台正常运行才行（5 的半数为 2.5，半数以上最少为 3），正常运行可以允许 2 台服务器挂掉</li>
-<li>6 台服务器，至少 3 台正常运行才行（6 的半数为 3，半数以上最少为 4），正常运行可以允许 2 台服务器挂掉</li>
-</ul>
-<p>通过以上可以发现，3 台服务器和 4 台服务器都最多允许 1 台服务器挂掉，5 台服务器和 6 台服务器都最多允许 2 台服务器挂掉，但是明显 4 台服务器成本高于 3 台服务器成本，6 台服务器成本高于 5 服务器成本。这是由于半数以上投票通过决定的。</p>
-<ol start="2">
-<li>防脑裂<br>一个 ZooKeeper 集群中，可以有多个 follower、observer 服务器，但是必需只能有一个 leader 服务器。如果 leader 服务器挂掉了，剩下的服务器集群会通过半数以上投票选出一个新的 leader 服务器。</li>
-</ol>
-<p>集群互不通讯情况：</p>
-<ul>
-<li>一个集群 3 台服务器，全部运行正常，但是其中 1 台裂开了，和另外 2 台无法通讯。3 台机器里面 2 台正常运行过半票可以选出一个 leader。</li>
-<li>一个集群 4 台服务器，全部运行正常，但是其中 2 台裂开了，和另外 2 台无法通讯。4 台机器里面 2 台正常工作没有过半票以上达到3，无法选出 leader 正常运行。</li>
-<li>一个集群 5 台服务器，全部运行正常，但是其中 2 台裂开了，和另外 3 台无法通讯。5 台机器里面 3 台正常运行过半票可以选出一个 leader。</li>
-<li>一个集群 6 台服务器，全部运行正常，但是其中 3 台裂开了，和另外 3 台无法通讯。6 台机器里面 3 台正常工作没有过半票以上达到 4，无法选出 leader 正常运行。</li>
-</ul>
-<p>通可以上分析可以看出，为什么 ZooKeeper 集群数量总是单出现，主要原因还是在于第 2 点，防脑裂，对于第 1 点，无非是正常控制，但是不影响集群正常运行。但是出现第 2 种裂的情况，ZooKeeper 集群就无法正常运行了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1394,7 +1392,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

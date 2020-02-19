@@ -171,6 +171,108 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/19/Redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/19/Redis%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" class="post-title-link" itemprop="url">Redis 布隆过滤器</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-19 20:05:00 / 修改时间：21:07:45" itemprop="dateCreated datePublished" datetime="2020-02-19T20:05:00+08:00">2020-02-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>布隆过滤器（Bloom Filter）是一种空间效率极高的概率型算法和数据结构，主要用来判断一个元数是否在集合中存在。<br>因为它是一个概率型的算法，所以会存在一定的误差，如果传入一个值去布隆过滤器中检索，可能会出现检测存在的结果实际上是不存在的，但是肯定不会出现实际上不存在却反馈存在的结果。<br>因此，布隆过滤器不适合那些“零错误”的应用场合。而在能容忍低错误率的应用场合下，布隆过滤器通过极少的错误换取了存储空间的极大节省。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>我们需要通过加载 module 来使用 Redis 中的布隆过滤器。使用 Docker 可以直接在 Redis 中体验布隆过滤器。 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 6379:6379 --name bloomfilter redislabs/rebloom</span><br><span class="line">docker <span class="built_in">exec</span> -it bloomfilter redis-cli</span><br></pre></td></tr></table></figure>
+
+<p>Redis 布隆过滤器主要就 2 个指令:</p>
+<ul>
+<li>bf.add 添加元素到布隆过滤器中：<code>bf.add urls https://cdrcool.github.io</code>。</li>
+<li>bf.exists 判断某个元素是否在过滤器中：<code>bf.exists urls https://cdrcool.github.io</code>。</li>
+</ul>
+<p>如果我们需要一次添加或查询多个元素，还可以使用以下 2 个指令：</p>
+<ul>
+<li>bf.madd 判断某个元素是否在过滤器中：<code>bf.exists urls https://cdrcool.github.io https://github.com</code>。</li>
+<li>bf.mexists 判断某个元素是否在过滤器中：<code>bf.exists urls https://cdrcool.github.io https://github.com</code>。</li>
+</ul>
+<p>当我们调用 bd.add 或 bf.madd 指令时，如果此时布隆过滤器不存在，那么 Redis 会帮我们自动创建。Redis 其实还提供了自定义参数的布隆过滤器，需要我们在 add 之前使用 bf.reserve 指令显示创建，如：<code>bf.reserve urls 0.01 100</code>。<br>bf.reservee 有 3 个参数：</p>
+<ul>
+<li>key 过滤器的名字。</li>
+<li>error_rate 允许布隆过滤器的错误率，这个值越低过滤器的位数组的大小越大，占用空间也就越大。</li>
+<li>initial_size 布隆过滤器可以储存的元素个数，当实际存储的元素个数超过这个值之后，过滤器的准确率会下降。</li>
+</ul>
+<p>需要注意的是，在执行 bf.reservee 这个命令之前过滤器的名字应该不存在，不然会报错。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>每个布隆过滤器对应到 Redis 的数据结构里面就是一个大型的 BitMap 和几个不一样的无偏 hash 函数。所谓无偏就是能够把元素的 hash 值算的比较均匀</p>
+<p>向布隆过滤器中添加 key 时，会使用多个 hash 函数对 key 进行 hash 算的一个整数索引值然后对位数组长度进行取模运算得到一个位置，每个 hash 函数都会算的一个不同的位置，再把位数组的这几个位置都置为 1 就完成了 add 操作。</p>
+<p>向布隆过滤器询问 key 是否存在时，跟 add 一样，也会把 hash 的几个位置都算出来，看看位数组中这几个位置是否都为 1，只要有一个位为 0，那么说明布隆过滤器中这个 key 不存在。如果都是 1，这并不能说明这个 key 就一定存在，只是极有可能存在，因为这些位置被置为 1 可能是因为其它的 key 存在所致。如果这个数组比较稀疏，判断正确的概率就会很大。</p>
+<p>使用时不要让实际元素远大于初始化大小，当实际元素开始超出初始化大小时，应该对布隆过滤器进行重建，重新分配一个 size 更大的过滤器，再将所有的历史元素批量 add 进去(这就要求我们在其它的存储器中记录所有的历史元素)。</p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ul>
+<li>爬虫系统中 URL 去重</li>
+<li>邮箱系统中垃圾邮件过滤</li>
+<li>推荐系统中新闻推荐 </li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://segmentfault.com/a/1190000016721700" target="_blank" rel="noopener">Redis 中的布隆过滤器</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/19/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F&%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF&%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1374,82 +1476,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/11/Elasticsearch%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/11/Elasticsearch%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">Elasticsearch集群架构</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-02-11 16:20:17 / 修改时间：16:51:23" itemprop="dateCreated datePublished" datetime="2020-02-11T16:20:17+08:00">2020-02-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-<p>title:Elasticsearch 集群架构<br>date:2020-02-1116:20:00<br>categories:Elasticsearch</p>
-<hr>
-<h2 id="主要特征"><a href="#主要特征" class="headerlink" title="主要特征"></a>主要特征</h2><p>从架构的角度出发，ElasticSearch 具有下面这些主要特征：</p>
-<ul>
-<li><p>合理的默认配置，使得用户在简单安装以后能直接使用 ElasticSearch 而不需要任何额外的调试，这包括内置的发现（如字段类型检测）和自动配置功能。</p>
-</li>
-<li><p>默认的分布式工作模式，每个节点总是假定自己是某个集群的一部分或将是某个集群的一部分，一旦工作启动节点便会加入某个集群。</p>
-</li>
-<li><p>对等架构（P2P）可以避免单点故障（SPOF），节点会自动连接到集群中的其他节点，进行相互的数据交换和监控操作。这其中就包括索引分片的自动复制。</p>
-</li>
-<li><p>易于向集群扩充新节点，不论是从数据容量的角度还是数量角度。</p>
-</li>
-<li><p>ElasticSearch 没有对索引中的数据结构强加任何限制，从而允许用户调整现有的数据模型。正如之前描述的那样，ElasticSearch 支持在一个索引中存在多种数据类型，并允许用户调整业务模型，包括处理文档之间的关联（尽管这种功能非常有限）。</p>
-</li>
-<li><p>准实时（NearRealTime，NRT）搜索和版本同步（versioning）。考虑到 ElasticSearch 的分布式特性，查询延迟和节点之间临时的数据不同步是难以避免的。ElasticSearch 尝试消除这些问题并且提供额外的机制用于版本同步。</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1520,7 +1546,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
