@@ -46,19 +46,19 @@
   };
 </script>
 
-  <meta name="description" content="业务逻辑处理一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。 那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。 利用数据库的唯一约束实现幂等以转账为例：将账户 X 的余额加 100 元。在这个例子中，我们可以通过改造业务逻辑，让它具备幂等性。首先，">
+  <meta name="description" content="分布式锁本质上要实现的目标就是在 Redis 里面占一个“茅坑”，当别的进程也要来占时，发现已经有人蹲在那里了，就只好放弃或者稍候再试。 占坑一般是使用 setnx(set if not exist) 指令，只允许被一个客户端占用。先来先占，再调用 del 指令释放茅坑。 12345setnx lock:codehole true... do something critical ...del l">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RabbitMQ 处理消息重复消费">
-<meta property="og:url" content="http://yoursite.com/2020/01/28/RabbitMQ%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/index.html">
+<meta property="og:title" content="Redis 分布式锁实现">
+<meta property="og:url" content="http://yoursite.com/2020/02/19/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="业务逻辑处理一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。 那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。 利用数据库的唯一约束实现幂等以转账为例：将账户 X 的余额加 100 元。在这个例子中，我们可以通过改造业务逻辑，让它具备幂等性。首先，">
+<meta property="og:description" content="分布式锁本质上要实现的目标就是在 Redis 里面占一个“茅坑”，当别的进程也要来占时，发现已经有人蹲在那里了，就只好放弃或者稍候再试。 占坑一般是使用 setnx(set if not exist) 指令，只允许被一个客户端占用。先来先占，再调用 del 指令释放茅坑。 12345setnx lock:codehole true... do something critical ...del l">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-01-28T10:52:00.000Z">
-<meta property="article:modified_time" content="2020-01-28T12:30:07.982Z">
+<meta property="article:published_time" content="2020-02-19T04:30:00.000Z">
+<meta property="article:modified_time" content="2020-02-19T05:20:18.493Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/28/RabbitMQ%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/">
+<link rel="canonical" href="http://yoursite.com/2020/02/19/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0/">
 
 
 <script id="page-configurations">
@@ -70,7 +70,7 @@
   };
 </script>
 
-  <title>RabbitMQ 处理消息重复消费 | OnePiece</title>
+  <title>Redis 分布式锁实现 | OnePiece</title>
   
 
 
@@ -175,7 +175,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/28/RabbitMQ%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/19/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -188,7 +188,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          RabbitMQ 处理消息重复消费
+          Redis 分布式锁实现
         </h1>
 
         <div class="post-meta">
@@ -199,7 +199,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-01-28 18:52:00 / 修改时间：20:30:07" itemprop="dateCreated datePublished" datetime="2020-01-28T18:52:00+08:00">2020-01-28</time>
+              <time title="创建时间：2020-02-19 12:30:00 / 修改时间：13:20:18" itemprop="dateCreated datePublished" datetime="2020-02-19T12:30:00+08:00">2020-02-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -207,8 +207,8 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/RabbitMQ/" itemprop="url" rel="index">
-                    <span itemprop="name">RabbitMQ</span>
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
                   </a>
                 </span>
             </span>
@@ -224,11 +224,27 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="业务逻辑处理"><a href="#业务逻辑处理" class="headerlink" title="业务逻辑处理"></a>业务逻辑处理</h2><p>一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。</p>
-<p>那么如何实现幂等操作呢？最好的方式就是，从业务逻辑设计上入手，将消费的业务逻辑设计成具备幂等性的操作。但是，不是所有的业务都能设计成天然幂等的，这里就需要一些方法和技巧来实现幂等。</p>
-<h3 id="利用数据库的唯一约束实现幂等"><a href="#利用数据库的唯一约束实现幂等" class="headerlink" title="利用数据库的唯一约束实现幂等"></a>利用数据库的唯一约束实现幂等</h3><p>以转账为例：将账户 X 的余额加 100 元。<br>在这个例子中，我们可以通过改造业务逻辑，让它具备幂等性。<br>首先，我们可以限定，对于每个转账单每个账户只可以执行一次变更操作，在分布式系统中，这个限制实现的方法非常多，最简单的是我们在数据库中建一张转账流水表，这个表有三个字段：转账单 ID、账户 ID 和变更金额，然后给转账单 ID 和账户 ID 这两个字段联合起来创建一个唯一约束，这样对于相同的转账单 ID 和账户 ID，表里至多只能存在一条记录。<br>这样，我们消费消息的逻辑可以变为：“在转账流水表中增加一条转账记录，然后再根据转账记录，异步操作更新用户余额即可。”在转账流水表增加一条转账记录这个操作中，由于我们在这个表中预先定义了“账户 ID 转账单 ID”的唯一约束，对于同一个转账单同一个账户只能插入一条记录，后续重复的插入操作都会失败，这样就实现了一个幂等的操作。我们只要写一个 SQL，正确地实现它就可以了。<br>基于这个思路，不光是可以使用关系型数据库，只要是支持类似“INSERT IF NOT EXIST”语义的存储类系统都可以用于实现幂等，比如，我们可以用 Redis 的 SETNX 命令来替代数据库中的唯一约束，来实现幂等消费。</p>
-<h3 id="为更新的数据设置前置条件"><a href="#为更新的数据设置前置条件" class="headerlink" title="为更新的数据设置前置条件"></a>为更新的数据设置前置条件</h3><p>另外一种实现幂等的思路是，给数据变更设置一个前置条件，如果满足条件就更新数据，否则拒绝更新数据，在更新数据的时候，同时变更前置条件中需要判断的数据。<br>这样，重复执行这个操作时，由于第一次更新数据的时候已经变更了前置条件中需要判断的数据，不满足前置条件，则不会重复执行更新数据操作。<br>比如，刚刚我们说过，“将账户 X 的余额增加 100元”这个操作并不满足幂等性，我们可以把这个操作加上一个前置条件，变为：“如果账户 X 当前的余额为 500元，将余额加 100元”，这个操作就具备了幂等性。<br>对应到消息队列中的使用时，可以在发消息时在消息体中带上当前的余额，在消费的时候进行判断数据库中，当前余额是否与消息中的余额相等，只有相等才执行变更操作。<br>但是，如果我们要更新的数据不是数值，或者我们要做一个比较复杂的更新操作怎么办？用什么作为前置判断条件呢？<br>更加通用的方法是，给我们的数据增加一个版本号属性，每次更数据前，比较当前数据的版本号是否和消息中的版本号一致，如果不一致就拒绝更新数据，更新数据的同时将版本号 +1，一样可以实现幂等更新。</p>
-<h3 id="记录并检查操作"><a href="#记录并检查操作" class="headerlink" title="记录并检查操作"></a>记录并检查操作</h3><p>如果上面提到的两种实现幂等方法都不能适用于我们的场景，我们还有一种通用性最强，适用范围最广的实现幂等性方法：记录并检查操作，也称为“Token 机制或者 GUID（全局唯一ID）机制”，实现的思路特别简单：在执行数据更新操作之前，先检查一下是否执行过这个更新操作。<br>具体的实现方法是，在发送消息时，给每条消息指定一个全局唯一的 ID，消费时，先根据这个 ID 检查这条消息是否有被消费过，如果没有消费过，才更新数据，然后将消费状态置为已消费。<br>原理和实现是不是很简单？其实一点儿都不简单，在分布式系统中，这个方法其实是非常难实现的。<br>首先，给每个消息指定一个全局唯一的 ID 就是一件不那么简单的事儿，方法有很多，但都不太好同时满足简单、高可用和高性能，或多或少都要有些牺牲。更加麻烦的是，在“检查消费状态，然后更新数据并且设置消费状态”中，三个操作必须作为一组操作保证原子性，才能真正实现幂等，否则就会出现 Bug。</p>
+        <p>分布式锁本质上要实现的目标就是在 Redis 里面占一个“茅坑”，当别的进程也要来占时，发现已经有人蹲在那里了，就只好放弃或者稍候再试。</p>
+<p>占坑一般是使用 setnx(set if not exist) 指令，只允许被一个客户端占用。先来先占，再调用 del 指令释放茅坑。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">setnx lock:codehole <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">... <span class="keyword">do</span> something critical ...</span><br><span class="line"></span><br><span class="line">del lock:codehole</span><br></pre></td></tr></table></figure>
+
+<p>但是有个问题，如果逻辑执行到中间出现异常了，可能会导致 del 指令没有被调用，这样就会陷入死锁，锁永远得不到释放。</p>
+<p>于是我们在拿到锁之后，再给锁加上一个过期时间，比如 5s，这样及时中间出现异常也可以保证 5s 之后锁会自动释放。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setnx lock:codehole <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">expire lock:codehole 5</span><br><span class="line"></span><br><span class="line">... <span class="keyword">do</span> something critical ...</span><br><span class="line"></span><br><span class="line">del lock:codehole</span><br></pre></td></tr></table></figure>
+
+<p>但是以上逻辑还有问题。如果再 setnx 和 expire 之间服务进程突然挂掉了，可能是因为机器掉电或者被认为杀掉的，就会导致 expire 得不到执行，也会造成死锁。</p>
+<p>这种问题的根源就在于 setnx 和 expire 是两条指令而不是原子指令，所以我们应该使用这两个指定的原子指令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> lock:codehole <span class="literal">true</span> ex 5 nx</span><br><span class="line"></span><br><span class="line">... <span class="keyword">do</span> something critical ...</span><br><span class="line"></span><br><span class="line">del lock:codehole</span><br></pre></td></tr></table></figure>
+
+<h2 id="超时问题"><a href="#超时问题" class="headerlink" title="超时问题"></a>超时问题</h2><p>Redis 分布式锁不能解决超时问题，如果在加锁和释放锁之间的逻辑执行时间太长，以至于超出了锁的超时限制，就会出现问题。因为这时候第一个线程持有的锁过期了，临界区的逻辑还没有执行完，这个时候第二个线程就提前重新持有了这把锁，导致临界区代码不能得到严格的串行化执行。</p>
+<p>为了避免这个问题，Redis 分布式锁不要用于较长时间的任务。如果真的偶尔出现了，数据出现的小波错乱可能需要人工介入结解决。</p>
+<h2 id="可重入性"><a href="#可重入性" class="headerlink" title="可重入性"></a>可重入性</h2><p>可重入性是指线程在持有锁的情况下再次请求加锁，如果一个锁支持同一个线程的多次加锁，那么这个锁就是可重入的。Redis 分布式锁如果要支持可重入，需要对客户端的 set 方法进行包装，使用线程的 Threadlocal 变量存储当前持有锁的计数。</p>
+<p>不推荐使用可重入锁，它加重了客户端的复杂性，在编写业务方法时注意在逻辑结构上进行调整完全可以不适用可重入锁。</p>
+<h2 id="Readlock"><a href="#Readlock" class="headerlink" title="Readlock"></a>Readlock</h2><p>在集群环境下，前面的分布式锁实现是有缺陷的，它不是绝对安全的，</p>
+<p>比如在 Sentinel 集群中，主节点挂掉时，从节点会取而代之，客户端上却并没有明显感知。原先第一个客户端在主节点中申请成功了一把锁，但是这把锁还没有来得及同步到从节点，主节点突然挂掉了。然后从节点变成了主节点，这个新的节点内部没有这个锁，所以当一个客户端过来请求加锁时，立即就批准了。这样就会导致系统中同样一把锁被两个客户端同时持有，不安全性由此产生。</p>
+<p>不过这种不安全也仅仅是在主从发生 failover 的情况下才会产生，而且持续时间极短，业务系统多数情况下可以容忍。</p>
+<p>为了解决这个问题，Redis 提供了 Readlock。要使用 Readlock，需要提供多个 Redis 实例，这些实例之前相互独立没有主从关系。同很多分布式算法一样，Readloack 也使用“大多数机制”。</p>
+<p>使用 Readlock 也是有代价的，需要更多的 Redis 实例，性能也下降了，代码上还需要引入额外的 library，运维上也需要特殊对待，这些都是需要考虑的成本。</p>
 
     </div>
 
@@ -264,13 +280,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/28/RabbitMQ%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7/" rel="prev" title="RabbitMQ 保证消息的顺序性">
-      <i class="fa fa-chevron-left"></i> RabbitMQ 保证消息的顺序性
+    <a href="/2020/02/19/Redis%E7%BA%BF%E7%A8%8BIO%E6%A8%A1%E5%9E%8B/" rel="prev" title="Redis 线程 IO 模型">
+      <i class="fa fa-chevron-left"></i> Redis 线程 IO 模型
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/28/RabbitMQ%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" rel="next" title="RabbitMQ 集群模式">
-      RabbitMQ 集群模式 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -331,7 +344,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#业务逻辑处理"><span class="nav-number">1.</span> <span class="nav-text">业务逻辑处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#利用数据库的唯一约束实现幂等"><span class="nav-number">1.1.</span> <span class="nav-text">利用数据库的唯一约束实现幂等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为更新的数据设置前置条件"><span class="nav-number">1.2.</span> <span class="nav-text">为更新的数据设置前置条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#记录并检查操作"><span class="nav-number">1.3.</span> <span class="nav-text">记录并检查操作</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#超时问题"><span class="nav-number">1.</span> <span class="nav-text">超时问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可重入性"><span class="nav-number">2.</span> <span class="nav-text">可重入性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Readlock"><span class="nav-number">3.</span> <span class="nav-text">Readlock</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -456,7 +469,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: 'd9c267207602993c8532a6c69171399b',
+      id: '0bfaa170eaeaf8015cff237c7496fb07',
         language: 'zh-CN',
       distractionFreeMode: true
     });
