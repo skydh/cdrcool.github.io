@@ -196,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-02-19 12:02:00 / 修改时间：12:25:24" itemprop="dateCreated datePublished" datetime="2020-02-19T12:02:00+08:00">2020-02-19</time>
+              <time title="创建时间：2020-02-19 12:02:00 / 修改时间：12:29:03" itemprop="dateCreated datePublished" datetime="2020-02-19T12:02:00+08:00">2020-02-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -222,7 +222,7 @@
 
       
           <p>Redis 采用的是<strong>基于内存的、单线程模型</strong>的 KV 数据库。官方提供的数据是可以达到 10w+ 的 QPS。这个数据不比采用单进程多线程的同样基于内存的 KV 数据库 Memcached 差。</p>
-<h2 id="理解单线程模型"><a href="#理解单线程模型" class="headerlink" title="理解单线程模型"></a>理解单线程模型</h2><p><img src="images/redis/%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png" alt="单线程模型实例"></p>
+<h2 id="理解单线程模型"><a href="#理解单线程模型" class="headerlink" title="理解单线程模型"></a>理解单线程模型</h2><p><img src="/images/redis/%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png" alt="单线程模型实例"></p>
 <ol>
 <li>Redis 会将每个客户端都关联一个指令队列。客户端的指令通过队列来按顺序处理，先到先服务。</li>
 <li>在一个客户端的指令队列中的指令是顺序执行的，但是多个指令队列中的指令是无法保证顺序的，例如执行完 client-0 的队列中的 command-0 后，接下去是执行哪个队列中的第一个指令是无法确定的，但是肯定不会同时执行两个指令。</li>
