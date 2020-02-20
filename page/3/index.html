@@ -171,6 +171,236 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%20IO%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/04/Netty%20IO%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">Netty IO模型</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-04 22:59:00" itemprop="dateCreated datePublished" datetime="2020-02-04T22:59:00+08:00">2020-02-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-08 21:14:19" itemprop="dateModified" datetime="2020-02-08T21:14:19+08:00">2020-02-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="IO-模型"><a href="#IO-模型" class="headerlink" title="IO 模型"></a>IO 模型</h2><p>IO 模型主要分类：</p>
+<ul>
+<li><p>同步（synchronous）IO 和异步（asynchronous）IO</p>
+</li>
+<li><p>阻塞（blocking）IO 和非阻塞（non-blocking）IO</p>
+</li>
+<li><p>同步阻塞（blocking-IO）简称 BIO</p>
+</li>
+<li><p>同步非阻塞（non-blocking-IO）简称 NIO</p>
+</li>
+<li><p>异步非阻塞（synchronous-non-blocking-IO）简称 AIO</p>
+</li>
+</ul>
+<h3 id="同步-VS-异步"><a href="#同步-VS-异步" class="headerlink" title="同步 VS 异步"></a>同步 VS 异步</h3><p>同步：发送一个请求，等待返回，再发送下一个请求，同步可以避免出现死锁，脏读的发生。</p>
+<p>异步：发送一个请求，不等待返回，随时可以再发送下一个请求，可以提高效率，保证并发。</p>
+<p>简述：数据就绪后需要自己去读是同步，数据就绪直接读好再回调给程序是异步。</p>
+<h3 id="阻塞-VS-非阻塞"><a href="#阻塞-VS-非阻塞" class="headerlink" title="阻塞 VS 非阻塞"></a>阻塞 VS 非阻塞</h3><p>阻塞：传统的 IO 流都是阻塞式的。也就是说，当一个线程调用 read（）或者 write（）方法时，该线程将被阻塞，直到有一些数据读读取或者被写入，在此期间，该线程不能执行其他任何任务。在完成网络通信进行 IO 操作时，由于线程会阻塞，所以服务器端必须为每个客户端都提供一个独立的线程进行处理，当服务器端需要处理大量的客户端时，性能急剧下降。</p>
+<p>非阻塞：Java NIO 是非阻塞式的。当线程从某通道进行读写数据时，若没有数据可用时，该线程会去执行其他任务。线程通常将非阻塞 IO 的空闲时间用于在其他通道上执行 IO 操作，所以单独的线程可以管理多个输入和输出通道。因此 NIO 可以让服务器端使用一个或有限几个线程来同时处理连接到服务器端的所有客户端。</p>
+<p>简述：没有数据传过来时，读会阻塞直到有数据；缓冲区满时，写操作也会阻塞，这就是阻塞。非粗赛遇到这些情况，都是直接返回。</p>
+<h3 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h3><p>以我们去饭店吃饭为例：</p>
+<ul>
+<li>BIO：食堂排队打饭模式，排队在窗口，打好才走；</li>
+<li>NIO：等待被叫模式，等待被叫，好了自己去端；</li>
+<li>AIO：包厢模式，点单后菜直接被端上桌。</li>
+</ul>
+<h3 id="IO-VS-NIO"><a href="#IO-VS-NIO" class="headerlink" title="IO VS NIO"></a>IO VS NIO</h3><table>
+<thead>
+<tr>
+<th align="center">IO</th>
+<th align="center">NIO</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">面向流（Stream Oriented）</td>
+<td align="center">面向缓冲区（Buffer Oriented）</td>
+</tr>
+<tr>
+<td align="center">阻塞 IO（Blocking IO）</td>
+<td align="center">非阻塞 IO（Non Blocking IO）</td>
+</tr>
+<tr>
+<td align="center">无</td>
+<td align="center">选择器（Selectors）</td>
+</tr>
+</tbody></table>
+<h3 id="BIO-VS-NIO-VS-AIO"><a href="#BIO-VS-NIO-VS-AIO" class="headerlink" title="BIO VS NIO VS AIO"></a>BIO VS NIO VS AIO</h3><table>
+<thead>
+<tr>
+<th align="center">BIO</th>
+<th align="center">NIO</th>
+<th align="center">AIO</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Thread-Per-Connection</td>
+<td align="center">Reactor</td>
+<td align="center">Proactor</td>
+</tr>
+</tbody></table>
+<h3 id="BIO、NIO、AIO-适用场景"><a href="#BIO、NIO、AIO-适用场景" class="headerlink" title="BIO、NIO、AIO 适用场景"></a>BIO、NIO、AIO 适用场景</h3><ul>
+<li>BIO 方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4 以前的唯一选择。</li>
+<li>NIO 方式适用于连接数目多且连接比较短（轻操作）的架构，比如聊天服务器，并发局限于应用中，编程比较复杂。</li>
+<li>AIO方式使用于连接数目多且连接比较长（重操作）的架构，比如相册服务器，充分调用 OS 参与并发操作，编程比较复杂，JDK7 开始支持。</li>
+</ul>
+<h3 id="多路复用-IO（IO-Multiplexing）"><a href="#多路复用-IO（IO-Multiplexing）" class="headerlink" title="多路复用 IO（IO Multiplexing）"></a>多路复用 IO（IO Multiplexing）</h3><p>即经典的 <strong>Reactor 设计模式</strong>，有时也称为<strong>异步阻塞 IO</strong>，Java 中的 Selector 和 Linux 中的 epoll 都是这种模型。</p>
+<h4 id="Reactor-模式"><a href="#Reactor-模式" class="headerlink" title="Reactor 模式"></a>Reactor 模式</h4><p>Reactor 模式的核心流程：注册感兴趣的事件 -&gt; 扫描是否有感兴趣的事件发生 -&gt; 事件发生后做出响应的处理。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Client/Server</th>
+<th align="center">SocketChannel/ServerSocketChannel</th>
+<th align="center">OP_ACCEPT</th>
+<th align="center">OP_CONNECT</th>
+<th align="center">OP_WRITE</th>
+<th align="center">OP_READ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">client</td>
+<td align="center">SocketChannel</td>
+<td align="center"></td>
+<td align="center">Y</td>
+<td align="center">Y</td>
+<td align="center">Y</td>
+</tr>
+<tr>
+<td align="center">server</td>
+<td align="center">ServerSocketChannel</td>
+<td align="center">Y</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">server</td>
+<td align="center">SocketChannel</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">Y</td>
+<td align="center">Y</td>
+</tr>
+</tbody></table>
+<p>Reactor 模式有三种实现方式：Reactor 单线程、Reactor 多线程模式、Reactor 主从模式。</p>
+<ol>
+<li>Reactor 单线程模式</li>
+</ol>
+<p><img src="/images/netty/Reactor%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%BC%8F.png" alt="Reactor 单线程模式"></p>
+<p>每个客户端发起连接请求都会交给 acceptor，acceptor 根据事件类型交给线程 handler 处理，注意 acceptor 处理和 handler 处理都在一个线程中处理，所以其中某个 handler 阻塞时，会导致其他所有的 client 的 handler 都得不到执行，并且更严重的是，handler 的阻塞也会导致整个服务不能接收新的 client 请求(因为 acceptor 也被阻塞了). 因为有这么多的缺陷，因此单线程 Reactor 模型用的比较少.</p>
+<ol start="2">
+<li>Reactor 多线程模式</li>
+</ol>
+<p><img src="/images/netty/Reactor%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%BC%8F.png" alt="Reactor 多线程模式"></p>
+<p>有专门一个线程，即 Acceptor 线程用于监听客户端的TCP连接请求。</p>
+<p>客户端连接的 IO 操作都是由一个特定的 NIO 线程池负责。每个客户端连接都与一个特定的 NIO 线程绑定，因此在这个客户端连接中的所有 IO 操作都是在同一个线程中完成的。</p>
+<p>客户端连接有很多，但是 NIO 线程数是比较少的，因此一个 NIO 线程可以同时绑定到多个客户端连接中。</p>
+<p>缺点：如果我们的服务器需要同时处理大量的客户端连接请求或我们需要在客户端连接时，进行一些权限的检查，那么单线程的 Acceptor 很有可能就处理不过来，造成了大量的客户端不能连接到服务器。</p>
+<ol start="3">
+<li>Reactor 主从模式</li>
+</ol>
+<p><img src="/images/netty/Reactor%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F.png" alt="Reactor 主从模式"></p>
+<p><strong>举例说明：</strong><br>以饭店规模变化为例：</p>
+<ul>
+<li>Reactor 单线程模式：一个人包揽所有，迎宾、点菜、做饭、上菜、送客等；</li>
+<li>Reactor 多线程模式：多招几个伙计，大家一起做上面的事情；</li>
+<li>Reactor 主从模式：进一步分工，搞一个或多个人专门做迎宾。</li>
+</ul>
+<h4 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h4><ol>
+<li>缓冲区 Buffer<br>Buffer 是一个对象。它包含一些要写入或者读出的数据。<br>在面向流的 I/O 中，可以将数据写入或者将数据直接读到 Stream 对象中。在 NIO 中，所有的数据都是用缓冲区处理。这也就是很多博客说，IO 是面向流的，NIO 是面向缓冲区的。<br>缓冲区实质是一个数组，通常它是一个字节数组（ByteBuffer），也可以使用其他类的数组。但是一个缓冲区不仅仅是一个数组，缓冲区提供了对数据的结构化访问以及维护读写位置（limit）等信息。<br>最常用的缓冲区是 ByteBuffer，一个 ByteBuffer 提供了一组功能于操作 byte 数组。除了 ByteBuffer，还有其他的一些缓冲区，事实上，每一种Java基本类型（除了Boolean）都对应一种缓冲区，具体如下：</li>
+</ol>
+<ul>
+<li>ByteBuffer：字节缓冲区</li>
+<li>CharBuffer：字符缓冲区</li>
+<li>ShortBuffer：短整型缓冲区</li>
+<li>IntBuffer：整型缓冲区</li>
+<li>LongBuffer：长整型缓冲区</li>
+<li>FloatBuffer：浮点型缓冲区</li>
+<li>DoubleBuffer：双精度浮点型缓冲区</li>
+</ul>
+<ol start="2">
+<li>通道 Channel<br>Channel 是一个通道，可以通过它读取和写入数据，它就像自来水管一样，网络数据通过 Channel 读取和写入。<br>通道和流不同之处在于通道是双向的，流只是在一个方向移动，而且通道可以用于读，写或者同时用于读写。因为 Channel 是全双工的，所以它比流更好地映射底层操作系统的 API，特别是在 UNIX 网络编程中，底层操作系统的通道都是全双工的，同时支持读和写。<br>Channel 有四种实现：</li>
+</ol>
+<ul>
+<li>FileChannel：文件中读取数据。</li>
+<li>DatagramChannel：从 UDP 网络中读取或者写入数据。</li>
+<li>SocketChannel：从 TCP 网络中读取或者写入数据。</li>
+<li>ServerSocketChannel：允许你监听来自 TCP 的连接，就像服务器一样。每一个连接都会有一个 SocketChannel 产生。这句话的意思就是，ServerSocketChannel 用于服务端，SocketChannel 用于客户端。</li>
+</ul>
+<ol start="3">
+<li>多路复用器 Selector<br>Selector 会不断轮询注册在上面的 Channel，如果某个 Channel 上面有新的 TCP 连接接入、读或写事件，这个channel就处于就绪状态，会被 Selector 轮询出来，然后通过 SelectionKey 可以获取 Channel 的集合，进行后续的 I/O 操作。一个多路复用器 Selector 可以同时轮询多个 Channel，由于 JDK 使用了 epoll() 代替传统的 select 实现，所以它没有最大连接句柄 1024/2048 的限制。这就意味着只需一个线程负责 Selector 的轮询，就可以接入成千上万的客户端。</li>
+</ol>
+<h2 id="Netty-IO-模型"><a href="#Netty-IO-模型" class="headerlink" title="Netty IO 模型"></a>Netty IO 模型</h2><p>目前 Netty 只支持 NIO 模型。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://youzhixueyuan.com/java-nio-introduce.html" target="_blank" rel="noopener">高并发编程系列：NIO、BIO、AIO的区别，及NIO的应用和框架选型</a></li>
+<li><a href="https://blog.csdn.net/u011521382/article/details/81069457" target="_blank" rel="noopener">NIO相关概念介绍：缓冲区Buffer,通道Channel,多路复用器Selector</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/04/Netty%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1187,92 +1417,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/31/%E5%9F%BA%E4%BA%8EDocker%E6%90%AD%E5%BB%BAZooKeeper%E9%9B%86%E7%BE%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/31/%E5%9F%BA%E4%BA%8EDocker%E6%90%AD%E5%BB%BAZooKeeper%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">基于 Docker 搭建 ZooKeeper 集群</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-01-31 18:05:00 / 修改时间：18:06:38" itemprop="dateCreated datePublished" datetime="2020-01-31T18:05:00+08:00">2020-01-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ZooKeeper/" itemprop="url" rel="index">
-                    <span itemprop="name">ZooKeeper</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li><p>创建 network</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create --driver bridge --subnet 172.22.0.0/16 --gateway 172.22.0.1  op_net</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>创建 zookeeper.yml</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.1'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">zk-1:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zookeeper</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">zk-1</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">zk-1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">2181</span><span class="string">:2181</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">ZOO_MY_ID:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">ZOO_SERVERS:</span> <span class="string">server.1=0.0.0.0:2888:3888</span> <span class="string">server.2=zk-2:2888:3888</span> <span class="string">server.3=zk-3:2888:3888</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">ipv4_address:</span> <span class="number">172.22</span><span class="number">.0</span><span class="number">.11</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">zk-2:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zookeeper</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">zk-2</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">zk-2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">2182</span><span class="string">:2181</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">ZOO_MY_ID:</span> <span class="number">2</span></span><br><span class="line">      <span class="attr">ZOO_SERVERS:</span> <span class="string">server.1=zk-1:2888:3888</span> <span class="string">server.2=0.0.0.0:2888:3888</span> <span class="string">server.3=zk-3:2888:3888;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">ipv4_address:</span> <span class="number">172.22</span><span class="number">.0</span><span class="number">.12</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">zk-3:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zookeeper</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">zk-3</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">zk-3</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">2183</span><span class="string">:2181</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">ZOO_MY_ID:</span> <span class="number">3</span></span><br><span class="line">      <span class="attr">ZOO_SERVERS:</span> <span class="string">server.1=zk-1:2888:3888</span> <span class="string">server.2=zk-2:2888:3888</span> <span class="string">server.3=0.0.0.0:2888:3888</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">ipv4_address:</span> <span class="number">172.22</span><span class="number">.0</span><span class="number">.13</span></span><br><span class="line">      </span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">external:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">op_net</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>启动 ZooKeeper 集群</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose -f zookeeper.yml up -d</span><br></pre></td></tr></table></figure>
-
-
-</li>
-</ol>
-<p>参考资料：</p>
-<ol>
-<li><a href="https://blog.csdn.net/qq_38270106/article/details/88789737" target="_blank" rel="noopener">docker安装zookeeper集群</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1343,7 +1487,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
