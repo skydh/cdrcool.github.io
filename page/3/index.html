@@ -545,7 +545,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-08 21:14:19" itemprop="dateModified" datetime="2020-02-08T21:14:19+08:00">2020-02-08</time>
+                <time title="修改时间：2020-02-21 19:25:25" itemprop="dateModified" datetime="2020-02-21T19:25:25+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -677,7 +677,7 @@
 <li>Reactor 单线程模式</li>
 </ol>
 <p><img src="/images/netty/Reactor%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%BC%8F.png" alt="Reactor 单线程模式"></p>
-<p>每个客户端发起连接请求都会交给 acceptor，acceptor 根据事件类型交给线程 handler 处理，注意 acceptor 处理和 handler 处理都在一个线程中处理，所以其中某个 handler 阻塞时，会导致其他所有的 client 的 handler 都得不到执行，并且更严重的是，handler 的阻塞也会导致整个服务不能接收新的 client 请求(因为 acceptor 也被阻塞了). 因为有这么多的缺陷，因此单线程 Reactor 模型用的比较少.</p>
+<p>每个客户端发起连接请求都会交给 acceptor，acceptor 根据事件类型交给线程 handler 处理，注意 acceptor 处理和 handler 处理都在一个线程中处理，所以其中某个 handler 阻塞时，会导致其他所有的 client 的 handler 都得不到执行，并且更严重的是，handler 的阻塞也会导致整个服务不能接收新的 client 请求(因为 acceptor 也被阻塞了)。 因为有这么多的缺陷，因此单线程 Reactor 模型用的比较少。</p>
 <ol start="2">
 <li>Reactor 多线程模式</li>
 </ol>
