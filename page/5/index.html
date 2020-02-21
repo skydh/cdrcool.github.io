@@ -910,10 +910,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-01-25 11:22:00 / 修改时间：14:01:25" itemprop="dateCreated datePublished" datetime="2020-01-25T11:22:00+08:00">2020-01-25</time>
+              <time title="创建时间：2020-01-25 11:22:00" itemprop="dateCreated datePublished" datetime="2020-01-25T11:22:00+08:00">2020-01-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-21 22:11:30" itemprop="dateModified" datetime="2020-02-21T22:11:30+08:00">2020-02-21</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -940,15 +946,15 @@
           <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>Rebalance 本质上是一种协议，规定了一个 Consumer Group 下的所有 Consumer 如何达成一致，来分配订阅 Topic 的每个分区。在 Rebalance 过程中，所有 Consumer 实例共同参与，在协调者（Coordinator）组件的帮助下，完成订阅主题分区的分配。</p>
 <h2 id="触发条件"><a href="#触发条件" class="headerlink" title="触发条件"></a>触发条件</h2><p>Rebalance 的触发条件有以下3个：</p>
 <ul>
-<li>组成员数发生变更<br>比如有新的 Consumer 实例加入组或者离开组，抑或是有 Consumer 实例崩溃被“踢出”组。</li>
-<li>订阅主题数发生变更<br>Consumer Group 可以是用正则表达式的方式订阅主题，比如 consumer.subscribe(Pattern.compile(“t.*c”)) 就表明该 Group 订阅所有以字母t开头、字母 c 结尾的主题。在 Consumer Group 的运行过程中，一旦我们新创建了一个满足这样条件的主题，那么该 Group 就会发生 Rebalance。</li>
-<li>订阅主题的分区数发生变更<br>Kafka 当前只允许增加一个主题的分区数。当分区数增加时，就会触发订阅该主题的所有 Group 开启 Rebalance。</li>
+<li><strong>组成员数发生变更：</strong> 比如有新的 Consumer 实例加入组或者离开组，抑或是有 Consumer 实例崩溃被“踢出”组。</li>
+<li><strong>订阅主题数发生变更：</strong> Consumer Group 可以是用正则表达式的方式订阅主题，比如 consumer.subscribe(Pattern.compile(“t.*c”)) 就表明该 Group 订阅所有以字母t开头、字母 c 结尾的主题。在 Consumer Group 的运行过程中，一旦我们新创建了一个满足这样条件的主题，那么该 Group 就会发生 Rebalance。</li>
+<li><strong>订阅主题的分区数发生变更：</strong> Kafka 当前只允许增加一个主题的分区数。当分区数增加时，就会触发订阅该主题的所有 Group 开启 Rebalance。</li>
 </ul>
 <h2 id="分区分配策略"><a href="#分区分配策略" class="headerlink" title="分区分配策略"></a>分区分配策略</h2><p>Rebalance 发生时，Group 下所有的 Consumer 实例都会协调在一起共同参与。那每个 Consumer 实例怎么知道应该消费订阅主题的哪些分区呢？这就需要<a href="https://cdrcool.github.io/2020/01/24/Kafka分区分配策略/" target="_blank" rel="noopener">Kafka 分区分配策略</a>的协助了。</p>
 <h2 id="弊端"><a href="#弊端" class="headerlink" title="弊端"></a>弊端</h2><ul>
-<li>Rebalance 影响 Consumer 端 TPS<br>这是因为在 Rebalance 过程中，所有 Consumer 实例都会停止消费，直到 Rebalance 完成。</li>
-<li>Rebalance 很慢<br>尤其是当我们的 Group 下成员很多的时候。</li>
-<li>Rebalance 效率不高<br>当前 Kafka 的设计机制决定了每次 Rebalance 时，Group 下的所有成员都要参与进来，而且通常不会考虑局部性原理，但局部性原理对提升系统性能是特别重要的。</li>
+<li><strong>Rebalance 影响 Consumer 端 TPS：</strong> 这是因为在 Rebalance 过程中，所有 Consumer 实例都会停止消费，直到 Rebalance 完成。</li>
+<li><strong>Rebalance 很慢：</strong> 尤其是当我们的 Group 下成员很多的时候。</li>
+<li><strong>Rebalance 效率不高：</strong> 当前 Kafka 的设计机制决定了每次 Rebalance 时，Group 下的所有成员都要参与进来，而且通常不会考虑局部性原理，但局部性原理对提升系统性能是特别重要的。</li>
 </ul>
 <h2 id="避免-Rebalance"><a href="#避免-Rebalance" class="headerlink" title="避免 Rebalance"></a>避免 Rebalance</h2><p>在真实的业务场景中，很多 Rebalance 都是计划外的或者说是不必要的。</p>
 <p>要避免 Rebalance，还是要从 Rebalance 发生的时机入手。我们在前面说过，Rebalance 发生的时机有 3 个：</p>
