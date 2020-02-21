@@ -1238,7 +1238,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-21 17:20:30" itemprop="dateModified" datetime="2020-02-21T17:20:30+08:00">2020-02-21</time>
+                <time title="修改时间：2020-02-21 17:23:06" itemprop="dateModified" datetime="2020-02-21T17:23:06+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1271,8 +1271,8 @@
 <ul>
 <li><strong>sessionID</strong> 会话 ID，唯一标识一个会话，每次客户端创建新的会话时，Zookeeper 都会为其分配一个全局唯一的 sessionID。</li>
 <li><strong>TimeOut</strong> 会话超时时间，客户端在构造 Zookeeper 实例时，会配置 sessionTimeout 参数用于指定会话的超时时间，Zookeeper 客户端向服务端发送这个超时时间后，服务端会根据自己的超时时间限制最终确定会话的超时时间。</li>
-<li><strong>TickTime</strong> 下次会话超时时间点，为了便于 Zookeeper 对会话实行”分桶策略”管理，同时为了高效低耗地实现会话的超时检查与清理，Zookeeper 会为每个会话标记一个下次会话超时时间点，其值大致等于当前时间加上 TimeOut。</li>
-<li><strong>isClosing</strong> 标记一个会话是否已经被关闭，当服务端检测到会话已经超时失效时，会将该会话的 isClosing 标记为”已关闭”，这样就能确保不再处理来自该会话的心情求了。</li>
+<li><strong>TickTime</strong> 下次会话超时时间点，为了便于 Zookeeper 对会话实行“分桶策略”管理，同时为了高效低耗地实现会话的超时检查与清理，Zookeeper 会为每个会话标记一个下次会话超时时间点，其值大致等于当前时间加上 TimeOut。</li>
+<li><strong>isClosing</strong> 标记一个会话是否已经被关闭，当服务端检测到会话已经超时失效时，会将该会话的 isClosing 标记为”已关闭”，这样就能确保不再处理来自该会话的新情求了。</li>
 </ul>
 <h2 id="会话管理"><a href="#会话管理" class="headerlink" title="会话管理"></a>会话管理</h2><p>Zookeeper 的会话管理主要是通过 SessionTracker 来负责，其采用了分桶策略（将类似的会话放在同一区块中进行管理）进行管理，以便 Zookeeper 对会话进行不同区块的隔离处理以及同一区块的统一处理。</p>
 <p><img src="/images/zookeeper/session%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86.png" alt="session会话管理"></p>
