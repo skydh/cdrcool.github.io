@@ -202,7 +202,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-21 20:09:51" itemprop="dateModified" datetime="2020-02-21T20:09:51+08:00">2020-02-21</time>
+                <time title="修改时间：2020-02-21 20:13:25" itemprop="dateModified" datetime="2020-02-21T20:13:25+08:00">2020-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,7 +252,31 @@
 <p><strong>使用多线程 Reactor 模式：</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EventLoopGroup eventLoopGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line">ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap().group(eventLoopGroup)...</span><br></pre></td></tr></table></figure>
 
-<h2 id="粘包-半包处理"><a href="#粘包-半包处理" class="headerlink" title="粘包/半包处理"></a>粘包/半包处理</h2><p>为了处理 TCP 的粘包/半包问题，Netty 提供了三种常用的封帧方式：<br>方式\支持 | 解码 | 编码<br>:-: | :-: | :-:<br>固定长度 | FixedLengthFrameDecoder | 简单<br>分隔符 | DelimiterBasedFrameDecoder | 简单<br>固定长度字段存内容的长度信息 | LengthFieldBasedFrameDecoder | LengthFieldPrepender</p>
+<h2 id="粘包-半包处理"><a href="#粘包-半包处理" class="headerlink" title="粘包/半包处理"></a>粘包/半包处理</h2><p>为了处理 TCP 的粘包/半包问题，Netty 提供了三种常用的封帧方式：</p>
+<table>
+<thead>
+<tr>
+<th align="center">方式\支持</th>
+<th align="center">解码</th>
+<th align="center">编码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">固定长度</td>
+<td align="center">FixedLengthFrameDecoder</td>
+<td align="center">简单</td>
+</tr>
+<tr>
+<td align="center">分隔符</td>
+<td align="center">DelimiterBasedFrameDecoder</td>
+<td align="center">简单</td>
+</tr>
+<tr>
+<td align="center">固定长度字段存内容的长度信息</td>
+<td align="center">LengthFieldBasedFrameDecoder</td>
+<td align="center">LengthFieldPrepender</td>
+</tr>
+</tbody></table>
 <p>上面三种解码器都继承自 ByteToMessageDecoder。</p>
 <p>在之前的示例代码中，我们选择的都是“固定长度字段存内容的长度信息”方式，如下面这样：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 一次解码器：处理粘包/半包</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderFrameDecoder</span> <span class="keyword">extends</span> <span class="title">LengthFieldBasedFrameDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OrderFrameDecoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Integer.MAX_VALUE, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 一次编码器：处理粘包/半包</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderFrameEncoder</span> <span class="keyword">extends</span> <span class="title">LengthFieldPrepender</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OrderFrameEncoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
