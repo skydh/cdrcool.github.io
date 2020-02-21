@@ -1335,10 +1335,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-08 13:20:00 / 修改时间：13:49:32" itemprop="dateCreated datePublished" datetime="2020-02-08T13:20:00+08:00">2020-02-08</time>
+              <time title="创建时间：2020-02-08 13:20:00" itemprop="dateCreated datePublished" datetime="2020-02-08T13:20:00+08:00">2020-02-08</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-21 21:02:25" itemprop="dateModified" datetime="2020-02-21T21:02:25+08:00">2020-02-21</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -1366,7 +1372,7 @@
 <ul>
 <li><p>一次解码器：ByteToMessageDecoder<br>io.netty.buffer.ByteBuf（原始数据流） -&gt; io.netty.buffer.ByteBuf（用户数据）</p>
 </li>
-<li><p>二次解码器：MessageToMessageDecoder<I><br>io.netty.buffer.ByteBuf（用户数据） -&gt; Java Object</p>
+<li><p>二次解码器：<code>MessageToMessageDecoder&lt;I&gt;</code><br>io.netty.buffer.ByteBuf（用户数据） -&gt; Java Object</p>
 </li>
 </ul>
 <h2 id="常用二次编码码方式"><a href="#常用二次编码码方式" class="headerlink" title="常用二次编码码方式"></a>常用二次编码码方式</h2><ul>
@@ -1387,7 +1393,7 @@
 <h2 id="Netty-对常用编解码方式的支持"><a href="#Netty-对常用编解码方式的支持" class="headerlink" title="Netty 对常用编解码方式的支持"></a>Netty 对常用编解码方式的支持</h2><ol>
 <li>相关类都在包 io.netty.handler.codec</li>
 <li>支持 base64、bytes、compression、json、marshaling、protobuf、serialization、string、xml等</li>
-<li>编码器继承自 MessageToMessageEncoder<I>，解码器继承自 MessageToMessageDecoder<I></li>
+<li>编码器继承自 <code>MessageToMessageEncoder&lt;I&gt;</code>，解码器继承自 <code>MessageToMessageDecoder&lt;I&gt;</code></li>
 </ol>
 
       
