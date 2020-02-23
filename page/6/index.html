@@ -1160,7 +1160,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-23 17:06:27" itemprop="dateModified" datetime="2020-02-23T17:06:27+08:00">2020-02-23</time>
+                <time title="修改时间：2020-02-23 17:14:35" itemprop="dateModified" datetime="2020-02-23T17:14:35+08:00">2020-02-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1205,8 +1205,9 @@
 <h2 id="索引类型"><a href="#索引类型" class="headerlink" title="索引类型"></a>索引类型</h2><h3 id="普通索引"><a href="#普通索引" class="headerlink" title="普通索引"></a>普通索引</h3><p>最基本的索引，它没有任何限制，用于加速查询。</p>
 <h3 id="唯一索引"><a href="#唯一索引" class="headerlink" title="唯一索引"></a>唯一索引</h3><p>索引列的值必须唯一，但允许有空值。如果是组合索引，则列值的组合必须唯一。<br>由于唯一索引用不上 change buffer 的优化机制，因此如果业务可以接受，从性能角度出发我建议你优先考虑非唯一索引。</p>
 <h3 id="主键索引"><a href="#主键索引" class="headerlink" title="主键索引"></a>主键索引</h3><p>是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般是在建表的时候同时创建主键索引。</p>
-<p>主键索引的叶子节点存的是整行数据。在 InnoDB 里，主键索引也被称为聚簇索引（clustered index）。<br>非主键索引的叶子节点内容是主键的值。在 InnoDB 里，非主键索引也被称为二级索引（secondary index）。<br>由于基于非主键索引的查询需要多扫描一棵索引树（回表），因此我们在应用中应该尽量使用主键查询。</p>
-<h3 id="组合索引"><a href="#组合索引" class="headerlink" title="组合索引"></a>组合索引</h3><p>指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用组合索引时遵循最左前缀集合。</p>
+<p>主键索引的叶子节点存的是整行数据。在 InnoDB 里，主键索引也被称为聚簇索引（clustered index）。<br>非主键索引的叶子节点内容是主键的值。在 InnoDB 里，非主键索引也被称为二级索引（secondary index）。</p>
+<p>由于基于非主键索引的查询需要多扫描一棵索引树（回表），因此我们在应用中应该尽量使用主键查询。</p>
+<h3 id="组合索引"><a href="#组合索引" class="headerlink" title="组合索引"></a>组合索引</h3><p>指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。<strong>使用组合索引时遵循最左前缀集合。</strong></p>
 <h3 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h3><p>主要用来查找文本中的关键字，而不是直接与索引中的值相比较。</p>
 <h2 id="性能影响"><a href="#性能影响" class="headerlink" title="性能影响"></a>性能影响</h2><ul>
 <li><p>insert 索引个数越多，对于insert操作来说，维护的成本就越大，插入一条数据的速度也就越慢。</p>
