@@ -54,7 +54,7 @@
 <meta property="og:description" content="全局锁全局锁就是对整个数据库实例枷锁，命令是：Flush tables with read lock(FTWRL)。当需要让整个库处于只读状态的时候，可以使用这个命令，之后其他线程的以下语句会被阻塞：数据更新语句（数据的增删改）、数据定义语句（包括建表、修改表结构等）和更新类事务的提交语句。 全局锁的典型使用场景是，做全库逻辑备份。 但是让整库都只读，听上去就很危险：  如果你在主库上备份，那么在">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-10-10T01:36:02.000Z">
-<meta property="article:modified_time" content="2020-02-23T08:14:02.541Z">
+<meta property="article:modified_time" content="2020-02-23T08:17:22.891Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
 
@@ -205,7 +205,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-23 16:14:02" itemprop="dateModified" datetime="2020-02-23T16:14:02+08:00">2020-02-23</time>
+                <time title="修改时间：2020-02-23 16:17:22" itemprop="dateModified" datetime="2020-02-23T16:17:22+08:00">2020-02-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -237,8 +237,8 @@
 <li>如果你在主库上备份，那么在备份期间都不能执行更新，业务基本上就得停摆</li>
 <li>如果你在从库上备份，那么备份期间从库不能执行主库同步过来的 binlog，会导致主从延迟</li>
 </ul>
-<p>因此可以使用<strong>可重复读隔离级别</strong>来获取一致性视图。不过对于 MyISAM 这种不支持事务的引擎，还是只能使用FTWRL。</p>
-<p>不建议使用<code>set global readonly=true</code>，主要有两个原因：</p>
+<p>因此可以使用<strong>可重复读隔离级别</strong>来获取一致性视图。不过对于 MyISAM 这种不支持事务的引擎，还是只能使用 FTWRL。</p>
+<p>不建议使用<code>set global readonly=true</code>，确实 readonly 方式也可以让全库进入只读状态，但我还是会建议你用 FTWRL 方式，主要有两个原因：</p>
 <ul>
 <li>在有些系统中，readonly 的值会被用来做其他逻辑，比如用来判断一个库是主库还是备库。因此，修改 global 变量的方式影响面更大。</li>
 <li>在异常处理机制上有差异。如果执行 FTWRL 命令之后之后由于客户端发生异常断开，那么MySQL会自动释放这个全局锁，整个库回到可以正常更新的状态。而将整个库设置为 readonly 之后，如果客户端发生异常，则数据库就会一直保持 readonly 状态，这样会导致整个库长时间处于不可写状态，风险较高。</li>
