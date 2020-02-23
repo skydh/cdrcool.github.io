@@ -1129,7 +1129,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/09/MySQL%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/09/MySQL%E7%B4%A2%E5%BC%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1143,7 +1143,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/10/09/MySQL%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB/" class="post-title-link" itemprop="url">MySQL 事务隔离</a>
+            <a href="/2019/10/09/MySQL%E7%B4%A2%E5%BC%95/" class="post-title-link" itemprop="url">MySQL 索引</a>
         </h1>
 
         <div class="post-meta">
@@ -1153,14 +1153,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-10-09 16:43:38" itemprop="dateCreated datePublished" datetime="2019-10-09T16:43:38+08:00">2019-10-09</time>
+              <time title="创建时间：2019-10-09 17:07:31" itemprop="dateCreated datePublished" datetime="2019-10-09T17:07:31+08:00">2019-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-23 16:56:51" itemprop="dateModified" datetime="2020-02-23T16:56:51+08:00">2020-02-23</time>
+                <time title="修改时间：2020-02-23 17:03:16" itemprop="dateModified" datetime="2020-02-23T17:03:16+08:00">2020-02-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1185,39 +1185,64 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="事务基本要素：ACID"><a href="#事务基本要素：ACID" class="headerlink" title="事务基本要素：ACID"></a>事务基本要素：ACID</h2><ul>
-<li><p>原子性（Atomicity）<br>事务的原子性是指事务必须是一个原子的操作序列单元。事务中包含的各项操作在一次执行过程中，只允许出现以下两种状态之一：全部成功执行、全部不执行。任何一项操作失败都将导致整个事务失败，同时其他已经被执行的操作都将被撤销并回滚，只打所有的操作全部成功，整个事务才算是成功完成。</p>
-</li>
-<li><p>一致性（Consistency）<br>事务的一致性是指事务的执行不能破坏数据库数据的完整性和一致性，一个事务在执行之前和执行之后，数据库都必须处于一致性状态。也就是说，事务执行的结果必须是使数据库从一个一致性状态转变到另一个一致性状态，因此当数据库只包含成功事务提交的结果时，就能说数据库处于一致性状态。而如果数据库系统在运行过程中发生故障， 有些事务尚未完成就被迫中断，这些未完成的事务对数据库所做的修改有一部分已写入物理数据库，这时数据库就处于一种不正确的状态，或者说是不一致的状态。</p>
-</li>
-<li><p>隔离性（Isolation）<br>事务的隔离性是指在并发环境中，并发的事务是相互隔离的，一个事务的执行不能被其他事务干扰。也就是说，不同的事务并发操纵相同的数据时，每个事务都有各自完整的数据空间，即一个事务内部的操作及使用的数据对其他并发事务是隔离的，并发执行的 各个事务之间不能互相干扰。</p>
-</li>
-<li><p>持久性（Durability）<br>事务的持久性也被称为永久性，是指一个事务一旦提交，它对数据库中对应数据的状态变更就应该是永久性的。换句话说，一旦某个事务成功结束，那么它对数据库所做的更新就必须被永久保存下来——即使发生系统崩溃或机器宕机等故障，只要数据库能够重新启动，那么一定能够将其恢复到事务成功结束时的状态。</p>
-</li>
+          <h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>索引其实就是为了提高数据查询的效率，就像书的目录一样。</p>
+<h2 id="常见模型"><a href="#常见模型" class="headerlink" title="常见模型"></a>常见模型</h2><ul>
+<li>哈希表</li>
+<li>有序数组</li>
+<li>二叉搜索树</li>
 </ul>
-<h2 id="脏读、幻读、不可重复读"><a href="#脏读、幻读、不可重复读" class="headerlink" title="脏读、幻读、不可重复读"></a>脏读、幻读、不可重复读</h2><ul>
-<li>脏读<br>指一个事务 A 正在访问数据，并且对该数据进行了修改，但是这种修改还没有提交到数据库中（也可能因为某些原因 Rollback了）。这时候另外一个事务 B 也访问这个数据，然后使用了这个被 A 修改的数据，那么这个数据就是脏的，并不是数据库中真实的数据。这就被称作脏读。</li>
-</ul>
-<p>解决办法：把数据库事务隔离级别调整到 READ_COMMITTED。</p>
+<p>特性：</p>
 <ul>
-<li>不可重复读<br>指在一个事务 A 内，多次读同一个数据，但是事务 A 没有结束时，另外一个事务 B 也访问该同一数据。那么在事务 A 的两次读数据之间，由于事务 B 的修改导致事务 A 两次读到的数据可能是不一样的。这就发生了在一个事务内两次读到的数据不一样，这就被称作不可重复读。</li>
+<li>哈希表这种结构适用于只有等值查询的场景</li>
+<li>有序数组虽然在等值查询和范围查询场景中的性能就都非常优秀，但有序数组索引只适用于静态存储引擎</li>
+<li>由于索引不止存在内存中，还要写到磁盘上，因此若使用二叉搜索树，会因为频繁访问磁盘导致查询效率低下</li>
 </ul>
-<p>解决办法：把数据库事务隔离级别调整到 REPEATABLE_READ。</p>
+<p>因此，MySQL是使用B+树来实现索引的。</p>
+<h2 id="InnoDB-索引模型"><a href="#InnoDB-索引模型" class="headerlink" title="InnoDB 索引模型"></a>InnoDB 索引模型</h2><p>假设，我们有一个主键列为 ID 的表，表中有字段 k，并且在 k 上有索引。这个表的建表语句是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">create table T(</span><br><span class="line">    id int primary key, </span><br><span class="line">    k int not null, </span><br><span class="line">    name varchar(16),</span><br><span class="line">    index (k)</span><br><span class="line">) engine&#x3D;InnoDB;</span><br></pre></td></tr></table></figure>
+
+<p>对应的索引组织结构如下：<br><img src="/images/mysql/InnoDB%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84%E7%A4%BA%E4%BE%8B.png" alt="InnoDB 索引组织结构示例"></p>
+<h2 id="索引类型"><a href="#索引类型" class="headerlink" title="索引类型"></a>索引类型</h2><h3 id="普通索引"><a href="#普通索引" class="headerlink" title="普通索引"></a>普通索引</h3><p>最基本的索引，它没有任何限制，用于加速查询。</p>
+<h3 id="唯一索引"><a href="#唯一索引" class="headerlink" title="唯一索引"></a>唯一索引</h3><p>索引列的值必须唯一，但允许有空值。如果是组合索引，则列值的组合必须唯一。<br>由于唯一索引用不上 change buffer 的优化机制，因此如果业务可以接受，从性能角度出发我建议你优先考虑非唯一索引。</p>
+<h3 id="主键索引"><a href="#主键索引" class="headerlink" title="主键索引"></a>主键索引</h3><p>是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般是在建表的时候同时创建主键索引。</p>
+<p>主键索引的叶子节点存的是整行数据。在 InnoDB 里，主键索引也被称为聚簇索引（clustered index）。<br>非主键索引的叶子节点内容是主键的值。在 InnoDB 里，非主键索引也被称为二级索引（secondary index）。<br>由于基于非主键索引的查询需要多扫描一棵索引树（回表），因此我们在应用中应该尽量使用主键查询。</p>
+<h3 id="组合索引"><a href="#组合索引" class="headerlink" title="组合索引"></a>组合索引</h3><p>指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用组合索引时遵循最左前缀集合。</p>
+<h3 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h3><p>主要用来查找文本中的关键字，而不是直接与索引中的值相比较。</p>
+<h2 id="性能影响"><a href="#性能影响" class="headerlink" title="性能影响"></a>性能影响</h2><ul>
+<li><p>insert 索引个数越多，对于insert操作来说，维护的成本就越大，插入一条数据的速度也就越慢。</p>
+</li>
+<li><p>delete delete操作刚好和insert相反，当删除一条数据时，会把这条数据涉及到的多个索引中的数据删除。开销要比insert小。</p>
+</li>
+<li><p>update 这个操作不同于insert、delete，只有当update的这个字段，涉及到索引时，才需要维护索引，相对来说开销要小一些。</p>
+</li>
+</ul>
+<h2 id="索引维护"><a href="#索引维护" class="headerlink" title="索引维护"></a>索引维护</h2><h3 id="页分裂"><a href="#页分裂" class="headerlink" title="页分裂"></a>页分裂</h3><p>B+ 树为了维护索引有序性，在插入新值的时候需要做必要的维护。如果插入的数据所在的数据页已经满了，根据 B+ 树的算法，这时候需要申请一个新的数据页，然后挪动部分数据过去。这个过程称为页分裂。</p>
+<h3 id="页合并"><a href="#页合并" class="headerlink" title="页合并"></a>页合并</h3><p>相邻两个页由于删除了数据，利用率很低之后，会将数据页做合并。合并的过程，可以认为是分裂过程的逆过程。</p>
+<h2 id="主键的选择"><a href="#主键的选择" class="headerlink" title="主键的选择"></a>主键的选择</h2><p>如果使用自增主键，那么每次插入一条新记录，都是追加操作，都不涉及到挪动其他记录，也不会触发叶子节点的分裂。而有业务逻辑的字段做主键，则往往不容易保证有序插入，这样写数据成本相对较高。<br>另外，主键长度越小，普通索引的叶子节点就越小，普通索引占用的空间也就越小。<br>所以，从性能和存储空间方面考量，自增主键往往是更合理的选择。</p>
+<p>业务主键适用于以下场景：</p>
 <ul>
-<li>幻读<br>指一个事务 A 对一个表中的数据进行了修改，而且该修改涉及到表中所有的数据行；同时另一个事务 B 也在修改表中的数据，该修改是向表中插入一行新数据。那么经过这一番操作之后，操作事务 A 的用户就会发现表中还有没修改的数据行，就像发生了幻觉一样。这就被称作幻读。</li>
+<li>只有一个索引</li>
+<li>该索引必须是唯一索引</li>
 </ul>
-<p>解决办法：把数据库事务隔离级别调整到 SERIALIZABLE_READ。</p>
-<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><ul>
-<li><p>读未提交（read uncommitted）<br>一个事务还没提交时，它做的变更就能被别的事务看到。</p>
-</li>
-<li><p>读提交（read committed）<br>一个事务提交之后，它做的变更才能被别的事务看到。</p>
-</li>
-<li><p>可重复读（repeatable read）<br>一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。当然在可重复隔离级别下，未提交变更对其它事务也是不可见的。</p>
-</li>
-<li><p>串行化（serializable）<br>对于同一行记录，“写”会加“写锁”，“读”会加“读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行。</p>
-</li>
+<h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><ul>
+<li>解释一：就是 select 的数据列只用从索引中就能够取得，不必从数据表中读取，换句话说查询列要被所使用的索引覆盖。</li>
+<li>解释二：索引是高效找到行的一个方法，当能通过检索索引就可以读取想要的数据，那就不需要再到数据表中读取行了。如果一个索引包含了（或覆盖了）满足查询语句中字段与条件的数据就叫做覆盖索引。</li>
+<li>解释三：是非聚集组合索引的一种形式，它包括在查询里的 Select、Join 和 Where 子句用到的所有列（即建立索引的字段正好是覆盖查询语句 select 子句 与查询条件 Where 子句中所涉及的字段，也即，索引包含了查询正在查找的所有数据）。</li>
 </ul>
-<h2 id="自动提交"><a href="#自动提交" class="headerlink" title="自动提交"></a>自动提交</h2><p>可以通过执行 <code>set autocommit 1|0</code> 来设置事务是否自动提交。<br>MySQL 默认为 1，表示开启自动提交。<br>如果没有开启自动提交，当前 session 所连接的 MySQL 的所有操作都会当成一个事务，直到输入 rollback/commit，当前事务才算结束。当前事务结束前新的 MySQL 连接时无法读取到任何 session 的操作的结果的。<br>如果开起了，mysql 会把每个sql语句当成一个事务然后自动的 commit。<br>当然无论开启与否，<code>start transaction commit|rollback</code> 都是独立的事务。</p>
+<h2 id="最左前缀原则"><a href="#最左前缀原则" class="headerlink" title="最左前缀原则"></a>最左前缀原则</h2><p>顾名思义是最左优先，以最左边的为起点任何连续的索引都能匹配上。<br>注：如果第一个字段是范围查询需要单独建一个索引。<br>注：在创建多列索引时，要根据业务需求，where 子句中使用最频繁的一列放在最左边。<br>当创建 (a,b,c) 复合索引时，想要索引生效的话,只能使用 a 和 a,b 和 a,b,c 三种组合。</p>
+<h2 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h2><p>索引条件下推（ICP）是对MySQL使用索引从表中检索行的情况的优化。如果没有 ICP，存储引擎会遍历索引以查找基表中的行，并将它们返回给 MySQL 服务器，该服务器会评估WHERE行的条件。启用 ICP 后，如果 WHERE 只使用索引中的列来评估部分 条件，MySQL 服务器会推送这部分内容。WHERE 条件下到存储引擎。然后，存储引擎通过使用索引条目来评估推送的索引条件，并且仅当满足该条件时才从表中读取行。ICP 可以减少存储引擎必须访问基表的次数以及 MySQL 服务器必须访问存储引擎的次数。</p>
+<h2 id="重建索引"><a href="#重建索引" class="headerlink" title="重建索引"></a>重建索引</h2><p>对于普通索引，可以通过执行下面两行来重建索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> T <span class="keyword">drop</span> <span class="keyword">index</span> k;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> T <span class="keyword">add</span> <span class="keyword">index</span>(k);</span><br></pre></td></tr></table></figure>
+
+<p>但是对于主键索引，如果也是执行下面两行来重建索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> T <span class="keyword">drop</span> primary <span class="keyword">key</span>;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> T <span class="keyword">add</span> primary <span class="keyword">key</span>(<span class="keyword">id</span>);</span><br></pre></td></tr></table></figure>
+<p>则不够合理，这是因为不论是删除主键还是创建主键，都会将整个表重建。所以连着执行这两个语句的话，第一个语句就白做了。<br>可以改为执行<code>alter table T engine=InnoDB</code>。</p>
+<h2 id="字符串添加索引"><a href="#字符串添加索引" class="headerlink" title="字符串添加索引"></a>字符串添加索引</h2><ul>
+<li>直接创建完整索引，这样可能比较占用空间</li>
+<li>创建前缀索引，节省空间，但会增加查询扫描次数，并且不能使用覆盖索引</li>
+<li>倒序存储，再创建前缀索引，用于绕过字符串本身前缀的区分度不够的问题</li>
+<li>创建 hash 字段索引，查询性能稳定，有额外的存储和计算消耗，跟第三种方式一样，都不支持范围扫描</li>
+</ul>
 
       
     </div>
@@ -1303,7 +1328,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
