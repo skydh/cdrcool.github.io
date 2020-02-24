@@ -171,6 +171,101 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/25/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E4%BD%8D%E7%A7%BB%E4%B8%BB%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/25/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E4%BD%8D%E7%A7%BB%E4%B8%BB%E9%A2%98/" class="post-title-link" itemprop="url">Kafka 消费者位移主题</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-25 15:16:00" itemprop="dateCreated datePublished" datetime="2020-01-25T15:16:00+08:00">2020-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-22 19:58:11" itemprop="dateModified" datetime="2020-02-22T19:58:11+08:00">2020-02-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">Kafka</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="位移主题"><a href="#位移主题" class="headerlink" title="位移主题"></a>位移主题</h2><p>位移主题，即 __consumer_offsets，是 Kafka中 针对 Consumer Group，用于记录消费者的消费位置信息。</p>
+<p>老版本 Consumer 的位移管理是依托于 Apache ZooKeeper 的，它会自动或手动地将位移数据提交到 ZooKeeper 中保存。当 Consumer 重启后，它能自动从 ZooKeeper 中读取位移数据，从而在上次消费截止的地方继续消费。这种设计使得 Kafka Broker 不需要保存位移数据，减少了 Broker 端需要持有的状态空间，因而有利于实现高伸缩性。<br>但是，ZooKeeper 其实并不适用于这种高频的写操作，因此，Kafka 最终在新版本 Consumer 中正式推出了全新的位移管理机制。</p>
+<p>新版本 Consumer 的位移管理机制其实很简单，就是将 Consumer 的位移数据作为一条条普通的 Kafka 消息，提交到 _ _consumer_offsets 中。可以这么说，__consumer_offsets 的主要作用是保存 Kafka 消费者的位移信息。它要求这个提交过程不仅要实现高持久性，还要支持高频的写操作。显然，Kafka的主题设计天然就满足这两个条件。</p>
+<p>需要强调的是，和我们创建的其他主题一样，位移主题就是普通的 Kafka 主题。我们可以手动地创建它、修改它，甚至是删除它。只不过，它同时也是一个内部主题，大部分情况下，我们其实并不需要“搭理”它，也不用花心思去管理它，把它丢给Kafka就完事了。</p>
+<p>虽说位移主题是一个普通的 Kafka 主题，但它的消息格式却是 Kafka 自己定义的，用户不能修改，也就是说我们不能随意地向这个主题写消息，因为一旦我们写入的消息不满足 Kafka 规定的格式，那么 Kafka 内部无法成功解析，就会造成 Broker 的崩溃。事实上，Kafka Consumer 有 API 帮我们提交位移，也就是向位移主题写消息。我们千万不要自己写个 Producer 随意向该主题发送消息。</p>
+<h2 id="消息格式"><a href="#消息格式" class="headerlink" title="消息格式"></a>消息格式</h2><p>对于 Consumer Group而言，它是一组 KV 对，key 包含3部分内容：&lt;Group ID，主题名，分区号&gt;，value 对应 Consumer 消费该分区的最新位移（其实也可以适用于保存 Consumer Group 信息的消息，或用于删除 Group 过期位移甚至是删除 Group 的消息）。</p>
+<h2 id="创建位移主题"><a href="#创建位移主题" class="headerlink" title="创建位移主题"></a>创建位移主题</h2><p>位移主题既可以由 Kafka 自动创建，也可以由我们手动创建。<br>默认位移主题是由 Kafka 自动创建的，此时该主题的默认分区数是 50，分区的默认副本数是 3。<br>我们也可以通过设置 Broker 端的参数 offsets.topic.num.partitions 和 offsets.topic.replication.factor 来改变分区数或副本数。</p>
+<p>通常还是让 Kafka 自动创建比较好。目前 Kafka 源码中有一些地方硬编码了 50 分区数，因此如果我们自行创建了一个不同于默认分区数的位移主题，可能会碰到各种各种奇怪的问题。</p>
+<h2 id="提交位移"><a href="#提交位移" class="headerlink" title="提交位移"></a>提交位移</h2><p>目前 Kafka Consumer 提交位移的方式有两种：自动提交位移（默认）和手动提交位移。</p>
+<h3 id="自动提交"><a href="#自动提交" class="headerlink" title="自动提交"></a>自动提交</h3><p>Consumer 端有个参数叫 enable.auto.commit，如果值是 true，则 Consumer 在后台默默地为我们定期提交位移，提交间隔由一个专属的参数 auto.commit.interval.ms 来控制。<br>自动提交位移有一个显著的优点，就是省事，我们不用操心位移提交的事情，就能保证消息消费不会丢失。<br>但自动提交位移的一个问题在于，它可能会出现重复消费。</p>
+<p>在默认情况下，Consumer 每 5 秒自动提交一次位移。<br>现在，我们假设提交位移之后的 3 秒发生了 Rebalance 操作。在 Rebalance 之后，所有 Consumer 从上一次提交的位移处继续消费，但该位移已经是 3 秒前的位移数据了，故在 Rebalance 发生前 3 秒消费的所有数据都要重新再消费一次。<br>虽然我们能够通过减少 auto.commit.interval.ms 的值来提高提交频率，但这么做只能缩小重复消费的时间窗口，不可能完全消除它。这是自动提交机制的一个缺陷。</p>
+<h3 id="手动提交"><a href="#手动提交" class="headerlink" title="手动提交"></a>手动提交</h3><p>反观手动提交位移，它的好处就在于更加灵活，我们完全能够把控位移提交的时机和频率。但是，它也有一个缺陷，就是在调用 commitSync() 时，Consumer 程序会处于阻塞状态，直到远端的 Broker 返回提交结果，这个状态才会结束。<br>在任何系统中，因为程序而非资源限制而导致的阻塞都可能是系统的瓶颈，会影响整个应用程序的 TPS。当然，我们可以选择拉长提交间隔，但这样做的后果是 Consumer 的提交频率下降，在下次 Consumer 重启回来后，会有更多的消息被重新消费。</p>
+<p>鉴于这个问题，Kafka 社区为手动提交位移提供了另一个 API 方法：KafkaConsumer#commitAsync()。从名字上来看它就不是同步的，而是一个异步操作。调用 commitAsync() 之后，它会立即返回，不会阻塞，因此不会影响 Consumer 应用的 TPS。由于它是异步的，Kafka 提供了回调函数（callback），供我们实现提交之后的逻辑，比如记录日志或处理异常等。</p>
+<p>那么，commitAsync 是否能够替代 commitSync 呢？答案是不能。commitAsync 的问题在于，出现问题时它不会自动重试。因为它是异步操作，倘若提交失败后自动重试，那么它重试时提交的位移值可能早已经“过期”或不是最新值了。因此，异步提交的重试其实没有意义，所以 commitAsync 是不会重试的。</p>
+<p>事实上，很多与 Kafka 集成的大数据框架都是禁用自动提交位移的，如 Spark、Flink 等。</p>
+<h3 id="混合提交"><a href="#混合提交" class="headerlink" title="混合提交"></a>混合提交</h3><p>显然，如果是手动提交，我们需要将 commitSync 和 commitAsync 组合使用才能到达最理想的效果，原因有两个：</p>
+<ol>
+<li>我们可以利用 commitSync 的自动重试来规避那些瞬时错误，比如网络的瞬时抖动，Broker 端 GC 等。因为这些问题都是短暂的，自动重试通常都会成功，因此，我们不想自己重试，而是希望 Kafka Consumer 帮我们做这件事。</li>
+<li>我们不希望程序总处于阻塞状态，影响 TPS。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/25/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84%E9%87%8D%E5%B9%B3%E8%A1%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1146,127 +1241,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/15/Hexo%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/15/Hexo%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" class="post-title-link" itemprop="url">Hexo 配置指南</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-15 10:51:00" itemprop="dateCreated datePublished" datetime="2020-01-15T10:51:00+08:00">2020-01-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-16 17:21:44" itemprop="dateModified" datetime="2020-01-16T17:21:44+08:00">2020-01-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="修改站点信息"><a href="#修改站点信息" class="headerlink" title="修改站点信息"></a>修改站点信息</h2><p>打开 _config.yml 文件，修改其中的 Site 下的 title 等属性：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">雨中的了悟</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">晴天</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">''</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h2><p>Hexo 默认使用 landscape 主题，同时支持配置为其它主题，这里以配置为 next 主题来介绍如何操作。</p>
-<ol>
-<li>访问 <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">https://github.com/theme-next/hexo-theme-next</a></li>
-<li>在根目录下执行命令：<code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></li>
-<li>打开 _config.yml 文件，将其中的 theme 属性由 landscape 改为 next</li>
-</ol>
-<p>next 主题默认只开放了 首页 和 归档 两个菜单，且在侧边栏中只有 日志 链接可以点击查看详情，现在我想添加 分类 菜单，同时让侧边栏中的 分类 和 标签 链接都能点击。</p>
-<h3 id="添加分类菜单"><a href="#添加分类菜单" class="headerlink" title="添加分类菜单"></a>添加分类菜单</h3><p>打开 \themes\next_config.yml 文件，将其中的 menu 属性下的 categories 属性前面的注释取消掉。</p>
-<h3 id="创建分类和标签链接"><a href="#创建分类和标签链接" class="headerlink" title="创建分类和标签链接"></a>创建分类和标签链接</h3><p>首先，执行以下两行命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new page <span class="string">"categories"</span></span><br><span class="line">hexo new page <span class="string">"tags"</span></span><br></pre></td></tr></table></figure>
-
-<p>之后，可以发现在 source 目录下多出了 categories 和 tags 两个子目录，然后分别修改这两个子目录中的 index.md 文件：</p>
-<ul>
-<li><p>categories</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type: categories</span><br><span class="line">date: 2020-01-15 11:24:00</span><br><span class="line">comments: false</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>tags</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type: tags</span><br><span class="line">date: 2020-01-15 11:24:00</span><br><span class="line">comments: false</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h2 id="部署到-GitHub"><a href="#部署到-GitHub" class="headerlink" title="部署到 GitHub"></a>部署到 GitHub</h2><ol>
-<li>访问 <a href="https://github.com/hexojs/hexo-deployer-git" target="_blank" rel="noopener">https://github.com/hexojs/hexo-deployer-git</a></li>
-<li>在根目录下执行命令：<code>npm install hexo-deployer-git --save</code></li>
-<li>打开 _config.yml 文件，在文件末尾添加以下配置：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://github.com/cdrcool/cdrcool.github.io</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure></li>
-<li>执行命令：<code>hexo d -g</code></li>
-</ol>
-<h2 id="集成-Gitalk"><a href="#集成-Gitalk" class="headerlink" title="集成 Gitalk"></a>集成 Gitalk</h2><ol>
-<li>访问 <a href="https://github.com/settings/developers" target="_blank" rel="noopener">https://github.com/settings/developers</a></li>
-<li>创建 OAuth App：<br><img src="/images/hexo/OAuth-App%E5%88%9B%E5%BB%BA%E7%A4%BA%E4%BE%8B.png" alt="OAuth App 创建示例"></li>
-<li>打开 \themes\next_config.yml 文件，配置 gittalk 相关属性：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Gitalk</span></span><br><span class="line"><span class="comment"># For more information: https://gitalk.github.io, https://github.com/gitalk/gitalk</span></span><br><span class="line"><span class="attr">gitalk:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">github_id:</span> <span class="string">cdrcool</span> <span class="comment"># GitHub repo owner</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">cdrcool.github.io</span> <span class="comment"># Repository name to store issues</span></span><br><span class="line">  <span class="attr">client_id:</span> <span class="string">5f0b1c1d42822204f803</span> <span class="comment"># GitHub Application Client ID</span></span><br><span class="line">  <span class="attr">client_secret:</span> <span class="string">56818d47fc75f1f4999acd7a3356879bbade310f</span> <span class="comment"># GitHub Application Client Secret</span></span><br><span class="line">  <span class="attr">admin_user:</span> <span class="string">cdrcool</span> <span class="comment"># GitHub repo owner and collaborators, only these guys can initialize gitHub issues</span></span><br><span class="line">  <span class="attr">distraction_free_mode:</span> <span class="literal">true</span> <span class="comment"># Facebook-like distraction free mode</span></span><br><span class="line">  <span class="comment"># Gitalk's display language depends on user's browser or system environment</span></span><br><span class="line">  <span class="comment"># If you want everyone visiting your site to see a uniform language, you can set a force language value</span></span><br><span class="line">  <span class="comment"># Available values: en | es-ES | fr | ru | zh-CN | zh-TW</span></span><br><span class="line">  <span class="attr">language:</span> <span class="string">zh-CN</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p>注意：文件名中中英文之间不能带有空格，不然授权成功后回调时会报 redirect_uri_mismatch 异常。</p>
-<h2 id="启用打赏"><a href="#启用打赏" class="headerlink" title="启用打赏"></a>启用打赏</h2><p>打开 \themes\next_config.yml 文件，配置 reward 相关属性：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Reward (Donate)</span></span><br><span class="line"><span class="comment"># Front-matter variable (unsupport animation).</span></span><br><span class="line"><span class="attr">reward_settings:</span></span><br><span class="line">  <span class="comment"># If true, reward will be displayed in every article by default.</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">animation:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">comment:</span> <span class="string">小礼物走一走，来</span> <span class="string">Github</span> <span class="string">关注我</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reward:</span></span><br><span class="line">  <span class="attr">wechatpay:</span> <span class="string">/images/wechatpay.png</span></span><br><span class="line">  <span class="attr">alipay:</span> <span class="string">/images/alipay.png</span></span><br><span class="line">  <span class="comment">#bitcoin: /images/bitcoin.png</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="大小写导致404"><a href="#大小写导致404" class="headerlink" title="大小写导致404"></a>大小写导致404</h3><p>打开 .deploy_git.git\config，将 ignorecase 属性的值由 true 改为 false，然后删除 .deploy_git 下所有文件，最后重新生成后部署：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo deploy -generate</span><br></pre></td></tr></table></figure>
-
-<h3 id="Gitment"><a href="#Gitment" class="headerlink" title="Gitment"></a>Gitment</h3><h4 id="Error-Not-Found"><a href="#Error-Not-Found" class="headerlink" title="Error: Not Found"></a>Error: Not Found</h4><p>检查 github_user 和 github_repo 是否配置正确</p>
-<h4 id="Error-Validation-Failed"><a href="#Error-Validation-Failed" class="headerlink" title="Error: Validation Failed"></a>Error: Validation Failed</h4><p>打开 \themes\next\layout_third-party\comments\gitment.swig，找到以下代码，将id值由 <code>window.location.pathname</code> 改为 <code>decodeURI(window.location.pathname)</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">renderGitment</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> gitment = <span class="keyword">new</span> &#123;&#123; CommentsClass &#125;&#125;(&#123;</span><br><span class="line">      id: <span class="built_in">window</span>.location.pathname,</span><br><span class="line">      owner: <span class="string">'&#123;&#123; theme.gitment.github_user &#125;&#125;'</span>,</span><br><span class="line">      repo: <span class="string">'&#123;&#123; theme.gitment.github_repo &#125;&#125;'</span>,</span><br><span class="line">      &#123;% <span class="keyword">if</span> theme.gitment.mint %&#125;</span><br><span class="line">        lang: <span class="string">'&#123;&#123; theme.gitment.language &#125;&#125;'</span> || navigator.language || navigator.systemLanguage || navigator.userLanguage,</span><br><span class="line">      &#123;% endif %&#125;</span><br><span class="line">      oauth: &#123;</span><br><span class="line">      &#123;% <span class="keyword">if</span> theme.gitment.mint and theme.gitment.redirect_protocol %&#125;</span><br><span class="line">        redirect_protocol: <span class="string">'&#123;&#123; theme.gitment.redirect_protocol &#125;&#125;'</span>,</span><br><span class="line">      &#123;% endif %&#125;</span><br><span class="line">      &#123;% <span class="keyword">if</span> theme.gitment.mint and theme.gitment.proxy_gateway %&#125;</span><br><span class="line">        proxy_gateway: <span class="string">'&#123;&#123; theme.gitment.proxy_gateway &#125;&#125;'</span>,</span><br><span class="line">      &#123;% <span class="keyword">else</span> %&#125;</span><br><span class="line">        client_secret: <span class="string">'&#123;&#123; theme.gitment.client_secret &#125;&#125;'</span>,</span><br><span class="line">      &#123;% endif %&#125;</span><br><span class="line">        client_id: <span class="string">'&#123;&#123; theme.gitment.client_id &#125;&#125;'</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    gitment.render(<span class="string">'gitment-container'</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1337,7 +1311,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

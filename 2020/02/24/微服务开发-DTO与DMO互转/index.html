@@ -46,19 +46,19 @@
   };
 </script>
 
-  <meta name="description" content="概念消费者组，即 Consumer Group，是 Kafka 提供的可扩展且具有容错性的消费者机制。要理解 Consumer Group，我们需要记住下面这三个特性：  Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。 Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可以是同一">
+  <meta name="description" content="概念 DTO 数据传输对象 DMO 数据模型对象  大多数情况下，DTO 与 DMO 所承载的字段大致是一样的，但是有些时候也会有差别。比如某些情况下，DTO 可能根据会实际需要裁剪或聚合添加某些字段，另外对于不同的 API 接口场景，即使使用同一个 DTO，它们的校验方式也可能不同。因此对于同一个 DMO，我们可能会用到一个或多个 DTO，那么为了交换数据，必然会存在两者之间的转换，也就是数据字">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka 消费者组">
-<meta property="og:url" content="http://yoursite.com/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/index.html">
+<meta property="og:title" content="微服务开发-DTO 与 DMO 互转">
+<meta property="og:url" content="http://yoursite.com/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-DTO%E4%B8%8EDMO%E4%BA%92%E8%BD%AC/index.html">
 <meta property="og:site_name" content="OnePiece">
-<meta property="og:description" content="概念消费者组，即 Consumer Group，是 Kafka 提供的可扩展且具有容错性的消费者机制。要理解 Consumer Group，我们需要记住下面这三个特性：  Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。 Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可以是同一">
+<meta property="og:description" content="概念 DTO 数据传输对象 DMO 数据模型对象  大多数情况下，DTO 与 DMO 所承载的字段大致是一样的，但是有些时候也会有差别。比如某些情况下，DTO 可能根据会实际需要裁剪或聚合添加某些字段，另外对于不同的 API 接口场景，即使使用同一个 DTO，它们的校验方式也可能不同。因此对于同一个 DMO，我们可能会用到一个或多个 DTO，那么为了交换数据，必然会存在两者之间的转换，也就是数据字">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-01-24T02:43:00.000Z">
-<meta property="article:modified_time" content="2020-02-22T12:21:23.545Z">
+<meta property="article:published_time" content="2020-02-24T13:54:00.000Z">
+<meta property="article:modified_time" content="2020-02-24T14:50:10.281Z">
 <meta property="article:author" content="晴天">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/">
+<link rel="canonical" href="http://yoursite.com/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-DTO%E4%B8%8EDMO%E4%BA%92%E8%BD%AC/">
 
 
 <script id="page-configurations">
@@ -70,7 +70,7 @@
   };
 </script>
 
-  <title>Kafka 消费者组 | OnePiece</title>
+  <title>微服务开发-DTO 与 DMO 互转 | OnePiece</title>
   
 
 
@@ -175,7 +175,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/24/Kafka%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-DTO%E4%B8%8EDMO%E4%BA%92%E8%BD%AC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -188,7 +188,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Kafka 消费者组
+          微服务开发-DTO 与 DMO 互转
         </h1>
 
         <div class="post-meta">
@@ -197,24 +197,18 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-01-24 10:43:00" itemprop="dateCreated datePublished" datetime="2020-01-24T10:43:00+08:00">2020-01-24</time>
+              <time title="创建时间：2020-02-24 21:54:00 / 修改时间：22:50:10" itemprop="dateCreated datePublished" datetime="2020-02-24T21:54:00+08:00">2020-02-24</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-22 20:21:23" itemprop="dateModified" datetime="2020-02-22T20:21:23+08:00">2020-02-22</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index">
-                    <span itemprop="name">Kafka</span>
+                  <a href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">微服务开发</span>
                   </a>
                 </span>
             </span>
@@ -230,15 +224,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>消费者组，即 Consumer Group，是 Kafka 提供的可扩展且具有容错性的消费者机制。<br>要理解 Consumer Group，我们需要记住下面这三个特性：</p>
-<ol>
-<li>Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。</li>
-<li>Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可以是同一个进程下的线程。在实际场景中，使用进程更为常见一些。</li>
-<li>Consumer Group 下所有实例订阅的主题的单个分区，只能分配给组内的某个 Consumer 实例消费。这个分区当然也可以被其它的 Group 消费。 </li>
-</ol>
-<h2 id="对比传统消息模型"><a href="#对比传统消息模型" class="headerlink" title="对比传统消息模型"></a>对比传统消息模型</h2><p>我们知道，JMS 规范定义了两种消息模型：点对点模型（消息队列）和发布/订阅模型，它们是各有优劣的。<br>传统的消息队列模型的缺陷在于消息一旦被消费，就会从队列中被删除，而且只能被下游的一个 Consumer 消费。严格来说，这一点不算是缺陷，只能算是它的一个特性。但是显然，这种模型的伸缩性（Scalability）很差，因为下游的多个 Consumer 都要“抢”这个共享消息队列的消息。<br>发布/订阅模型的缺陷同样是伸缩性不高，因为每个订阅者都必须要订阅主题的所有分区。这种全量订阅的方式既不灵活，也会影像消息的真实投递效果。</p>
-<p>使用 Consumer Group 机制，Kafka 同时实现了传统消息引擎系统的两大模型（又避开了这两钟模型的缺陷）：如果所有实例都属于同一个 group，那么它实现的就是消息队列模型；如果所有实例分别属于不同的 Group，那么它实现的就是 发布/订阅模型。</p>
-<h2 id="消费者实例数量"><a href="#消费者实例数量" class="headerlink" title="消费者实例数量"></a>消费者实例数量</h2><p>理想情况下，每个 Consumer Group 下的 Consumer 实例的数量应该等于该 Group 订阅主题的分区总数。一般不推荐设置大于总分区数的 Consumer 实例，设置多余的实例只会浪费资源，而没有任何好处。</p>
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
+<li>DTO 数据传输对象</li>
+<li>DMO 数据模型对象</li>
+</ul>
+<p>大多数情况下，DTO 与 DMO 所承载的字段大致是一样的，但是有些时候也会有差别。<br>比如某些情况下，DTO 可能根据会实际需要裁剪或聚合添加某些字段，另外对于不同的 API 接口场景，即使使用同一个 DTO，它们的校验方式也可能不同。<br>因此对于同一个 DMO，我们可能会用到一个或多个 DTO，那么为了交换数据，必然会存在两者之间的转换，也就是数据字段的拷贝。<br>这种拷贝如果手工去做，繁琐且容易出错，好在业界有一些实践，可以帮我们自动处理绝大多数场景下的字段映射。（少数特殊场景下，有些字段可能不能自动匹配映射，只需要简单的定制一些映射逻辑即可）</p>
+<h2 id="ModelMapper"><a href="#ModelMapper" class="headerlink" title="ModelMapper"></a>ModelMapper</h2><h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.modelmapper<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>modelmapper<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;modelmapper.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ModelMapper modelMapper = <span class="keyword">new</span> ModelMapper();</span><br><span class="line">OrderDto order = modelMapper.map(orderEntity, OrderDto<span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="MapStruct"><a href="#MapStruct" class="headerlink" title="MapStruct"></a>MapStruct</h2><h3 id="依赖-1"><a href="#依赖-1" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct-jdk8<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mapstruct.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mapstruct.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用示例-1"><a href="#使用示例-1" class="headerlink" title="使用示例"></a>使用示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderMapper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">OrderDto <span class="title">toDto</span><span class="params">(OrderEntity entity)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">OrderEntity <span class="title">toEntity</span><span class="params">(OrderDto dto)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">OrderMapper mapper = Mappers.getMapper(OrderMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">OrderDto order = mapper.convert(orderEntity);</span><br></pre></td></tr></table></figure>
+
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><ul>
+<li>ModelMapper 是在运行期使用反射，而 MapStruct 是在编译期动态生成字节码</li>
+<li>MapStruct 性能远高于 ModelMapper</li>
+<li>ModelMapper 易用性高于 MapStruct</li>
+</ul>
 
     </div>
 
@@ -274,13 +276,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/21/Kafka%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/" rel="prev" title="Kafka 事务消息">
-      <i class="fa fa-chevron-left"></i> Kafka 事务消息
+    <a href="/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-%E7%BB%9F%E4%B8%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="prev" title="微服务开发-统一异常处理">
+      <i class="fa fa-chevron-left"></i> 微服务开发-统一异常处理
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/24/Kafka%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" rel="next" title="Kafka 分区分配策略">
-      Kafka 分区分配策略 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -341,7 +340,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对比传统消息模型"><span class="nav-number">2.</span> <span class="nav-text">对比传统消息模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消费者实例数量"><span class="nav-number">3.</span> <span class="nav-text">消费者实例数量</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ModelMapper"><span class="nav-number">2.</span> <span class="nav-text">ModelMapper</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖"><span class="nav-number">2.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用示例"><span class="nav-number">2.2.</span> <span class="nav-text">使用示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapStruct"><span class="nav-number">3.</span> <span class="nav-text">MapStruct</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖-1"><span class="nav-number">3.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用示例-1"><span class="nav-number">3.2.</span> <span class="nav-text">使用示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对比"><span class="nav-number">4.</span> <span class="nav-text">对比</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -466,7 +465,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo: 'cdrcool.github.io',
       owner: 'cdrcool',
       admin: ['cdrcool'],
-      id: '8da3ee8a05ff6ce68da69221d6739467',
+      id: '483b5e3efed3acc870203115834147ae',
         language: 'zh-CN',
       distractionFreeMode: true
     });
