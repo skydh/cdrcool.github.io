@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8A%80%E6%9C%AF%E6%A0%88%E9%80%89%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-%E6%8E%A5%E5%8F%A3%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -185,7 +185,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8A%80%E6%9C%AF%E6%A0%88%E9%80%89%E5%9E%8B/" class="post-title-link" itemprop="url">微服务技术栈选型</a>
+            <a href="/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-%E6%8E%A5%E5%8F%A3%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C/" class="post-title-link" itemprop="url">微服务开发-接口参数校验</a>
         </h1>
 
         <div class="post-meta">
@@ -196,7 +196,118 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-02-24 10:35:00 / 修改时间：13:37:30" itemprop="dateCreated datePublished" datetime="2020-02-24T10:35:00+08:00">2020-02-24</time>
+              <time title="创建时间：2020-02-24 14:20:00 / 修改时间：17:14:19" itemprop="dateCreated datePublished" datetime="2020-02-24T14:20:00+08:00">2020-02-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">微服务开发</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在企业级服务开发当中，开发人员经常犯的一个错误就是忽略对接口参数做必要的校验，造成调用异常，甚至关键服务挂掉，所以开发人员必须重视参数校验。</p>
+<p>因为参数校验和具体业务场景是相关的，一般无法做到自动化，因此参数校验主要是业务开发人员的职责。当然，服务框架应该提供必要的支持，方便开发人员对请求参数添加必要的校验。</p>
+<p>在接口参数校验这方面，Spring 提供了完善的支持，我们只需在 Controller 接口参数前添加相关注解，即可实现对应的参数校验。</p>
+<h2 id="基础校验"><a href="#基础校验" class="headerlink" title="基础校验"></a>基础校验</h2><ul>
+<li>NotNull</li>
+<li>NotEmpty</li>
+<li>NotBlank</li>
+<li>Size</li>
+<li>Digits</li>
+<li>Max</li>
+<li>Min</li>
+<li>DecimalMax</li>
+<li>DecimalMin</li>
+<li>Positive</li>
+<li>PositiveOrZero</li>
+<li>Negative</li>
+<li>NegativeOrZero</li>
+<li>AssertTrue</li>
+<li>AssertFalse</li>
+<li>Email</li>
+<li>Pattern</li>
+<li>Null</li>
+<li>Past</li>
+<li>PastOrPresent</li>
+<li>Future</li>
+<li>FutureOrPresent</li>
+</ul>
+<h2 id="对象校验"><a href="#对象校验" class="headerlink" title="对象校验"></a>对象校验</h2><p>如果参数是对象类型，我们需要在该参数前面添加 <strong>@Valid</strong> 注解，然后在对象属性上添加前面列出的基础校验注解。</p>
+<h2 id="自定义校验"><a href="#自定义校验" class="headerlink" title="自定义校验"></a>自定义校验</h2><p>我们也可以手动创建相关注解，已实现自定义校验。下面以创建子表非空检验（逻辑删除）为例进行演示。</p>
+<ol>
+<li><p>创建注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Constraint</span>(validatedBy = SublistNotEmptyValidator<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">Target</span>(</span>&#123;METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> SublistNotEmpty &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">message</span><span class="params">()</span> <span class="keyword">default</span> "</span>&#123;org.hibernate.validator.constraints.NotEmpty.message&#125;<span class="string">";</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Class&lt;?&gt;[] groups() default &#123;&#125;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Class&lt;? extends Payload&gt;[] payload() default &#123;&#125;;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建注解解析器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SublistNotEmptyValidator</span> <span class="keyword">implements</span> <span class="title">ConstraintValidator</span>&lt;<span class="title">SublistNotEmpty</span>, <span class="title">List</span>&lt;? <span class="keyword">extends</span> <span class="title">LogicDeleteAware</span>&gt;&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initialize</span><span class="params">(SublistNotEmpty constraintAnnotation)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isValid</span><span class="params">(List&lt;? extends LogicDeleteAware&gt; value, ConstraintValidatorContext context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !CollectionUtils.isEmpty(value) &amp;&amp; !value.stream().allMatch(LogicDeleteAware::isDeleted);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="校验示例"><a href="#校验示例" class="headerlink" title="校验示例"></a>校验示例</h2><p><strong>基础校验：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"account"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> AccountVo <span class="title">getAccount</span><span class="params">(@RequestParam @NotBlank String userId)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>对象校验：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"save"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> AccountVo <span class="title">save</span><span class="params">(@RequestBody @Valid AccountVo vo)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AccountVo</span> </span>&#123;</span><br><span class="line">    <span class="meta">@NotBlank</span>(message = <span class="string">"账号名不能为空"</span>)</span><br><span class="line">    <span class="keyword">private</span> String accountName;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SublistNotEmpty</span>(message = <span class="string">"账号明细不能为空"</span>)</span><br><span class="line">    <span class="meta">@Valid</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;AccountDetailVo&gt; accountDetails;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-%E6%8A%80%E6%9C%AF%E6%A0%88%E9%80%89%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/24/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%8F%91-%E6%8A%80%E6%9C%AF%E6%A0%88%E9%80%89%E5%9E%8B/" class="post-title-link" itemprop="url">微服务开发-技术栈选型</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-24 10:35:00 / 修改时间：14:20:46" itemprop="dateCreated datePublished" datetime="2020-02-24T10:35:00+08:00">2020-02-24</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1170,103 +1281,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/18/Redis%E8%BF%87%E6%9C%9F%E7%AD%96%E7%95%A5%E5%8F%8A%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/18/Redis%E8%BF%87%E6%9C%9F%E7%AD%96%E7%95%A5%E5%8F%8A%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/" class="post-title-link" itemprop="url">Redis 过期策略及内存淘汰策略</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-18 14:04:00" itemprop="dateCreated datePublished" datetime="2020-02-18T14:04:00+08:00">2020-02-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-19 11:54:07" itemprop="dateModified" datetime="2020-02-19T11:54:07+08:00">2020-02-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Redis/" itemprop="url" rel="index">
-                    <span itemprop="name">Redis</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="过期策略"><a href="#过期策略" class="headerlink" title="过期策略"></a>过期策略</h2><p>Redis 会将每个设置了过期时间的 key 放入到一个独立的字典中，以后会定时遍历这个字典来删除到期的 key。除了定时遍历之外，它还会使用惰性策略来删除过期的 key。所谓惰性删除就是在客户端访问这个 key 的时候，Redis 对 key 的过期时间进行检查，如果过期了就立即删除。<strong>定时删除是集中处理，惰性删除时零散处理。</strong></p>
-<h3 id="定时扫描策略"><a href="#定时扫描策略" class="headerlink" title="定时扫描策略"></a>定时扫描策略</h3><p>Redis 默认会每秒进行 10 次过期扫描，过期扫描不会遍历过期字典中所有的 key，而是采用了一种简单的贪心策略。</p>
-<ol>
-<li>从过期字典中随机 20 个 key；</li>
-<li>删除这 20 个 key 中已经过期的 key；</li>
-<li>如果过期的 key 比率超过了 1/4，那就重复步骤 1；</li>
-</ol>
-<p>同时，为了保证过期扫描不会出现循环过度，导致线程卡死现象，算法还增加了扫描时间的上限，默认不会超过 25ms。</p>
-<p>如果一个大型的 Redis 实例中所有的 key 在同一时间过期，Redis 会持续扫描过期字典（循环多次），直到过期字典中过期的 key 变得稀疏，或等待时间超过 25ms，这就会导致线上读写请求出现明显的卡顿现象，甚至大量的链接因为超时而关闭，业务端就会出现很多异常。而且这是我们还无法从 Redis 的 showlog 中看到慢查询记录，因为慢查询指的时逻辑处理过程慢，不包含等待时间。</p>
-<p>所以<strong>业务开发人员一定要注意过期时间，如果有大批量的 key 过期，要给过期时间设置一个随机范围，从而分散过期处理的压力</strong>。</p>
-<h3 id="从库的过期策略"><a href="#从库的过期策略" class="headerlink" title="从库的过期策略"></a>从库的过期策略</h3><p>从库不会进行过期扫描，从库对过期的处理是被动的。主库在 key 到期时，会在 AOF 文件里面增加一条 del 指令，然后同步到所有的从库，从库通过执行这条 del指令来删除过期的 key。</p>
-<p>因为指令同步时异步进行的，所以主库过期的 key 的 del 指令没有及时同步到从库的话，会出现主从数据的不一致。</p>
-<h2 id="内存淘汰策略"><a href="#内存淘汰策略" class="headerlink" title="内存淘汰策略"></a>内存淘汰策略</h2><p>当 Redis 内存超出物理内存限制时，内存的数据会开始和磁盘产生频繁的交换（swap）。交换会让 Redis 的性能急剧下降，对于访问量比较频繁的 Redis 来说，这样龟速的存取效率基本上等于不可用。</p>
-<p>在生产环境中我们是不允许 Redis 出现交换行为，为了限制最大使用内存，Redis 提供了配置参数 maxmemory 来限制内存超出期望大小。</p>
-<p>当实际内存超出 maxmemory 时，Redis 提供了几种可选策略（maxmemory-policy）来让用户自己觉醒该如何腾出新的空间以继续提供读写服务。</p>
-<h3 id="noeviction"><a href="#noeviction" class="headerlink" title="noeviction"></a>noeviction</h3><p>不会继续服务器写请求（DEL 请求可以继续服务），读请求可以继续进行。这样可以保证不会丢失数据，但是会让线上的业务不能持续进行。这是默认的淘汰策略。</p>
-<h3 id="volatile-lru"><a href="#volatile-lru" class="headerlink" title="volatile-lru"></a>volatile-lru</h3><p>尝试淘汰设置了过期时间的 key，最少使用的 key 优先被淘汰。没有设置过期时间的 key 不会被淘汰，这样可以保证需要持久化的数据不会突然丢失。</p>
-<h3 id="volatile-ttl"><a href="#volatile-ttl" class="headerlink" title="volatile-ttl"></a>volatile-ttl</h3><p>跟上面一样，除了淘汰的策略不是 LRU，而是 key 的剩余寿命 ttl 的值，ttl 越小越优先被淘汰。</p>
-<h3 id="volatile-random"><a href="#volatile-random" class="headerlink" title="volatile-random"></a>volatile-random</h3><p>跟上面一样，不过淘汰的 key 是过期 key 集合中随机的 key。</p>
-<h3 id="allkeys-lru"><a href="#allkeys-lru" class="headerlink" title="allkeys-lru"></a>allkeys-lru</h3><p>区别于 volatile-lru，这个策略要淘汰的 key 对象是全体的 key 集合，而不只是过期的 key 集合。这意味着没有设置过期时间的 key 也会被淘汰。</p>
-<h3 id="allkeys-random"><a href="#allkeys-random" class="headerlink" title="allkeys-random"></a>allkeys-random</h3><p>跟上面一样，不过淘汰的策略是随机的 key。</p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>volatile-xxx 策略只会针对带过期时间的 key 进行淘汰，allkeys-xxx 策略会对所有的 key 进行淘汰。如果我们只是拿 Redis 做缓存，那应该使用 allkeys-xxx，客户端写缓存时不必携带过期时间；如果我们还想同时使用 Redis 的持久化功能，那就使用 volatile-xxx 策略，这样可以保留没有设置过期时间的 key，它们是永久的 key 不会被 LRU 算法淘汰。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1337,7 +1351,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
