@@ -171,6 +171,109 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/19/Redis%E7%BA%BF%E7%A8%8BIO%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="晴天">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OnePiece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/19/Redis%E7%BA%BF%E7%A8%8BIO%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">Redis 线程 IO 模型</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-19 12:02:00 / 修改时间：12:29:03" itemprop="dateCreated datePublished" datetime="2020-02-19T12:02:00+08:00">2020-02-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Redis 采用的是<strong>基于内存的、单线程模型</strong>的 KV 数据库。官方提供的数据是可以达到 10w+ 的 QPS。这个数据不比采用单进程多线程的同样基于内存的 KV 数据库 Memcached 差。</p>
+<h2 id="理解单线程模型"><a href="#理解单线程模型" class="headerlink" title="理解单线程模型"></a>理解单线程模型</h2><p><img src="/images/redis/%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png" alt="单线程模型实例"></p>
+<ol>
+<li>Redis 会将每个客户端都关联一个指令队列。客户端的指令通过队列来按顺序处理，先到先服务。</li>
+<li>在一个客户端的指令队列中的指令是顺序执行的，但是多个指令队列中的指令是无法保证顺序的，例如执行完 client-0 的队列中的 command-0 后，接下去是执行哪个队列中的第一个指令是无法确定的，但是肯定不会同时执行两个指令。</li>
+<li>Redis 同样也会为每个客户端关联一个响应队列，通过响应队列来顺序地将指令的返回结果回复给客户端。</li>
+<li>同样，一个响应队列中的消息可以顺序的回复给客户端，多个响应队列之间是无法保证顺序的。</li>
+<li>所有的客户端的队列中的指令或者响应，Redis 每次都只能处理一个，同一时间绝对不会处理超过一个指令或者响应。</li>
+</ol>
+<h2 id="为什么-Redis-使用单线程模型还能保证高性能"><a href="#为什么-Redis-使用单线程模型还能保证高性能" class="headerlink" title="为什么 Redis 使用单线程模型还能保证高性能"></a>为什么 Redis 使用单线程模型还能保证高性能</h2><ul>
+<li><p>纯内存访问<br>Redis 将所有数据放在内存中，内存的响应时长大约为 100 纳秒，这是 Redis 的 QPS 过万的重要基础。</p>
+</li>
+<li><p>非阻塞式 IO</p>
+<ul>
+<li><p>什么是阻塞式 IO<br>当我们调用 Scoket 的读写方法，默认它们是阻塞的。<br>read() 方法要传递进去一个参数 n，表示读取这么多字节后再返回，如果没有读够 n 字节线程就会阻塞，直到新的数据到来或者连接关闭了， read 方法才可以返回，线程才能继续处理。<br>write() 方法会首先把数据写到系统内核为 Scoket 分配的写缓冲区中，当写缓存区满溢，即写缓存区中的数据还没有写入到磁盘，就有新的数据要写道写缓存区时，write() 方法就会阻塞，直到写缓存区中有空闲空间。</p>
+</li>
+<li><p>什么是非阻塞式 IO<br>非阻塞 IO 在 Scoket 对象上提供了一个选项 Non_Blocking ，当这个选项打开时，读写方法不会阻塞，而是能读多少读多少，能写多少写多少。<br>能读多少取决于内核为 Scoket 分配的读缓冲区的大小，能写多少取决于内核为 Scoket 分配的写缓冲区的剩余空间大小。读方法和写方法都会通过返回值来告知程序实际读写了多少字节数据。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>有了非阻塞 IO 意味着线程在读写 IO 时可以不必再阻塞了，读写可以瞬间完成然后线程可以继续干别的事了。</p>
+<ul>
+<li><p>IO 多路复用<br>“多路”指的是多个网络连接，“复用”指的是复用同一个线程。采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络 IO 的时间消耗）。可以直接理解为：单线程的原子操作，避免上下文切换的时间和性能消耗；加上对内存中数据的处理速度，很自然的提高 Redis 的吞吐量</p>
+</li>
+<li><p>数据结构简单<br>单线程可以简化数据结构和算法的实现。并发数据结构实现不但困难而且开发测试比较麻。<br>Redis 全程使用 hash 结构，读取速度快，还有一些特殊的数据结构，对数据存储进行了优化，如压缩表对短数据进行压缩存储，再如跳表使用有序的数据结构加快读取的速度。</p>
+</li>
+<li><p>单线程避免了线程切换和竞态产生的消耗<br>单线程避免了线程切换和竞态产生的消耗，对于服务端开发来说，锁和线程切换通常是性能杀手。</p>
+</li>
+</ul>
+<h2 id="单线程的问题"><a href="#单线程的问题" class="headerlink" title="单线程的问题"></a>单线程的问题</h2><ul>
+<li>对于每个命令的执行时间是有要求的。如果某个命令执行过长，会造成其他命令的阻塞，所以 redis 适用于那些需要快速执行的场景。</li>
+<li>无法发挥多核CPU性能，不过可以通过在单机开多个 Redis 实例来完善。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/18/Redis%E8%BF%87%E6%9C%9F%E7%AD%96%E7%95%A5%E5%8F%8A%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1441,114 +1544,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/08/Netty%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="晴天">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="OnePiece">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/08/Netty%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">Netty心跳机制</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-02-08 14:52:00 / 修改时间：20:41:41" itemprop="dateCreated datePublished" datetime="2020-02-08T14:52:00+08:00">2020-02-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Netty/" itemprop="url" rel="index">
-                    <span itemprop="name">Netty</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="何为心跳"><a href="#何为心跳" class="headerlink" title="何为心跳"></a>何为心跳</h2><p>顾名思义，所谓心跳，即在 TCP 长连接中，客户端和服务器之间定期发送的一种特殊的数据包，通知对方自己还在线，以确保 TCP 连接的有效性。</p>
-<h2 id="为什么需要心跳"><a href="#为什么需要心跳" class="headerlink" title="为什么需要心跳"></a>为什么需要心跳</h2><p>因为网络的不可靠性，有可能在 TCP 保持长连接的过程中，由于某些突发情况，例如网线被拔出，突然掉电等，会造成服务器和客户端的连接中断。<br>在这些突发情况下，如果恰好服务器和客户端之间没有交互的话，那么它们是不能在短时间内发现对方已经掉线的。<br>为了解决这个问题，我们就需要引入心跳机制。<br>心跳机制的工作原理是：在服务器和客户端之间一定时间内没有数据交互时，即处于 idle 状态时，客户端或服务器会发送一个特殊的数据包给对方，当接收方收到这个数据报文之后，也立即发送一个特殊的数据报文，回应发送方，此即一个 PING-PONMG 交互。自然地，当某一端收到心跳消息后，就知道了对方仍然在线，这就确保 TCP 连接的有效性。</p>
-<h2 id="如何实现心跳"><a href="#如何实现心跳" class="headerlink" title="如何实现心跳"></a>如何实现心跳</h2><p>我们可以通过两种方式实现心跳机制：</p>
-<ul>
-<li>使用 TCP 协议层里面的 keepalive 机制</li>
-<li>在应用层上实现自定义的心跳机制（在 Netty 中即为 Idle check）</li>
-</ul>
-<p>虽然在 TCP 协议层上，提供了 keepalive 保活机制，但是使用它有几个缺点：</p>
-<ol>
-<li>它不是 TCP 的标准协议，并且默认时关闭的。</li>
-<li>TCP keepalive 机制依赖于操作系统的实现，默认的 keepalive 心跳时间是<strong>两个小时</strong>，并且对 keepalive 的修改需要系统调用（或者修改系统配置），灵活性不够。</li>
-<li>TCP keepalive 与 TCP 协议绑定，因此如果需要更换为 UDP 协议时，keepalive 机制就失效了。</li>
-</ol>
-<p>虽然使用 TCP 层面的 keepalive 机制比自定义的应用层心跳机制节省流量, 但是基于上面的几点缺点, 一般的实践中, 人们大多数都是选择在应用层上实现自定义的心跳。</p>
-<h3 id="TCP-keepalive"><a href="#TCP-keepalive" class="headerlink" title="TCP keepalive"></a>TCP keepalive</h3><p>TCP keepalive 核心参数：</p>
-<ul>
-<li>net.ipv4.tcp_keepalive_time = 7200</li>
-<li>net.ipv4.tcp_keepalive_intl = 75</li>
-<li>net.ipv4.tcp_keepalive_probes = 9<br>当启用（默认关闭）keepalive 时，TCP 在连接没有数据通过的 7200 秒后发送 keepalive 消息，当探测没有回复时按 75 秒的重试频率重发，一直发 9 个探测包都没有确认时连接失败，所以总耗时一般为：2 小时 11 分（7200 秒 + 75 * 9）。</li>
-</ul>
-<h3 id="Idle-check"><a href="#Idle-check" class="headerlink" title="Idle check"></a>Idle check</h3><p>Idle 监测，只是负责诊断，诊断后，做出不同的行为，决定 Idle 监测的最终用途。</p>
-<ul>
-<li>发送 keepalive（区别于 TCP keepalive）：在有其它数据传输的时候，不发送 keepalive，无数据传输超过一定时间，判定为 Idle，再发 keepalive。</li>
-<li>直接关闭连接：快速释放损坏的、恶意的、很久不用的连接，让系统时刻保持最好的状态；简单粗暴，客户端可能需要重连。<br>实际应用中：结合起来使用。按需 keepalive，保证不会空闲，如果空闲，关闭连接。</li>
-</ul>
-<h2 id="Netty-中开启心跳监测"><a href="#Netty-中开启心跳监测" class="headerlink" title="Netty 中开启心跳监测"></a>Netty 中开启心跳监测</h2><h3 id="Server-端开启-TCP-keepalive"><a href="#Server-端开启-TCP-keepalive" class="headerlink" title="Server 端开启 TCP keepalive"></a>Server 端开启 TCP keepalive</h3><ul>
-<li>bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true)</li>
-<li>bootstrap.childOption(NioChannelOption.SO_KEEPALIVE, true)</li>
-</ul>
-<p>注意，是 <strong>.childOption</strong>(ChannelOption.SO_KEEPALIVE, true) 而不是 .option(ChannelOption.SO_KEEPALIVE, true)，虽然可以设置后者，但是无效。</p>
-<h3 id="开启-Idle-Check"><a href="#开启-Idle-Check" class="headerlink" title="开启 Idle Check"></a>开启 Idle Check</h3><p>要开启 Idle Check，关键是继承 <strong>IdleStateHandler</strong>。实例化一个 IdleStateHandler 需要提供 3 个参数：</p>
-<ul>
-<li>readerIdleTimeSeconds：读超时. 即当在指定的时间间隔内没有从 Channel 读取到数据时, 会触发一个 READER_IDLE 的 IdleStateEvent 事件。</li>
-<li>writerIdleTimeSeconds：写超时. 即当在指定的时间间隔内没有数据写入到 Channel 时, 会触发一个 WRITER_IDLE 的 IdleStateEvent 事件。</li>
-<li>allIdleTimeSeconds：读/写超时. 即当在指定的时间间隔内没有读或写操作时, 会触发一个 ALL_IDLE 的 IdleStateEvent 事件。</li>
-</ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://segmentfault.com/a/1190000006931568" target="_blank" rel="noopener">浅析 Netty 实现心跳机制与断线重连</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1619,7 +1614,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">66</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
